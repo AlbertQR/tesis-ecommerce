@@ -42,25 +42,29 @@ export interface ICartItem {
  * @property {number} total - Total incluyendo envío
  * @property {object} deliveryAddress - Dirección de entrega
  * @property {string} [invoiceUrl] - URL de la factura PDF
+ * @property {Date} expiresAt - Fecha de expiración del pedido (24 horas)
  * @property {Date} createdAt - Fecha de creación del pedido
  * @property {Date} updatedAt - Fecha de última modificación
  */
 export interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
+  orderId: string;
   date: Date;
   status: OrderStatus;
   items: ICartItem[];
   subtotal: number;
   shipping: number;
   total: number;
-  deliveryAddress: {
-    street: string;
-    number: string;
-    city: string;
-    neighborhood: string;
+  deliveryAddress?: {
+    label: string;
+    street?: string;
+    number?: string;
+    city?: string;
+    neighborhood?: string;
     instructions?: string;
   };
   invoiceUrl?: string;
+  expiresAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -87,6 +91,7 @@ const CartItemSchema = new Schema<ICartItem>({
  */
 const OrderSchema = new Schema<IOrder>({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  orderId: { type: String, required: true },
   date: { type: Date, default: Date.now },
   status: { 
     type: String, 
@@ -98,13 +103,15 @@ const OrderSchema = new Schema<IOrder>({
   shipping: { type: Number, required: true },
   total: { type: Number, required: true },
   deliveryAddress: {
-    street: { type: String, required: true },
-    number: { type: String, required: true },
-    city: { type: String, required: true },
-    neighborhood: { type: String, required: true },
+    label: { type: String, required: false },
+    street: { type: String, required: false },
+    number: { type: String, required: false },
+    city: { type: String, required: false },
+    neighborhood: { type: String, required: false },
     instructions: { type: String }
   },
   invoiceUrl: { type: String },
+  expiresAt: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

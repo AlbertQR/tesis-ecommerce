@@ -10,7 +10,9 @@
 ### 1.2 Inicio de Sesión
 - El usuario debe poder iniciar sesión con email y contraseña
 - Generación de token JWT al iniciar sesión exitosamente
-- Persistencia del token en localStorage del navegador
+- Persistencia del token JWT en localStorage del navegador
+- **IMPORTANTE**: Solo se almacena el token JWT, los datos del usuario se extraen del payload del JWT
+- Validación de expiración del token automáticamente
 
 ### 1.3 Perfil de Usuario
 - Visualización de datos del perfil (nombre, email, teléfono)
@@ -71,6 +73,11 @@
 - Costo de envío (envío fijo de $100)
 - Total general
 
+### 3.3 Expiración del Carrito
+- **IMPLEMENTADO**: El carrito expira después de 30 minutos de inactividad
+- **IMPLEMENTADO**: Al expirar, el stock de los productos se restaura automáticamente
+- Limpieza automática cada 60 segundos en el backend
+
 ---
 
 ## 4. Proceso de Compra (Checkout)
@@ -91,6 +98,16 @@
 - Registro de dirección de entrega
 - Cálculo de totales
 
+### 4.4 Expiración de Pedidos
+- **IMPLEMENTADO**: Los pedidos expiran después de 24 horas si no son entregados
+- **IMPLEMENTADO**: Al expirar, el pedido se cancela automáticamente y el stock se restaura
+- Limpieza automática cada 60 segundos en el backend
+
+### 4.5 Verificación de Entrega por QR
+- **IMPLEMENTADO**: La factura PDF incluye un código QR con el ID del pedido
+- **IMPLEMENTADO**: Endpoint público `/api/orders/verify-qr` para verificar entrega
+- El código QR permite marcar el pedido como "entregado" escaneándolo
+
 ---
 
 ## 5. Gestión de Pedidos
@@ -100,6 +117,12 @@
 - Estados: pending, confirmed, preparing, ready, delivered, cancelled
 - Detalle de cada pedido (productos, cantidades, precios)
 - Descarga de factura en PDF
+
+### 5.2 Factura PDF con QR
+- **IMPLEMENTADO**: Generación automática de factura PDF al completar pedido
+- **IMPLEMENTADO**: Código QR en la factura para verificación de entrega
+- Datos incluidos: número de pedido, fecha, datos del cliente, productos, cantidades, precios unitarios, subtotal, envío, total
+- Descarga disponible desde la lista de pedidos del usuario
 
 ### 5.2 Gestión de Pedidos (Administrador)
 - Visualización de todos los pedidos
@@ -114,6 +137,7 @@
 ### 6.1 Testimonios
 - Visualización de testimonios en el home
 - Gestión de testimonios (administrador): crear, editar, eliminar
+- **IMPLEMENTADO**: Campo opcional de imagen para testimonios
 
 ### 6.2 Combos
 - Visualización de combos destacados
@@ -135,6 +159,20 @@
 ### 7.2 Dashboard
 - Vista general del panel de administración
 
+### 7.3 Subida de Imágenes
+- **IMPLEMENTADO**: Endpoint `/api/upload` para subir imágenes
+- **IMPLEMENTADO**: Soporte para productos, testimonios y contenido
+- Almacenamiento en carpeta `public/uploads/`
+- Archivos renombrados con UUID
+- Formatos permitidos: jpeg, jpg, png, gif, webp (máx 5MB)
+
+### 7.4 Protección de Rutas
+- **IMPLEMENTADO**: Guards de autenticación para rutas protegidas
+- **IMPLEMENTADO**: AdminGuard para rutas del panel de administración
+- Rutas protegidas: `/perfil`, `/pedidos`, `/pedido/:id`, `/admin`
+- Redirección a login si no autenticado
+- Redirección a home si intenta acceder a admin sin permisos
+
 ---
 
 ## 8. Facturación
@@ -143,6 +181,12 @@
 - Generación automática de factura al completar pedido
 - Datos incluidos: número de pedido, fecha, datos del cliente, productos, cantidades, precios unitarios, subtotal, envío, total
 - Archivo PDF descargable por el usuario
+
+### 8.2 Código QR de Verificación
+- **IMPLEMENTADO**: Código QR en cada factura PDF
+- El QR contiene: `{ orderId, action: 'verify' }`
+- Escaneo permite verificar y marcar pedido como entregado
+- Endpoint público para verificación: `POST /api/orders/verify-qr`
 
 ---
 
@@ -278,15 +322,21 @@
 - Seed automático de datos iniciales
 
 ### 16.2 Colecciones
-- users: Usuarios del sistema
+- users: Usuarios del sistema (incluye campo `cart` y `cartExpiresAt`)
 - addresses: Direcciones de entrega
 - products: Catálogo de productos
 - categories: Categorías de productos
-- testimonials: Testimonios de clientes
+- testimonials: Testimonios de clientes (incluye campo `image` opcional)
 - combos: Combos promocionales
-- orders: Pedidos realizados
+- orders: Pedidos realizados (incluye campo `expiresAt` para expiración)
 - contents: Contenido dinámico del sitio
 - legal: Documentos legales
+
+### 16.3 Almacenamiento del Carrito
+- **IMPLEMENTADO**: Carrito almacenado en MongoDB (modelo User)
+- No依赖于 express-session
+- Campo `cartExpiresAt` para controlar expiración de 30 minutos
+- Limpieza automática de carritos expirados
 
 ---
 

@@ -5,13 +5,15 @@
 ### 1.1 Autenticación
 - Implementación de JWT (JSON Web Token) para autenticación
 - Token con expiración de 7 días
-- Almacenamiento seguro del token en localStorage
+- Almacenamiento del token en localStorage
+- **IMPORTANTE**: Solo se almacena el token JWT, los datos del usuario se extraen del payload
 - Protección de rutas sensibles mediante middleware de autenticación
 
 ### 1.2 Autorización
 - Diferenciación de roles: usuario (cliente) y administrador
 - Middleware de autorización para rutas administrativas
 - Protección de endpoints sensibles (carrito, pedidos, administración)
+- **IMPLEMENTADO**: Frontend guards (authGuard, adminGuard) para protección de rutas
 
 ### 1.3 Validación
 - Validación de datos de entrada con Zod
@@ -34,8 +36,10 @@
 - **Lenguaje**: TypeScript (modo estricto)
 - **Validación**: Zod
 - **Autenticación**: JWT (jsonwebtoken)
-- **Gestión de sesiones**: express-session
+- **Gestión de sesiones**: MongoDB (carrito almacenado en User)
 - **PDF**: PDFKit
+- **QR Code**: qrcode (generación de códigos QR para verificación)
+- **File Upload**: multer (subida de imágenes)
 - **Base de datos**: MongoDB con Mongoose
 - **Testing**: Vitest
 
@@ -178,7 +182,9 @@ backend/src/
 
 ### 9.3 Archivos
 - Facturas almacenadas en carpeta `/invoices`
+- Imágenes subidas por usuarios en `/public/uploads`
 - Archivos estáticos servidos desde Express
+- Tamaños máximos: 5MB para imágenes
 
 ---
 

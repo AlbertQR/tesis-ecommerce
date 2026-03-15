@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Product, CartItem, CartItemResponse } from '../models/product.model';
+import { Product as ProductModel, ProductCategory as ProductCategoryModel } from '../models/product.model';
 import { tap, catchError, of } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -11,28 +11,15 @@ import { AuthService } from './auth.service';
 const DELIVERY_FEE = 100;
 
 /**
- * Interfaz que define la estructura de un item en el carrito.
- * 
- * @interface CartItem
- * 
- * @property {Product} product - Datos del producto
- * @property {number} quantity - Cantidad seleccionada
+ * Interfaz que define la estructura de un item en el carrito (formato interno).
  */
 export interface CartItem {
-  product: Product;
+  product: ProductModel;
   quantity: number;
 }
 
 /**
  * Interfaz que define la respuesta del API para items del carrito.
- * 
- * @interface CartItemResponse
- * 
- * @property {string} productId - ID del producto
- * @property {string} productName - Nombre del producto
- * @property {string} productImage - URL de imagen del producto
- * @property {number} quantity - Cantidad en el carrito
- * @property {number} unitPrice - Precio unitario
  */
 export interface CartItemResponse {
   productId: string;
@@ -43,39 +30,14 @@ export interface CartItemResponse {
 }
 
 /**
- * Interfaz que define la estructura de un producto.
- * 
- * @interface Product
- * 
- * @property {string} id - Identificador único
- * @property {string} name - Nombre del producto
- * @property {string} description - Descripción del producto
- * @property {number} price - Precio en COP
- * @property {ProductCategory} category - Categoría del producto
- * @property {string} image - URL de la imagen
- * @property {number} stock - Cantidad disponible
- * @property {boolean} [isFeatured] - Indica si es destacado
- * @property {boolean} [isHot] - Indica si es popular
- * @property {boolean} [isCombo] - Indica si es un combo
+ * Alias para Product del modelo
  */
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: ProductCategory;
-  image: string;
-  stock: number;
-  isFeatured?: boolean;
-  isHot?: boolean;
-  isCombo?: boolean;
-}
+export type Product = ProductModel;
 
 /**
- * Categorías disponibles para los productos.
- * @typedef {'cafeteria' | 'pizzeria' | 'despensa' | 'combo'} ProductCategory
+ * Alias para ProductCategory del modelo
  */
-export type ProductCategory = 'cafeteria' | 'pizzeria' | 'despensa' | 'combo';
+export type ProductCategory = ProductCategoryModel;
 
 /**
  * Servicio para gestionar el carrito de compras del usuario.

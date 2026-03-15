@@ -29,6 +29,7 @@ export interface Order {
   total: number;
   deliveryAddress: Address;
   invoiceUrl?: string;
+  expiresAt?: string;
 }
 
 export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';

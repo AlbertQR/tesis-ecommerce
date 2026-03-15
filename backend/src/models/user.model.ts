@@ -1,5 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
+interface ICartItem {
+  productId: string;
+  productName: string;
+  productImage: string;
+  quantity: number;
+  unitPrice: number;
+}
+
 /**
  * Interfaz que define la estructura de un usuario en la base de datos.
  * Representa tanto usuarios regulares como administradores del sistema.
@@ -13,6 +21,8 @@ import mongoose, { Document, Schema } from 'mongoose';
  * @property {string} phone - Número de teléfono de contacto
  * @property {string} [avatar] - URL opcional de la foto de perfil
  * @property {'user' | 'admin'} role - Rol del usuario en el sistema
+ * @property {ICartItem[]} cart - Carrito de compras del usuario
+ * @property {Date} cartExpiresAt - Fecha de expiración del carrito (30 min)
  * @property {Date} createdAt - Fecha de creación del registro
  * @property {Date} updatedAt - Fecha de última modificación
  */
@@ -23,6 +33,8 @@ export interface IUser extends Document {
   phone: string;
   avatar?: string;
   role: 'user' | 'admin';
+  cart: ICartItem[];
+  cartExpiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,6 +53,8 @@ const UserSchema = new Schema<IUser>({
   phone: { type: String, required: true },
   avatar: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  cart: { type: Schema.Types.Mixed as any, default: [] },
+  cartExpiresAt: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

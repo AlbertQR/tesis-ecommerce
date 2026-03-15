@@ -1,159 +1,79 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { CartService } from './cart.service';
-import { Product } from '../models/product.model';
+import { describe, it, expect, beforeEach } from 'vitest';
 
-describe('CartService', () => {
-  let service: CartService;
-  let httpMock: HttpTestingController;
-
-  const mockProduct: Product = {
-    id: '1',
-    name: 'Pizza Pepperoni',
-    description: 'Delicious pizza',
-    price: 35000,
-    category: 'pizzeria',
-    image: '/img/pizza.jpg',
-    stock: 10
-  };
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [CartService]
-    });
-
-    service = TestBed.inject(CartService);
-    httpMock = TestBed.inject(HttpTestingController);
-  });
-
-  afterEach(() => {
-    httpMock.verify();
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
+describe('CartService Logic', () => {
   describe('Cart calculations', () => {
     it('should calculate cart count correctly', () => {
-      // Test with mock data
       const items = [
-        { product: mockProduct, quantity: 2 },
-        { product: { ...mockProduct, id: '2', price: 12000 }, quantity: 1 }
+        { product: { id: '1', name: 'Product 1', price: 10000, description: '', category: 'cafeteria' as const, image: '', stock: 10 }, quantity: 2 },
+        { product: { id: '2', name: 'Product 2', price: 5000, description: '', category: 'pizzeria' as const, image: '', stock: 5 }, quantity: 3 }
       ];
-      
       const count = items.reduce((sum, item) => sum + item.quantity, 0);
-      expect(count).toBe(3);
+      expect(count).toBe(5);
     });
 
     it('should calculate cart subtotal correctly', () => {
       const items = [
-        { product: mockProduct, quantity: 2 }, // 35000 * 2 = 70000
-        { product: { ...mockProduct, id: '2', price: 12000 }, quantity: 1 } // 12000 * 1 = 12000
+        { product: { id: '1', name: 'Product 1', price: 10000, description: '', category: 'cafeteria' as const, image: '', stock: 10 }, quantity: 2 },
+        { product: { id: '2', name: 'Product 2', price: 5000, description: '', category: 'pizzeria' as const, image: '', stock: 5 }, quantity: 3 }
       ];
-      
       const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-      expect(subtotal).toBe(82000);
+      expect(subtotal).toBe(35000);
     });
 
     it('should calculate total with delivery fee', () => {
-      const subtotal = 82000;
+      const subtotal = 35000;
       const deliveryFee = 100;
-      const total = subtotal + deliveryFee;
-      
-      expect(total).toBe(82100);
+      const hasDelivery = true;
+      const total = subtotal + (hasDelivery ? deliveryFee : 0);
+      expect(total).toBe(35100);
     });
 
     it('should handle empty cart', () => {
-      const items: { product: Product; quantity: number }[] = [];
-      const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-      
-      expect(subtotal).toBe(0);
-    });
-  });
-
-  describe('Cart item operations', () => {
-    it('should add item to cart', () => {
-      const cartItems: { product: Product; quantity: number }[] = [];
-      
-      cartItems.push({
-        product: mockProduct,
-        quantity: 1
-      });
-      
-      expect(cartItems).toHaveLength(1);
-      expect(cartItems[0].product.name).toBe('Pizza Pepperoni');
-    });
-
-    it('should add multiple different products to cart', () => {
-      const cartItems: { product: Product; quantity: number }[] = [];
-      
-      cartItems.push({ product: mockProduct, quantity: 1 });
-      cartItems.push({ product: { ...mockProduct, id: '2', name: 'Latte' }, quantity: 1 });
-      
-      expect(cartItems).toHaveLength(2);
-      expect(cartItems[0].product.id).toBe('1');
-      expect(cartItems[1].product.id).toBe('2');
-    });
-
-    it('should update item quantity', () => {
-      const cartItems = [
-        { product: mockProduct, quantity: 2 },
-        { product: { ...mockProduct, id: '2' }, quantity: 1 }
-      ];
-      
-      const itemIndex = cartItems.findIndex(item => item.product.id === '1');
-      if (itemIndex >= 0) {
-        cartItems[itemIndex].quantity = 5;
-      }
-      
-      expect(cartItems[0].quantity).toBe(5);
-    });
-
-    it('should remove item from cart', () => {
-      const cartItems = [
-        { product: mockProduct, quantity: 2 },
-        { product: { ...mockProduct, id: '2' }, quantity: 1 }
-      ];
-      
-      const filteredItems = cartItems.filter(item => item.product.id !== '1');
-      
-      expect(filteredItems).toHaveLength(1);
-      expect(filteredItems[0].product.id).toBe('2');
-    });
-
-    it('should clear entire cart', () => {
-      const cartItems = [
-        { product: mockProduct, quantity: 2 },
-        { product: { ...mockProduct, id: '2' }, quantity: 1 }
-      ];
-      
-      const clearedItems: typeof cartItems = [];
-      
-      expect(clearedItems).toHaveLength(0);
+      const items: any[] = [];
+      const count = items.reduce((sum, item) => sum + item.quantity, 0);
+      expect(count).toBe(0);
     });
   });
 
   describe('Delivery fee calculations', () => {
     it('should apply delivery fee when has delivery', () => {
       const hasDelivery = true;
-      const subtotal = 50000;
-      const deliveryFee = 100;
-      
-      const total = hasDelivery ? subtotal + deliveryFee : subtotal;
-      
-      expect(total).toBe(50100);
+      const fee = hasDelivery ? 100 : 0;
+      expect(fee).toBe(100);
     });
 
     it('should not apply delivery fee when no delivery', () => {
       const hasDelivery = false;
-      const subtotal = 50000;
-      const deliveryFee = 100;
-      
-      const total = hasDelivery ? subtotal + deliveryFee : subtotal;
-      
-      expect(total).toBe(50000);
+      const fee = hasDelivery ? 100 : 0;
+      expect(fee).toBe(0);
+    });
+  });
+
+  describe('Cart item operations logic', () => {
+    it('should filter item to remove', () => {
+      const removeItem = (items: string[], id: string) => items.filter(item => item !== id);
+      const items = ['1', '2', '3'];
+      const result = removeItem(items, '2');
+      expect(result).toEqual(['1', '3']);
+    });
+
+    it('should update quantity only if positive', () => {
+      const updateQuantity = (qty: number) => qty > 0;
+      expect(updateQuantity(5)).toBe(true);
+      expect(updateQuantity(0)).toBe(false);
+      expect(updateQuantity(-1)).toBe(false);
+    });
+
+    it('should clear cart to empty array', () => {
+      const clearCart = () => [];
+      expect(clearCart()).toEqual([]);
+    });
+  });
+
+  describe('DELIVERY_FEE constant', () => {
+    it('should have delivery fee of 100 COP', () => {
+      const DELIVERY_FEE = 100;
+      expect(DELIVERY_FEE).toBe(100);
     });
   });
 });

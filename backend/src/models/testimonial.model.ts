@@ -12,6 +12,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * @property {string} comment - Testimonio o opinión del cliente
  * @property {number} rating - Calificación de 1 a 5 estrellas
  * @property {string} initials - Iniciales del cliente para mostrar avatar
+ * @property {string} image - URL de la imagen del cliente (opcional)
  */
 export interface ITestimonial extends Document {
   name: string;
@@ -19,6 +20,7 @@ export interface ITestimonial extends Document {
   comment: string;
   rating: number;
   initials: string;
+  image?: string;
 }
 
 /**
@@ -32,7 +34,8 @@ const TestimonialSchema = new Schema<ITestimonial>({
   role: { type: String, required: true },
   comment: { type: String, required: true },
   rating: { type: Number, required: true },
-  initials: { type: String, required: true }
+  initials: { type: String, required: true },
+  image: { type: String }
 });
 
 /**

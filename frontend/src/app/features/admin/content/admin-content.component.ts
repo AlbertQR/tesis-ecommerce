@@ -17,6 +17,7 @@ interface Testimonial {
   comment: string;
   rating: number;
   initials: string;
+  image?: string;
 }
 
 @Component({
@@ -39,9 +40,11 @@ export class AdminContentComponent implements OnInit {
   
   isEditingTestimonial = signal(false);
   editingTestimonial = signal<Testimonial | null>(null);
+  
+  isUploading = signal(false);
 
   contentForm = { key: '', value: '', type: 'text' as 'text' | 'image' | 'json' };
-  testimonialForm = { name: '', role: '', comment: '', rating: 5, initials: '' };
+  testimonialForm = { name: '', role: '', comment: '', rating: 5, initials: '', image: '' as string | undefined };
 
   ngOnInit(): void {
     this.loadContents();
@@ -109,7 +112,14 @@ export class AdminContentComponent implements OnInit {
   }
 
   startEditTestimonial(testimonial: Testimonial): void {
-    this.testimonialForm = { ...testimonial };
+    this.testimonialForm = { 
+      name: testimonial.name, 
+      role: testimonial.role, 
+      comment: testimonial.comment, 
+      rating: testimonial.rating, 
+      initials: testimonial.initials,
+      image: testimonial.image || '' 
+    };
     this.editingTestimonial.set(testimonial);
     this.isEditingTestimonial.set(true);
   }
@@ -127,7 +137,7 @@ export class AdminContentComponent implements OnInit {
   }
 
   startAddTestimonial(): void {
-    this.testimonialForm = { name: '', role: '', comment: '', rating: 5, initials: '' };
+    this.testimonialForm = { name: '', role: '', comment: '', rating: 5, initials: '', image: '' };
     this.editingTestimonial.set(null);
     this.isEditingTestimonial.set(true);
   }
@@ -153,5 +163,36 @@ export class AdminContentComponent implements OnInit {
 
   formatDate(date: string): string {
     return new Date(date).toLocaleDateString('es-CO');
+  }
+
+  onImageSelected(event: Event, type: 'content' | 'testimonial'): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.uploadImage(input.files[0], type);
+    }
+  }
+
+  uploadImage(file: File, type: 'content' | 'testimonial'): void {
+    this.isUploading.set(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const token = localStorage.getItem('token');
+    this.http.post<{ url: string }>(`${this.apiUrl}/upload`, formData, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: (response) => {
+        if (type === 'content') {
+          this.contentForm.value = response.url;
+        } else {
+          this.testimonialForm.image = response.url;
+        }
+        this.isUploading.set(false);
+      },
+      error: () => {
+        this.isUploading.set(false);
+        alert('Error al subir la imagen');
+      }
+    });
   }
 }

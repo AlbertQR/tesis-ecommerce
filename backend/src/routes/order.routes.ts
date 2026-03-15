@@ -10,7 +10,9 @@ import {
   getOrderById,
   getAllOrders,
   updateOrderStatus,
-  downloadInvoice
+  downloadInvoice,
+  verifyOrderByQR,
+  cancelOrder
 } from '../controllers/order.controller.js';
 import { authenticate, authorizeAdmin } from '../middleware/auth.js';
 
@@ -26,7 +28,10 @@ router.post('/checkout', authenticate, checkout);
 
 router.get('/orders', authenticate, getOrders);
 router.get('/orders/:id', authenticate, getOrderById);
+router.delete('/orders/:id', authenticate, cancelOrder);
 router.get('/orders/:id/invoice', authenticate, downloadInvoice);
+
+router.post('/verify-qr', verifyOrderByQR);
 
 router.get('/admin/orders', authenticate, authorizeAdmin, getAllOrders);
 router.put('/admin/orders/:id/status', authenticate, authorizeAdmin, updateOrderStatus);

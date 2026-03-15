@@ -104,8 +104,28 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Valor</label>
-            <textarea [(ngModel)]="contentForm.value" name="value" rows="3"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+            @if (contentForm.type === 'image') {
+              <div class="space-y-2">
+                <div class="flex gap-2">
+                  <input type="text" [(ngModel)]="contentForm.value" name="value" readonly
+                    placeholder="URL de la imagen"
+                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm">
+                  <label class="px-4 py-2 bg-brand text-white rounded-lg cursor-pointer hover:bg-brand-hover transition-colors">
+                    <i class="fa-solid fa-upload"></i>
+                    <input type="file" accept="image/*" (change)="onImageSelected($event, 'content')" class="hidden">
+                  </label>
+                </div>
+                @if (isUploading()) {
+                  <div class="text-sm text-brand"><i class="fa-solid fa-spinner fa-spin"></i> Subiendo...</div>
+                }
+                @if (contentForm.value) {
+                  <img [src]="contentForm.value" class="h-24 w-24 object-cover rounded-lg">
+                }
+              </div>
+            } @else {
+              <textarea [(ngModel)]="contentForm.value" name="value" rows="3"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+            }
           </div>
           <div class="flex gap-3">
             <button (click)="editingContent() ? saveContent() : saveNewContent()" class="flex-1 bg-brand text-white py-2 rounded-lg hover:bg-brand-hover">Guardar</button>
@@ -135,6 +155,24 @@
               <input type="text" [(ngModel)]="testimonialForm.initials" name="initials" maxlength="2"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg">
             </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Imagen (opcional)</label>
+            <div class="flex gap-2">
+              <input type="text" [(ngModel)]="testimonialForm.image" name="image" readonly
+                placeholder="Seleccione una imagen"
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm">
+              <label class="px-4 py-2 bg-brand text-white rounded-lg cursor-pointer hover:bg-brand-hover transition-colors">
+                <i class="fa-solid fa-upload"></i>
+                <input type="file" accept="image/*" (change)="onImageSelected($event, 'testimonial')" class="hidden">
+              </label>
+            </div>
+            @if (isUploading()) {
+              <div class="text-sm text-brand mt-1"><i class="fa-solid fa-spinner fa-spin"></i> Subiendo...</div>
+            }
+            @if (testimonialForm.image) {
+              <img [src]="testimonialForm.image" class="h-16 w-16 object-cover rounded-lg mt-2">
+            }
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Rol</label>

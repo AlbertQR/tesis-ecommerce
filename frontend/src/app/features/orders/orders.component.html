@@ -58,6 +58,22 @@
               <div class="flex items-center gap-4">
                 <span class="text-xl font-bold text-brand">{{ formatPrice(order.total) }}</span>
                 <button 
+                  (click)="downloadInvoice(order.id)"
+                  class="text-gray-600 hover:text-brand text-sm"
+                  title="Descargar Factura"
+                >
+                  <i class="fa-solid fa-file-pdf"></i>
+                </button>
+                @if (order.status === 'pending' || order.status === 'confirmed') {
+                  <button 
+                    (click)="cancelOrder(order.id)"
+                    class="text-red-600 hover:text-red-800 text-sm"
+                    title="Cancelar Pedido"
+                  >
+                    <i class="fa-solid fa-times-circle"></i>
+                  </button>
+                }
+                <button 
                   (click)="viewOrderDetails(order)"
                   class="text-brand hover:underline text-sm"
                 >

@@ -1,108 +1,13 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Product, Category, Testimonial, Combo } from '../models/product.model';
+import { Product as ProductModel, Category as CategoryModel, Testimonial as TestimonialModel, Combo as ComboModel, ProductCategory as ProductCategoryModel } from '../models/product.model';
 import { tap } from 'rxjs';
 
-/**
- * Interfaz que define la estructura de un producto.
- * 
- * @interface Product
- * 
- * @property {string} id - Identificador único del producto
- * @property {string} name - Nombre del producto
- * @property {string} description - Descripción detallada
- * @property {number} price - Precio en COP
- * @property {ProductCategory} category - Categoría del producto
- * @property {string} image - URL de la imagen
- * @property {boolean} [isFeatured] - Indica si es destacado
- * @property {boolean} [isHot] - Indica si es popular
- * @property {boolean} [isCombo] - Indica si es un combo
- * @property {number} stock - Cantidad disponible
- */
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: ProductCategory;
-  image: string;
-  isFeatured?: boolean;
-  isHot?: boolean;
-  isCombo?: boolean;
-  stock: number;
-}
-
-/**
- * Categorías disponibles para los productos.
- * 
- * @typedef {'cafeteria' | 'pizzeria' | 'despensa' | 'combo'} ProductCategory
- */
-export type ProductCategory = 'cafeteria' | 'pizzeria' | 'despensa' | 'combo';
-
-/**
- * Interfaz que define la estructura de una categoría.
- * 
- * @interface Category
- * 
- * @property {string} id - Identificador único
- * @property {string} name - Nombre de la categoría
- * @property {string} description - Descripción
- * @property {string} image - URL de imagen
- */
-export interface Category {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-}
-
-/**
- * Interfaz que define la estructura de un testimonio.
- * 
- * @interface Testimonial
- * 
- * @property {string} id - Identificador único
- * @property {string} name - Nombre del cliente
- * @property {string} role - Rol o relación
- * @property {string} comment - Testimonio
- * @property {number} rating - Calificación (1-5)
- * @property {string} initials - Iniciales para avatar
- */
-export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  comment: string;
-  rating: number;
-  initials: string;
-}
-
-/**
- * Interfaz que define la estructura de un combo.
- * 
- * @interface Combo
- * 
- * @property {string} id - Identificador único
- * @property {string} name - Nombre del combo
- * @property {string} description - Descripción
- * @property {number} price - Precio especial
- * @property {number} [originalPrice] - Precio sin descuento
- * @property {string} image - URL de imagen
- * @property {string[]} includes - Elementos incluidos
- * @property {boolean} [isFeatured] - Indica si es destacado
- * @property {number} [discount] - Porcentaje de descuento
- */
-export interface Combo {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  includes: string[];
-  isFeatured?: boolean;
-  discount?: number;
-}
+export type Product = ProductModel;
+export type Category = CategoryModel;
+export type Testimonial = TestimonialModel;
+export type Combo = ComboModel;
+export type ProductCategory = ProductCategoryModel;
 
 /**
  * Servicio para gestionar los datos públicos del sitio: productos, categorías, testimonios y combos.

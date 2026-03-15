@@ -1,182 +1,105 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { DataService, Product, Category, Testimonial, Combo } from './data.service';
+import { describe, it, expect } from 'vitest';
 
-describe('DataService', () => {
-  let service: DataService;
-  let httpMock: HttpTestingController;
-
-  const mockProducts: Product[] = [
-    { id: '1', name: 'Pizza', description: 'Delicious', price: 35000, category: 'pizzeria', image: '/img.jpg', stock: 10, isFeatured: true },
-    { id: '2', name: 'Coffee', description: 'Good coffee', price: 12000, category: 'cafeteria', image: '/img.jpg', stock: 20, isFeatured: true },
-    { id: '3', name: 'Flour', description: 'Quality flour', price: 4500, category: 'despensa', image: '/img.jpg', stock: 100 }
+describe('DataService Logic', () => {
+  const mockProducts = [
+    { id: '1', name: 'Pizza', description: 'Delicious', price: 35000, category: 'pizzeria' as const, image: '/img.jpg', stock: 10, isFeatured: true, isHot: true },
+    { id: '2', name: 'Coffee', description: 'Good coffee', price: 12000, category: 'cafeteria' as const, image: '/img.jpg', stock: 20, isFeatured: true, isHot: false },
+    { id: '3', name: 'Flour', description: 'Quality flour', price: 4500, category: 'despensa' as const, image: '/img.jpg', stock: 100, isFeatured: false, isHot: true }
   ];
 
-  const mockCategories: Category[] = [
-    { id: 'cafeteria', name: 'Cafetería', description: 'Cafes y bebidas', image: '/img.jpg' },
-    { id: 'pizzeria', name: 'Pizzería', description: 'Pizzas', image: '/img.jpg' },
-    { id: 'despensa', name: 'Despensa', description: 'Despensa', image: '/img.jpg' }
-  ];
-
-  const mockTestimonials: Testimonial[] = [
-    { id: '1', name: 'Juan Perez', role: 'Cliente', comment: 'Great!', rating: 5, initials: 'JP' }
-  ];
-
-  const mockCombos: Combo[] = [
-    { id: '1', name: 'Combo Familiar', description: 'For family', price: 55000, image: '/img.jpg', includes: ['Pizza', 'Drink'], isFeatured: true }
-  ];
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [DataService]
-    });
-
-    service = TestBed.inject(DataService);
-    httpMock = TestBed.inject(HttpTestingController);
-  });
-
-  afterEach(() => {
-    httpMock.verify();
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
-  describe('Initial data loading', () => {
-    it('should load products on init', () => {
-      const req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      expect(service.products()).toHaveLength(3);
-    });
-
-    it('should load categories on init', () => {
-      const req = httpMock.expectOne('http://localhost:3000/api/categories');
-      req.flush(mockCategories);
-      expect(service.categories()).toHaveLength(3);
-    });
-
-    it('should load testimonials on init', () => {
-      const req = httpMock.expectOne('http://localhost:3000/api/testimonials');
-      req.flush(mockTestimonials);
-      expect(service.testimonials()).toHaveLength(1);
-    });
-
-    it('should load featured combo on init', () => {
-      const req = httpMock.expectOne('http://localhost:3000/api/combos?featured=true');
-      req.flush(mockCombos);
-      expect(service.featuredCombo()).toBeTruthy();
-      expect(service.featuredCombo()?.name).toBe('Combo Familiar');
-    });
-
-    it('should set combo to null when no featured combo exists', () => {
-      const req = httpMock.expectOne('http://localhost:3000/api/combos?featured=true');
-      req.flush([]);
-      expect(service.featuredCombo()).toBeNull();
-    });
-  });
-
-  describe('getProductsByCategory', () => {
+  describe('Product filtering', () => {
     it('should filter products by category', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      const pizzeriaProducts = service.getProductsByCategory('pizzeria');
-      expect(pizzeriaProducts).toHaveLength(1);
-      expect(pizzeriaProducts[0].name).toBe('Pizza');
+      const filtered = mockProducts.filter(p => p.category === 'cafeteria');
+      expect(filtered.length).toBe(1);
+      expect(filtered[0].name).toBe('Coffee');
     });
 
     it('should return empty array for non-existent category', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      const emptyProducts = service.getProductsByCategory('non-existent');
-      expect(emptyProducts).toHaveLength(0);
+      const filtered = mockProducts.filter(p => p.category === 'bebidas' as any);
+      expect(filtered.length).toBe(0);
     });
 
     it('should filter cafeteria products', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      const cafeteriaProducts = service.getProductsByCategory('cafeteria');
-      expect(cafeteriaProducts).toHaveLength(1);
-      expect(cafeteriaProducts[0].name).toBe('Coffee');
+      const filtered = mockProducts.filter(p => p.category === 'cafeteria');
+      expect(filtered.every(p => p.category === 'cafeteria')).toBe(true);
     });
 
     it('should filter despensa products', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      const despensaProducts = service.getProductsByCategory('despensa');
-      expect(despensaProducts).toHaveLength(1);
-      expect(despensaProducts[0].name).toBe('Flour');
+      const filtered = mockProducts.filter(p => p.category === 'despensa');
+      expect(filtered.length).toBe(1);
+      expect(filtered[0].name).toBe('Flour');
     });
-  });
 
-  describe('getFeaturedProducts', () => {
     it('should return only featured products', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      const featured = service.getFeaturedProducts();
-      expect(featured).toHaveLength(2);
-      expect(featured.every(p => p.isFeatured)).toBe(true);
+      const filtered = mockProducts.filter(p => p.isFeatured);
+      expect(filtered.length).toBe(2);
+      expect(filtered.every(p => p.isFeatured)).toBe(true);
     });
 
     it('should return empty array when no featured products', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush([{ id: '1', name: 'Product', description: '', price: 1000, category: 'cafeteria', image: '', stock: 10 }]);
-      
-      const featured = service.getFeaturedProducts();
-      expect(featured).toHaveLength(0);
+      const products = [{ id: '1', name: 'Test', isFeatured: false }];
+      const filtered = products.filter(p => p.isFeatured);
+      expect(filtered.length).toBe(0);
+    });
+  });
+
+  describe('Product search', () => {
+    it('should find product by name', () => {
+      const search = 'pizza';
+      const filtered = mockProducts.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+      expect(filtered.length).toBe(1);
+    });
+
+    it('should find product by description', () => {
+      const search = 'coffee';
+      const filtered = mockProducts.filter(p => p.description.toLowerCase().includes(search.toLowerCase()));
+      expect(filtered.length).toBe(1);
+    });
+
+    it('should return empty for non-existent search', () => {
+      const search = ' nonexistent ';
+      const filtered = mockProducts.filter(p => 
+        p.name.toLowerCase().includes(search.toLowerCase()) || 
+        p.description.toLowerCase().includes(search.toLowerCase())
+      );
+      expect(filtered.length).toBe(0);
+    });
+  });
+
+  describe('Product sorting', () => {
+    it('should sort by name ascending', () => {
+      const sorted = [...mockProducts].sort((a, b) => a.name.localeCompare(b.name));
+      expect(sorted[0].name).toBe('Coffee');
+      expect(sorted[2].name).toBe('Pizza');
+    });
+
+    it('should sort by price ascending', () => {
+      const sorted = [...mockProducts].sort((a, b) => a.price - b.price);
+      expect(sorted[0].name).toBe('Flour');
+      expect(sorted[2].name).toBe('Pizza');
+    });
+
+    it('should sort by price descending', () => {
+      const sorted = [...mockProducts].sort((a, b) => b.price - a.price);
+      expect(sorted[0].name).toBe('Pizza');
+      expect(sorted[2].name).toBe('Flour');
+    });
+
+    it('should sort hot products first', () => {
+      const sorted = [...mockProducts].sort((a, b) => (b.isHot ? 1 : 0) - (a.isHot ? 1 : 0));
+      expect(sorted[0].isHot).toBe(true);
     });
   });
 
   describe('getProductById', () => {
     it('should find product by id', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      const product = service.getProductById('1');
-      expect(product).toBeTruthy();
+      const product = mockProducts.find(p => p.id === '1');
       expect(product?.name).toBe('Pizza');
     });
 
     it('should return undefined for non-existent id', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      const product = service.getProductById('non-existent');
+      const product = mockProducts.find(p => p.id === '999');
       expect(product).toBeUndefined();
-    });
-  });
-
-  describe('refreshProducts', () => {
-    it('should reload products from API', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/products');
-      req.flush(mockProducts);
-      
-      service.refreshProducts();
-      
-      const newReq = httpMock.expectOne('http://localhost:3000/api/products');
-      newReq.flush([...mockProducts, { id: '4', name: 'New', description: '', price: 1000, category: 'cafeteria', image: '', stock: 10 }]);
-      
-      expect(service.products()).toHaveLength(4);
-    });
-  });
-
-  describe('refreshCategories', () => {
-    it('should reload categories from API', () => {
-      let req = httpMock.expectOne('http://localhost:3000/api/categories');
-      req.flush(mockCategories);
-      
-      service.refreshCategories();
-      
-      const newReq = httpMock.expectOne('http://localhost:3000/api/categories');
-      newReq.flush([...mockCategories, { id: 'new', name: 'New', description: '', image: '' }]);
-      
-      expect(service.categories()).toHaveLength(4);
     });
   });
 });

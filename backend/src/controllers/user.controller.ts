@@ -6,7 +6,13 @@ import { UpdateUserInput, AddressInput, UpdateAddressInput } from '../schemas/va
 
 export const getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const user = await User.findById(req.user?.id);
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    
+    const user = await User.findById(userId);
     
     if (!user) {
       res.status(404).json({ error: 'Usuario no encontrado' });
@@ -28,10 +34,16 @@ export const getProfile = async (req: AuthRequest, res: Response): Promise<void>
 
 export const updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    
     const data = req.body as UpdateUserInput;
     
     const user = await User.findByIdAndUpdate(
-      req.user?.id,
+      userId,
       { 
         ...(data.name && { name: data.name }),
         ...(data.phone && { phone: data.phone }),
@@ -56,7 +68,12 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
 
 export const getAddresses = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const addresses = await Address.find({ userId: new mongoose.Types.ObjectId(req.user?.id) });
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    const addresses = await Address.find({ userId: new mongoose.Types.ObjectId(userId) });
     res.json(addresses.map(a => ({ ...a.toObject(), id: a._id.toString() })));
   } catch (error) {
     console.error('GetAddresses error:', error);
@@ -66,17 +83,23 @@ export const getAddresses = async (req: AuthRequest, res: Response): Promise<voi
 
 export const createAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    
     const data = req.body as AddressInput;
     
     if (data.isDefault) {
       await Address.updateMany(
-        { userId: new mongoose.Types.ObjectId(req.user?.id) },
+        { userId: new mongoose.Types.ObjectId(userId) },
         { isDefault: false }
       );
     }
 
     const address = await Address.create({
-      userId: new mongoose.Types.ObjectId(req.user?.id),
+      userId: new mongoose.Types.ObjectId(userId),
       label: data.label,
       street: data.street,
       number: data.number,
@@ -96,18 +119,24 @@ export const createAddress = async (req: AuthRequest, res: Response): Promise<vo
 
 export const updateAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    
     const { id } = req.params;
     const data = req.body as UpdateAddressInput;
 
     if (data.isDefault) {
       await Address.updateMany(
-        { userId: new mongoose.Types.ObjectId(req.user?.id) },
+        { userId: new mongoose.Types.ObjectId(userId) },
         { isDefault: false }
       );
     }
 
     const address = await Address.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(id), userId: new mongoose.Types.ObjectId(req.user?.id) },
+      { _id: new mongoose.Types.ObjectId(id), userId: new mongoose.Types.ObjectId(userId) },
       {
         ...(data.label && { label: data.label }),
         ...(data.street && { street: data.street }),
@@ -136,8 +165,14 @@ export const updateAddress = async (req: AuthRequest, res: Response): Promise<vo
 
 export const deleteAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    
     const { id } = req.params;
-    const address = await Address.findOne({ _id: new mongoose.Types.ObjectId(id), userId: new mongoose.Types.ObjectId(req.user?.id) });
+    const address = await Address.findOne({ _id: new mongoose.Types.ObjectId(id), userId: new mongoose.Types.ObjectId(userId) });
     
     if (!address) {
       res.status(404).json({ error: 'Dirección no encontrada' });
@@ -146,7 +181,7 @@ export const deleteAddress = async (req: AuthRequest, res: Response): Promise<vo
 
     if (address.isDefault) {
       const remaining = await Address.find({ 
-        userId: new mongoose.Types.ObjectId(req.user?.id),
+        userId: new mongoose.Types.ObjectId(userId),
         _id: { $ne: address._id }
       });
       if (remaining.length > 0) {
@@ -164,15 +199,21 @@ export const deleteAddress = async (req: AuthRequest, res: Response): Promise<vo
 
 export const setDefaultAddress = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ error: 'Usuario no autenticado' });
+      return;
+    }
+    
     const { id } = req.params;
 
     await Address.updateMany(
-      { userId: new mongoose.Types.ObjectId(req.user?.id) },
+      { userId: new mongoose.Types.ObjectId(userId) },
       { isDefault: false }
     );
 
     const address = await Address.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(id), userId: new mongoose.Types.ObjectId(req.user?.id) },
+      { _id: new mongoose.Types.ObjectId(id), userId: new mongoose.Types.ObjectId(userId) },
       { isDefault: true, updatedAt: new Date() },
       { new: true }
     );

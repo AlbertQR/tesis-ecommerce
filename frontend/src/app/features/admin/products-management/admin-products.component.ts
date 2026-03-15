@@ -32,6 +32,7 @@ export class AdminProductsComponent implements OnInit {
   isEditing = signal(false);
   editingProduct = signal<Product | null>(null);
   isLoading = signal(false);
+  isUploading = signal(false);
 
   formData: Product = {
     id: '',
@@ -192,5 +193,32 @@ export class AdminProductsComponent implements OnInit {
         }
       });
     }
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      this.uploadImage(input.files[0]);
+    }
+  }
+
+  uploadImage(file: File): void {
+    this.isUploading.set(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const token = localStorage.getItem('token');
+    this.http.post<{ url: string }>(`${this.apiUrl}/upload`, formData, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: (response) => {
+        this.formData.image = response.url;
+        this.isUploading.set(false);
+      },
+      error: () => {
+        this.isUploading.set(false);
+        alert('Error al subir la imagen');
+      }
+    });
   }
 }

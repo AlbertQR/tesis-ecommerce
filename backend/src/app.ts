@@ -11,14 +11,20 @@ import categoryRoutes from './routes/category.routes.js';
 import contentRoutes from './routes/content.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import legalRoutes from './routes/legal.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
+import { cleanupExpiredCarts, cleanupExpiredOrders } from './controllers/order.controller.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
 
 app.use(cors({
-  origin: config.cors.origin,
-  credentials: true
+  origin: (origin, callback) => {
+    callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -35,6 +41,7 @@ app.use(session({
 }));
 
 app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -43,6 +50,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api', contentRoutes);
 app.use('/api', orderRoutes);
 app.use('/api', legalRoutes);
+app.use('/api', uploadRoutes);
 
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
@@ -56,6 +64,9 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 const startServer = async () => {
   try {
     await db.connect();
+    
+    setInterval(cleanupExpiredCarts, 60 * 1000);
+    setInterval(cleanupExpiredOrders, 60 * 1000);
     
     app.listen(config.port, () => {
       console.log('🌟 Doña Yoli Backend - Ecommerce API');

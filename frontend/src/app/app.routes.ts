@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -19,11 +21,18 @@ export const routes: Routes = [
   },
   {
     path: 'perfil',
-    loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
+    loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'pedidos',
-    loadComponent: () => import('./features/orders/orders.component').then(m => m.OrdersComponent)
+    loadComponent: () => import('./features/orders/orders.component').then(m => m.OrdersComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'pedido/:id',
+    loadComponent: () => import('./features/orders/confirmation/order-confirmation.component').then(m => m.OrderConfirmationComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'contacto',
@@ -52,6 +61,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () => import('./features/admin/admin-layout.component').then(m => m.AdminLayoutComponent),
+    canActivate: [adminGuard],
     children: [
       { path: '', loadComponent: () => import('./features/admin/dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
       { path: 'usuarios', loadComponent: () => import('./features/admin/users/admin-users.component').then(m => m.AdminUsersComponent) },

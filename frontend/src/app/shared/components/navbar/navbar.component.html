@@ -1,96 +1,141 @@
-  <!-- Navegación -->
-  <nav class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto px-4 py-5">
-      <div class="flex justify-between items-center">
-        <!-- Logo -->
-        <a routerLink="/" class="flex items-center gap-2 group">
-          <div class="w-20 h-4 rounded-full flex items-center justify-center text-white text-xl font-bold">
-            <img src="logo.png" alt="Doña Yoli">
-          </div>
-        </a>
+<!-- Navegación -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-5">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <a class="flex items-center gap-2 group" routerLink="/">
+        <div
+          class="w-20 h-4 rounded-full flex items-center justify-center text-white text-xl font-bold">
+          <img alt="Doña Yoli" src="logo.png">
+        </div>
+      </a>
 
-        <!-- Menú Desktop -->
-        <div class="hidden md:flex space-x-8 font-medium">
-          <a routerLink="/" routerLinkActive="text-brand" [routerLinkActiveOptions]="{exact: true}"
-            class="hover:text-brand transition-colors">Inicio</a>
-          <a routerLink="/productos" routerLinkActive="text-brand" class="hover:text-brand transition-colors">Menú</a>
-          <a routerLink="/nosotros" routerLinkActive="text-brand" class="hover:text-brand transition-colors">Nosotros</a>
-          <a routerLink="/contacto" routerLinkActive="text-brand" class="hover:text-brand transition-colors">Contacto</a>
-          <div class="relative group">
-            <button class="hover:text-brand transition-colors">Información Legal</button>
-            <div class="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 hidden group-hover:block z-50">
-              <a routerLink="/terminos" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">Términos y Condiciones</a>
-              <a routerLink="/privacidad" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">Política de Privacidad</a>
-              <a routerLink="/devoluciones" class="block px-4 py-2 hover:bg-gray-100 text-gray-700">Política de Devoluciones</a>
-            </div>
+      <!-- Menú Desktop -->
+      <div class="hidden md:flex space-x-8 font-medium">
+        <a [routerLinkActiveOptions]="{exact: true}"
+           class="hover:text-brand transition-colors"
+           routerLink="/"
+           routerLinkActive="text-brand">Inicio</a>
+        <a class="hover:text-brand transition-colors" routerLink="/productos"
+           routerLinkActive="text-brand">Menú</a>
+        <a class="hover:text-brand transition-colors" routerLink="/nosotros"
+           routerLinkActive="text-brand">Nosotros</a>
+        <a class="hover:text-brand transition-colors" routerLink="/contacto"
+           routerLinkActive="text-brand">Contacto</a>
+        <div class="relative group">
+          <button (blur)="closeLegalMenu()" (mouseenter)="toggleLegalMenu()"
+                  (mouseleave)="toggleLegalMenu()"
+                  class="hover:text-brand transition-colors">Información Legal
+          </button>
+          <div (mouseenter)="toggleLegalMenu()"
+               (mouseleave)="toggleLegalMenu()"
+            [class.block]="isLegalMenuOpen()"
+            class="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 hidden group-hover:block z-50">
+            <a (click)="closeLegalMenu()"
+               class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+               routerLink="/terminos">Términos
+              y Condiciones</a>
+            <a (click)="closeLegalMenu()"
+               class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+               routerLink="/privacidad">Política
+              de Privacidad</a>
+            <a (click)="closeLegalMenu()"
+               class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+               routerLink="/devoluciones">Política
+              de Devoluciones</a>
           </div>
         </div>
+      </div>
 
-        <!-- Iconos -->
-        <div class="flex items-center space-x-4">
-          <a routerLink="/productos" class="text-gray-600 hover:text-brand transition-colors">
-            <i class="fa-solid fa-magnifying-glass text-xl"></i>
-          </a>
-          <button class="text-gray-600 hover:text-brand transition-colors relative" routerLink="/carrito">
-            <i class="fa-solid fa-cart-shopping text-xl"></i>
-            @if (cartCount() > 0) {
+      <!-- Iconos -->
+      <div class="flex items-center space-x-4">
+        <a class="text-gray-600 hover:text-brand transition-colors"
+           routerLink="/productos">
+          <i class="fa-solid fa-magnifying-glass text-xl"></i>
+        </a>
+        <button
+          class="text-gray-600 hover:text-brand transition-colors relative"
+          routerLink="/carrito">
+          <i class="fa-solid fa-cart-shopping text-xl"></i>
+          @if (cartCount() > 0) {
             <span
               class="absolute -top-2 -right-2 bg-brand text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
               {{ cartCount() }}
             </span>
-            }
-          </button>
-          
-          @if (isAuthenticated()) {
-            @if (user()?.role === 'admin') {
-              <a routerLink="/admin" class="text-gray-600 hover:text-brand transition-colors">
-                <i class="fa-solid fa-gear text-xl"></i>
-              </a>
-            }
-            <a routerLink="/perfil" class="text-gray-600 hover:text-brand transition-colors">
-              <i class="fa-solid fa-user text-xl"></i>
-            </a>
-            <button (click)="logout()" class="text-gray-600 hover:text-brand transition-colors">
-              <i class="fa-solid fa-right-from-bracket text-xl"></i>
-            </button>
-          } @else {
-            <a routerLink="/login" class="text-gray-600 hover:text-brand transition-colors">
-              <i class="fa-solid fa-user text-xl"></i>
+          }
+        </button>
+
+        @if (isAuthenticated()) {
+          @if (user()?.role === 'admin') {
+            <a routerLink="/admin"
+               class="text-gray-600 hover:text-brand transition-colors">
+              <i class="fa-solid fa-gear text-xl"></i>
             </a>
           }
-          
-          <button (click)="toggleMenu()" class="md:hidden text-gray-600 hover:text-brand">
-            <i class="fa-solid fa-bars text-xl"></i>
+          <a routerLink="/perfil"
+             class="text-gray-600 hover:text-brand transition-colors">
+            <i class="fa-solid fa-user text-xl"></i>
+          </a>
+          <button (click)="logout()"
+                  class="text-gray-600 hover:text-brand transition-colors">
+            <i class="fa-solid fa-right-from-bracket text-xl"></i>
           </button>
-        </div>
+        } @else {
+          <a routerLink="/login"
+             class="text-gray-600 hover:text-brand transition-colors">
+            <i class="fa-solid fa-user text-xl"></i>
+          </a>
+        }
+
+        <button (click)="toggleMenu()"
+                class="md:hidden text-gray-600 hover:text-brand">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Menú Mobile -->
-    @if (isMenuOpen()) {
+  <!-- Menú Mobile -->
+  @if (isMenuOpen()) {
     <div class="md:hidden bg-white border-t">
       <div class="flex flex-col p-4 space-y-3">
-        <a routerLink="/" (click)="toggleMenu()" class="hover:text-brand font-medium">Inicio</a>
-        <a routerLink="/productos" (click)="toggleMenu()" class="hover:text-brand font-medium">Menú</a>
-        <a routerLink="/nosotros" (click)="toggleMenu()" class="hover:text-brand font-medium">Nosotros</a>
-        <a routerLink="/contacto" (click)="toggleMenu()" class="hover:text-brand font-medium">Contacto</a>
+        <a routerLink="/" (click)="toggleMenu()"
+           class="hover:text-brand font-medium">Inicio</a>
+        <a routerLink="/productos" (click)="toggleMenu()"
+           class="hover:text-brand font-medium">Menú</a>
+        <a routerLink="/nosotros" (click)="toggleMenu()"
+           class="hover:text-brand font-medium">Nosotros</a>
+        <a routerLink="/contacto" (click)="toggleMenu()"
+           class="hover:text-brand font-medium">Contacto</a>
         <div class="border-t pt-2">
           <span class="text-sm text-gray-500">Información Legal:</span>
-          <a routerLink="/terminos" (click)="toggleMenu()" class="block hover:text-brand font-medium">Términos y Condiciones</a>
-          <a routerLink="/privacidad" (click)="toggleMenu()" class="block hover:text-brand font-medium">Política de Privacidad</a>
-          <a routerLink="/devoluciones" (click)="toggleMenu()" class="block hover:text-brand font-medium">Política de Devoluciones</a>
+          <a routerLink="/terminos" (click)="toggleMenu()"
+             class="block hover:text-brand font-medium">Términos y
+            Condiciones</a>
+          <a routerLink="/privacidad" (click)="toggleMenu()"
+             class="block hover:text-brand font-medium">Política de
+            Privacidad</a>
+          <a routerLink="/devoluciones" (click)="toggleMenu()"
+             class="block hover:text-brand font-medium">Política de
+            Devoluciones</a>
         </div>
         @if (isAuthenticated()) {
-          <a routerLink="/perfil" (click)="toggleMenu()" class="hover:text-brand font-medium">Mi Perfil</a>
-          <a routerLink="/pedidos" (click)="toggleMenu()" class="hover:text-brand font-medium">Mis Pedidos</a>
+          <a routerLink="/perfil" (click)="toggleMenu()"
+             class="hover:text-brand font-medium">Mi Perfil</a>
+          <a routerLink="/pedidos" (click)="toggleMenu()"
+             class="hover:text-brand font-medium">Mis Pedidos</a>
           @if (user()?.role === 'admin') {
-            <a routerLink="/admin" (click)="toggleMenu()" class="hover:text-brand font-medium">Administración</a>
+            <a routerLink="/admin" (click)="toggleMenu()"
+               class="hover:text-brand font-medium">Administración</a>
           }
-          <button (click)="logout(); toggleMenu()" class="hover:text-brand font-medium text-left">Cerrar Sesión</button>
+          <button (click)="logout(); toggleMenu()"
+                  class="hover:text-brand font-medium text-left">Cerrar Sesión
+          </button>
         } @else {
-          <a routerLink="/login" (click)="toggleMenu()" class="hover:text-brand font-medium">Iniciar Sesión</a>
+          <a routerLink="/login" (click)="toggleMenu()"
+             class="hover:text-brand font-medium">Iniciar Sesión</a>
         }
       </div>
     </div>
-    }
-  </nav>
+  }
+</nav>

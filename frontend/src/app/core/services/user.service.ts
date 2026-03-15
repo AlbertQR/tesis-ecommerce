@@ -1,8 +1,14 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Address, Order, OrderStatus, User } from '../models/user.model';
+import { Address as AddressModel, Order as OrderModel, OrderStatus as OrderStatusModel, User as UserModel } from '../models/user.model';
 import { tap, catchError, of } from 'rxjs';
 import { AuthService } from './auth.service';
+
+// Re-export types for use in components and tests
+export type Address = AddressModel;
+export type Order = OrderModel;
+export type OrderStatus = OrderStatusModel;
+export type User = UserModel;
 
 /**
  * Servicio para gestionar datos del usuario como direcciones y pedidos.
@@ -30,6 +36,7 @@ import { AuthService } from './auth.service';
 export class UserService {
   /** URL base del API de usuarios */
   private apiUrl = 'http://localhost:3000/api/users';
+  private ordersApiUrl = 'http://localhost:3000/api/orders';
   
   /** Inyección del servicio de autenticación */
   private authService = inject(AuthService);
@@ -121,9 +128,39 @@ export class UserService {
    * @returns {void}
    */
   loadOrders(): void {
-    this.http.get<Order[]>(`${this.apiUrl}/orders`).pipe(
+    this.http.get<Order[]>(`${this.ordersApiUrl}`).pipe(
       tap(orders => this.ordersSignal.set(orders)),
       catchError(() => of([]))
+    ).subscribe();
+  }
+
+  /**
+   * Descarga la factura de un pedido.
+   * 
+   * @method downloadInvoice
+   * @param {string} orderId - ID del pedido
+   * @returns {void}
+   */
+  downloadInvoice(orderId: string): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      window.open(`${this.ordersApiUrl}/${orderId}/invoice?token=${token}`, '_blank');
+    }
+  }
+
+  /**
+   * Cancela un pedido.
+   * 
+   * @method cancelOrder
+   * @param {string} orderId - ID del pedido
+   * @returns {void}
+   */
+  cancelOrder(orderId: string): void {
+    this.http.delete<Order>(`${this.ordersApiUrl}/${orderId}`).pipe(
+      tap(() => {
+        this.loadOrders();
+      }),
+      catchError(() => of(null))
     ).subscribe();
   }
 
