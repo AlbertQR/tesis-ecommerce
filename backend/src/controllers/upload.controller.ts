@@ -24,11 +24,9 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (_req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  const allowedTypes = /jpeg|jpg|png|gif|webp/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
-
-  if (extname && mimetype) {
+  const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  
+  if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(new Error('Solo se permiten imágenes (jpeg, jpg, png, gif, webp)'));
@@ -43,31 +41,19 @@ const upload = multer({
   }
 });
 
-export const uploadImage = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    upload.single('image')(req, res, (err) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-
-      if (!req.file) {
-        res.status(400).json({ error: 'No se ha proporcionado ninguna imagen' });
-        return;
-      }
-
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-      const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
-      res.json({ 
-        url: imageUrl,
-        filename: req.file.filename,
-        originalName: req.file.originalname
-      });
-    });
-  } catch (error) {
-    console.error('UploadImage error:', error);
-    res.status(500).json({ error: 'Error al subir la imagen' });
-  }
-};
-
 export const uploadMiddleware = upload.single('image');
+
+export const uploadImage = (req: AuthRequest, res: Response): void => {
+  if (!req.file) {
+    res.status(400).json({ error: 'No se ha proporcionado ninguna imagen' });
+    return;
+  }
+
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+  res.json({ 
+    url: imageUrl,
+    filename: req.file.filename,
+    originalName: req.file.originalname
+  });
+};

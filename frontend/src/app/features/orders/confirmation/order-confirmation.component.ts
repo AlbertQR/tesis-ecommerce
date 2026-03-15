@@ -1,19 +1,20 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
-import { Order } from '../../../core/models/user.model';
-import { UserService } from '../../../core/services/user.service';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Order } from '@core/models/user.model';
+import { UserService } from '@core/services/user.service';
+import { FormatPricePipe } from '@shares/pipes';
 
 @Component({
   selector: 'app-order-confirmation',
-  standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormatPricePipe],
   template: `
     <section class="py-16 bg-gray-50 min-h-screen">
       <div class="container mx-auto px-4">
         @if (isLoading()) {
           <div class="text-center py-16">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
+            <div
+              class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
             <p class="mt-4 text-gray-600">Cargando...</p>
           </div>
         } @else if (order()) {
@@ -21,12 +22,13 @@ import { UserService } from '../../../core/services/user.service';
           <div class="max-w-2xl mx-auto">
             <!-- Éxito -->
             <div class="bg-white rounded-xl shadow-md p-8 text-center mb-6">
-              <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div
+                class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i class="fa-solid fa-check text-4xl text-green-600"></i>
               </div>
               <h1 class="text-3xl font-bold text-gray-800 mb-2">¡Pedido Realizado!</h1>
               <p class="text-gray-600">Tu pedido ha sido confirmado successfully.</p>
-              
+
               <div class="mt-6 p-4 bg-gray-50 rounded-lg inline-block">
                 <p class="text-sm text-gray-500">Número de Pedido</p>
                 <p class="text-xl font-bold text-brand">{{ o.id }}</p>
@@ -36,7 +38,7 @@ import { UserService } from '../../../core/services/user.service';
             <!-- Detalles del pedido -->
             <div class="bg-white rounded-xl shadow-md p-6 mb-6">
               <h2 class="text-xl font-bold text-gray-800 mb-4">Detalles del Pedido</h2>
-              
+
               <div class="space-y-3">
                 <div class="flex justify-between">
                   <span class="text-gray-600">Fecha:</span>
@@ -89,33 +91,36 @@ import { UserService } from '../../../core/services/user.service';
                       <span class="text-gray-500">{{ item.quantity }}x</span>
                       <span class="font-medium">{{ item.productName }}</span>
                     </div>
-                    <span class="text-brand font-medium">{{ formatPrice(item.unitPrice * item.quantity) }}</span>
+                    <span
+                      class="text-brand font-medium">{{ (item.unitPrice * item.quantity) | formatPrice }}</span>
                   </div>
                 }
               </div>
-              
+
               <div class="mt-4 pt-4 border-t space-y-2">
                 <div class="flex justify-between text-gray-600">
                   <span>Subtotal</span>
-                  <span>{{ formatPrice(o.subtotal) }}</span>
+                  <span>{{ o.subtotal | formatPrice }}</span>
                 </div>
                 <div class="flex justify-between text-gray-600">
                   <span>Envío</span>
-                  <span>{{ formatPrice(o.shipping) }}</span>
+                  <span>{{ o.shipping | formatPrice }}</span>
                 </div>
                 <div class="flex justify-between text-xl font-bold pt-2">
                   <span>Total</span>
-                  <span class="text-brand">{{ formatPrice(o.total) }}</span>
+                  <span class="text-brand">{{ o.total | formatPrice }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Botones -->
             <div class="flex gap-4">
-              <a routerLink="/pedidos" class="flex-1 bg-brand text-white font-bold py-3 rounded-lg text-center hover:bg-brand-hover transition-colors">
+              <a routerLink="/pedidos"
+                 class="flex-1 bg-brand text-white font-bold py-3 rounded-lg text-center hover:bg-brand-hover transition-colors">
                 Ver Mis Pedidos
               </a>
-              <a routerLink="/productos" class="flex-1 border border-brand text-brand font-bold py-3 rounded-lg text-center hover:bg-brand hover:text-white transition-colors">
+              <a routerLink="/productos"
+                 class="flex-1 border border-brand text-brand font-bold py-3 rounded-lg text-center hover:bg-brand hover:text-white transition-colors">
                 Seguir Comprando
               </a>
             </div>
@@ -125,7 +130,8 @@ import { UserService } from '../../../core/services/user.service';
             <i class="fa-solid fa-triangle-exclamation text-6xl text-red-300 mb-4"></i>
             <h2 class="text-2xl font-bold text-gray-800 mb-2">Pedido no encontrado</h2>
             <p class="text-gray-600 mb-6">No se encontró el pedido que buscas.</p>
-            <a routerLink="/productos" class="inline-block bg-brand text-white font-bold py-3 px-8 rounded-lg hover:bg-brand-hover transition-colors">
+            <a routerLink="/productos"
+               class="inline-block bg-brand text-white font-bold py-3 px-8 rounded-lg hover:bg-brand-hover transition-colors">
               Volver a la tienda
             </a>
           </div>
@@ -135,12 +141,10 @@ import { UserService } from '../../../core/services/user.service';
   `
 })
 export class OrderConfirmationComponent implements OnInit {
-  private userService = inject(UserService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  
   order = signal<Order | null>(null);
   isLoading = signal(true);
+  private userService = inject(UserService);
+  private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
     this.loadOrder();
@@ -152,9 +156,7 @@ export class OrderConfirmationComponent implements OnInit {
       const orderId = this.route.snapshot.paramMap.get('id');
       const orders = this.userService.orders() as Order[];
       const found = orders.find((o: Order) => o.id === orderId);
-      if (found) {
-        this.order.set(found);
-      }
+      if (found) this.order.set(found);
       this.isLoading.set(false);
     }, 500);
   }
@@ -173,14 +175,6 @@ export class OrderConfirmationComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(price);
   }
 
   getStatusLabel(status: string): string {

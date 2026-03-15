@@ -1,14 +1,13 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { CartService } from '../../../core/services/cart.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { CartService } from '@core/services/cart.service';
+import { AuthService } from '@core/services/auth.service';
 import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive],
-  templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css',
+  templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
   isMenuOpen = signal(false);
@@ -43,6 +42,7 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']).then(() => {});
+    this.router.navigate(['/']).then(() => {
+    });
   }
 }

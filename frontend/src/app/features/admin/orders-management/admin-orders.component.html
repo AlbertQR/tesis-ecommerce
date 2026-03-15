@@ -49,7 +49,7 @@
             <tr class="border-t hover:bg-gray-50">
               <td class="py-3 px-4 font-medium">{{ order.id }}</td>
               <td class="py-3 px-4 text-gray-600">{{ formatDate(order.date) }}</td>
-              <td class="py-3 px-4 font-bold text-brand">{{ formatPrice(order.total) }}</td>
+              <td class="py-3 px-4 font-bold text-brand">{{ order.total | formatPrice }}</td>
               <td class="py-3 px-4">
                 <span class="px-2 py-1 rounded text-xs font-medium {{ getStatusClass(order.status) }}">
                   {{ getStatusLabel(order.status) }}
@@ -121,15 +121,15 @@
               @for (item of selectedOrder()!.items; track item.productId) {
                 <div class="flex justify-between p-2 bg-gray-50 rounded">
                   <span>{{ item.quantity }}x {{ item.productName }}</span>
-                  <span class="font-medium">{{ formatPrice(item.unitPrice * item.quantity) }}</span>
+                  <span class="font-medium">{{ (item.unitPrice * item.quantity) | formatPrice }}</span>
                 </div>
               }
             </div>
           </div>
           <div class="border-t pt-4">
-            <div class="flex justify-between"><span>Subtotal</span><span>{{ formatPrice(selectedOrder()!.subtotal) }}</span></div>
-            <div class="flex justify-between"><span>Delivery</span><span>{{ formatPrice(selectedOrder()!.shipping) }}</span></div>
-            <div class="flex justify-between font-bold text-lg"><span>Total</span><span class="text-brand">{{ formatPrice(selectedOrder()!.total) }}</span></div>
+            <div class="flex justify-between"><span>Subtotal</span><span>{{ selectedOrder()!.subtotal | formatPrice }}</span></div>
+            <div class="flex justify-between"><span>Delivery</span><span>{{ selectedOrder()!.shipping | formatPrice }}</span></div>
+            <div class="flex justify-between font-bold text-lg"><span>Total</span><span class="text-brand">{{ selectedOrder()!.total | formatPrice }}</span></div>
           </div>
         </div>
       </div>

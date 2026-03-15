@@ -24,6 +24,7 @@ export interface ICartItem {
   productImage: string;
   quantity: number;
   unitPrice: number;
+  category: string;
 }
 
 /**
@@ -80,7 +81,8 @@ const CartItemSchema = new Schema<ICartItem>({
   productName: { type: String, required: true },
   productImage: { type: String, required: true },
   quantity: { type: Number, required: true },
-  unitPrice: { type: Number, required: true }
+  unitPrice: { type: Number, required: true },
+  category: { type: String, required: true }
 });
 
 /**

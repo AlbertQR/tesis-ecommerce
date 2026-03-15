@@ -1,43 +1,32 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-
-interface LegalDocument {
-  id: string;
-  type: 'terms' | 'privacy' | 'returns';
-  title: string;
-  content: string;
-  isActive: boolean;
-  updatedAt: string;
-}
+import { environment } from '@environments/environment';
+import { LegalDocument } from '@core/models';
 
 @Component({
   selector: 'app-admin-legal',
   imports: [FormsModule],
-  templateUrl: './admin-legal.component.html',
-  styleUrl: './admin-legal.component.css'
+  templateUrl: './admin-legal.component.html'
 })
 export class AdminLegalComponent implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
-
   documents = signal<LegalDocument[]>([]);
   isLoading = signal(false);
   isEditing = signal(false);
   editingDoc = signal<LegalDocument | null>(null);
-
   formData = {
     type: 'terms' as 'terms' | 'privacy' | 'returns',
     title: '',
     content: '',
     isActive: true
   };
-
   typeLabels: Record<string, string> = {
     terms: 'Términos y Condiciones',
     privacy: 'Política de Privacidad',
     returns: 'Política de Devoluciones'
   };
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.loadDocuments();

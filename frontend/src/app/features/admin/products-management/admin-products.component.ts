@@ -1,40 +1,24 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { ProductCategory } from '../../../core/models/product.model';
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: ProductCategory;
-  image: string;
-  isFeatured: boolean;
-  isHot: boolean;
-  isCombo: boolean;
-  stock: number;
-}
+import { ProductCategory, ProductModel } from '@core/models';
+import { FormatPricePipe } from '@shares/pipes';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-admin-products',
-  imports: [FormsModule],
-  templateUrl: './admin-products.component.html',
-  styleUrl: './admin-products.component.css'
+  imports: [FormsModule, FormatPricePipe],
+  templateUrl: './admin-products.component.html'
 })
 export class AdminProductsComponent implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
-
-  products = signal<Product[]>([]);
+  products = signal<ProductModel[]>([]);
   categoryFilter = signal<'all' | ProductCategory | 'combo'>('all');
   searchTerm = signal('');
   isEditing = signal(false);
-  editingProduct = signal<Product | null>(null);
+  editingProduct = signal<ProductModel | null>(null);
   isLoading = signal(false);
   isUploading = signal(false);
-
-  formData: Product = {
+  formData: ProductModel = {
     id: '',
     name: '',
     description: '',
@@ -46,13 +30,14 @@ export class AdminProductsComponent implements OnInit {
     isCombo: false,
     stock: 0
   };
-
   categories = [
     { id: 'cafeteria', name: 'Cafetería' },
     { id: 'pizzeria', name: 'Pizzería' },
     { id: 'despensa', name: 'Despensa' },
     { id: 'combo', name: 'Combo' }
   ];
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.loadProducts();
@@ -60,7 +45,7 @@ export class AdminProductsComponent implements OnInit {
 
   loadProducts(): void {
     this.isLoading.set(true);
-    this.http.get<Product[]>(`${this.apiUrl}/products`).subscribe({
+    this.http.get<ProductModel[]>(`${this.apiUrl}/products`).subscribe({
       next: (data) => {
         this.products.set(data);
         this.isLoading.set(false);
@@ -71,7 +56,7 @@ export class AdminProductsComponent implements OnInit {
     });
   }
 
-  filteredProducts(): Product[] {
+  filteredProducts(): ProductModel[] {
     let result = this.products();
     if (this.categoryFilter() !== 'all') {
       result = result.filter(p => p.category === this.categoryFilter());
@@ -83,12 +68,13 @@ export class AdminProductsComponent implements OnInit {
     return result;
   }
 
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
-  }
-
   getCategoryLabel(category: string): string {
-    const labels: Record<string, string> = { cafeteria: 'Cafetería', pizzeria: 'Pizzería', despensa: 'Despensa', combo: 'Combo' };
+    const labels: Record<string, string> = {
+      cafeteria: 'Cafetería',
+      pizzeria: 'Pizzería',
+      despensa: 'Despensa',
+      combo: 'Combo'
+    };
     return labels[category] || category;
   }
 
@@ -125,7 +111,7 @@ export class AdminProductsComponent implements OnInit {
     this.isEditing.set(true);
   }
 
-  startEdit(product: Product): void {
+  startEdit(product: ProductModel): void {
     this.formData = { ...product };
     this.editingProduct.set(product);
     this.isEditing.set(true);
@@ -133,16 +119,16 @@ export class AdminProductsComponent implements OnInit {
 
   save(): void {
     if (this.editingProduct()) {
-      this.http.put<Product>(`${this.apiUrl}/products/${this.formData.id}`, this.formData).subscribe({
+      this.http.put<ProductModel>(`${this.apiUrl}/products/${this.formData.id}`, this.formData).subscribe({
         next: (updated) => {
-          this.products.update(list => 
+          this.products.update(list =>
             list.map(p => p.id === updated.id ? updated : p)
           );
           this.isEditing.set(false);
         }
       });
     } else {
-      this.http.post<Product>(`${this.apiUrl}/products`, this.formData).subscribe({
+      this.http.post<ProductModel>(`${this.apiUrl}/products`, this.formData).subscribe({
         next: (created) => {
           this.products.update(list => [...list, created]);
           this.isEditing.set(false);
@@ -164,7 +150,7 @@ export class AdminProductsComponent implements OnInit {
   toggleFeatured(id: string): void {
     const product = this.products().find(p => p.id === id);
     if (product) {
-      this.http.put<Product>(`${this.apiUrl}/products/${id}`, { isFeatured: !product.isFeatured }).subscribe({
+      this.http.put<ProductModel>(`${this.apiUrl}/products/${id}`, { isFeatured: !product.isFeatured }).subscribe({
         next: (updated) => {
           this.products.update(list => list.map(p => p.id === id ? updated : p));
         }
@@ -175,7 +161,7 @@ export class AdminProductsComponent implements OnInit {
   toggleHot(id: string): void {
     const product = this.products().find(p => p.id === id);
     if (product) {
-      this.http.put<Product>(`${this.apiUrl}/products/${id}`, { isHot: !product.isHot }).subscribe({
+      this.http.put<ProductModel>(`${this.apiUrl}/products/${id}`, { isHot: !product.isHot }).subscribe({
         next: (updated) => {
           this.products.update(list => list.map(p => p.id === id ? updated : p));
         }
@@ -187,7 +173,7 @@ export class AdminProductsComponent implements OnInit {
     const product = this.products().find(p => p.id === id);
     if (product) {
       const newStock = Math.max(0, product.stock + change);
-      this.http.put<Product>(`${this.apiUrl}/products/${id}`, { stock: newStock }).subscribe({
+      this.http.put<ProductModel>(`${this.apiUrl}/products/${id}`, { stock: newStock }).subscribe({
         next: (updated) => {
           this.products.update(list => list.map(p => p.id === id ? updated : p));
         }
@@ -207,15 +193,15 @@ export class AdminProductsComponent implements OnInit {
     const formData = new FormData();
     formData.append('image', file);
 
-    const token = localStorage.getItem('token');
     this.http.post<{ url: string }>(`${this.apiUrl}/upload`, formData, {
-      headers: { Authorization: `Bearer ${token}` }
+      reportProgress: true
     }).subscribe({
       next: (response) => {
         this.formData.image = response.url;
         this.isUploading.set(false);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Upload error:', err);
         this.isUploading.set(false);
         alert('Error al subir la imagen');
       }

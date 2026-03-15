@@ -6,6 +6,7 @@ interface ICartItem {
   productImage: string;
   quantity: number;
   unitPrice: number;
+  category: string;
 }
 
 /**

@@ -1,30 +1,17 @@
-export interface Product {
+export interface ProductModel {
   id: string;
   name: string;
   description: string;
   price: number;
   category: ProductCategory;
   image: string;
-  isFeatured?: boolean;
-  isHot?: boolean;
-  isCombo?: boolean;
-  stock?: number;
+  isFeatured: boolean;
+  isHot: boolean;
+  isCombo: boolean;
+  stock: number;
 }
 
 export type ProductCategory = 'cafeteria' | 'pizzeria' | 'despensa' | 'combo';
-
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
-
-export interface CartItemResponse {
-  productId: string;
-  productName: string;
-  productImage: string;
-  quantity: number;
-  unitPrice: number;
-}
 
 export interface Category {
   id: ProductCategory;

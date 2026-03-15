@@ -1,8 +1,8 @@
-export interface User {
+export interface UserModel {
   id: string;
-  name: string;
+  name?: string;
   email: string;
-  phone: string;
+  phone?: string;
   avatar?: string;
   role?: 'user' | 'admin';
 }
@@ -44,7 +44,7 @@ export interface OrderItem {
 }
 
 export interface UserProfile {
-  user: User;
+  user: UserModel;
   addresses: Address[];
   orders: Order[];
 }

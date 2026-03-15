@@ -2,7 +2,7 @@
   <div class="container mx-auto px-4">
     <div class="max-w-4xl mx-auto">
       <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8">
-        <a routerLink="/" class="hover:text-brand">Inicio</a>
+        <a class="hover:text-brand" routerLink="/">Inicio</a>
         <i class="fa-solid fa-chevron-right text-xs"></i>
         <span class="text-gray-800">Política de Devoluciones</span>
       </nav>
@@ -13,16 +13,20 @@
         </div>
       } @else {
         <div class="bg-white rounded-xl shadow-md p-8 text-center">
-          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fa-solid fa-rotate-left text-gray-400 text-2xl"></i>
           </div>
-          <h2 class="text-xl font-bold text-gray-800 mb-2">Contenido no disponible</h2>
-          <p class="text-gray-600">La política de devoluciones está siendo actualizada.</p>
+          <h2 class="text-xl font-bold text-gray-800 mb-2">Contenido no
+            disponible</h2>
+          <p class="text-gray-600">La política de devoluciones está siendo
+            actualizada.</p>
         </div>
       }
 
       <div class="mt-8 text-center">
-        <a routerLink="/contacto" class="text-brand hover:underline">¿Tienes preguntas? Contáctanos</a>
+        <a class="text-brand hover:underline" routerLink="/contacto">¿Tienes
+          preguntas? Contáctanos</a>
       </div>
     </div>
   </div>

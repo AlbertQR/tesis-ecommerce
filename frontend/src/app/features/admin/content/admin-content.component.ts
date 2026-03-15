@@ -1,6 +1,7 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '@environments/environment';
 
 interface Content {
   id: string;
@@ -23,28 +24,29 @@ interface Testimonial {
 @Component({
   selector: 'app-admin-content',
   imports: [FormsModule],
-  templateUrl: './admin-content.component.html',
-  styleUrl: './admin-content.component.css'
+  templateUrl: './admin-content.component.html'
 })
 export class AdminContentComponent implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
-
   contents = signal<Content[]>([]);
   testimonials = signal<Testimonial[]>([]);
   activeTab = signal<'contents' | 'testimonials'>('contents');
   isLoading = signal(false);
-  
   isEditingContent = signal(false);
   editingContent = signal<Content | null>(null);
-  
   isEditingTestimonial = signal(false);
   editingTestimonial = signal<Testimonial | null>(null);
-  
   isUploading = signal(false);
-
   contentForm = { key: '', value: '', type: 'text' as 'text' | 'image' | 'json' };
-  testimonialForm = { name: '', role: '', comment: '', rating: 5, initials: '', image: '' as string | undefined };
+  testimonialForm = {
+    name: '',
+    role: '',
+    comment: '',
+    rating: 5,
+    initials: '',
+    image: '' as string | undefined
+  };
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.loadContents();
@@ -112,13 +114,13 @@ export class AdminContentComponent implements OnInit {
   }
 
   startEditTestimonial(testimonial: Testimonial): void {
-    this.testimonialForm = { 
-      name: testimonial.name, 
-      role: testimonial.role, 
-      comment: testimonial.comment, 
-      rating: testimonial.rating, 
+    this.testimonialForm = {
+      name: testimonial.name,
+      role: testimonial.role,
+      comment: testimonial.comment,
+      rating: testimonial.rating,
       initials: testimonial.initials,
-      image: testimonial.image || '' 
+      image: testimonial.image || ''
     };
     this.editingTestimonial.set(testimonial);
     this.isEditingTestimonial.set(true);
@@ -177,10 +179,7 @@ export class AdminContentComponent implements OnInit {
     const formData = new FormData();
     formData.append('image', file);
 
-    const token = localStorage.getItem('token');
-    this.http.post<{ url: string }>(`${this.apiUrl}/upload`, formData, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).subscribe({
+    this.http.post<{ url: string }>(`${this.apiUrl}/upload`, formData).subscribe({
       next: (response) => {
         if (type === 'content') {
           this.contentForm.value = response.url;

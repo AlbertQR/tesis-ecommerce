@@ -101,7 +101,8 @@ export const addToCart = async (req: AuthRequest, res: Response): Promise<void> 
         productName: product.name,
         productImage: product.image,
         quantity: data.quantity,
-        unitPrice: product.price
+        unitPrice: product.price,
+        category: product.category
       });
     }
 
@@ -345,9 +346,9 @@ async function generateInvoice(
     doc.pipe(writeStream);
 
     doc.fontSize(24).text('Doña Yoli', { align: 'center' });
-    doc.fontSize(12).text('Café, Pizza y Despensa', { align: 'center' });
+    doc.fontSize(12).text('Cafe, Pizza y Despensa', { align: 'center' });
     doc.moveDown();
-    doc.text('─'.repeat(50), { align: 'center' });
+    doc.text('-'.repeat(50), { align: 'center' });
     doc.moveDown();
 
     doc.fontSize(14).text(`FACTURA #: ${orderId}`, { align: 'center' });
@@ -356,18 +357,29 @@ async function generateInvoice(
 
     doc.text(`Cliente: ${user?.name || 'Cliente'}`);
     doc.text(`Email: ${user?.email || 'N/A'}`);
-    doc.text(`Teléfono: ${user?.phone || 'N/A'}`);
+    doc.text(`Telefono: ${user?.phone || 'N/A'}`);
     doc.moveDown();
 
-    doc.text(`Dirección de entrega:`);
-    doc.text(`${address.label}: ${address.street} #${address.number}`);
-    doc.text(`${address.neighborhood}, ${address.city}`);
-    if (address.instructions) {
-      doc.text(`Instrucciones: ${address.instructions}`);
+    const addrLabel = address?.label || '';
+    const addrStreet = address?.street || '';
+    const addrNumber = address?.number || '';
+    const addrNeighborhood = address?.neighborhood || '';
+    const addrCity = address?.city || '';
+    const addrInstructions = address?.instructions || '';
+
+    if (addrLabel === 'Recogida en tienda' || !addrLabel) {
+      doc.text('Tipo de entrega: Recogida en tienda');
+    } else {
+      doc.text('Direccion de entrega:');
+      doc.text(`${addrLabel}: ${addrStreet} #${addrNumber}`);
+      doc.text(`${addrNeighborhood}, ${addrCity}`);
+      if (addrInstructions) {
+        doc.text(`Instrucciones: ${addrInstructions}`);
+      }
     }
     doc.moveDown();
 
-    doc.text('─'.repeat(50));
+    doc.text('-'.repeat(50));
     doc.moveDown(0.5);
 
     doc.fontSize(11).text('DETALLE DEL PEDIDO', { underline: true });
@@ -380,7 +392,7 @@ async function generateInvoice(
     doc.text('Total', 420, y, { width: 80, align: 'right' });
 
     doc.moveDown(0.5);
-    doc.text('─'.repeat(50));
+    doc.text('-'.repeat(50));
 
     for (const item of items) {
       y = doc.y;
@@ -392,7 +404,7 @@ async function generateInvoice(
     }
 
     doc.moveDown();
-    doc.text('─'.repeat(50));
+    doc.text('-'.repeat(50));
     doc.moveDown(0.5);
 
     const totalsY = doc.y;
@@ -400,7 +412,7 @@ async function generateInvoice(
     doc.text(`$${subtotal.toLocaleString('es-CO')}`, 420, totalsY, { width: 80, align: 'right' });
 
     doc.moveDown(0.5);
-    doc.text('Envío:', 320, doc.y, { width: 80, align: 'right' });
+    doc.text('Envio:', 320, doc.y, { width: 80, align: 'right' });
     doc.text(`$${shipping.toLocaleString('es-CO')}`, 420, doc.y, { width: 80, align: 'right' });
 
     doc.moveDown(0.5);
@@ -413,7 +425,7 @@ async function generateInvoice(
     doc.fontSize(9).text('Escanee para verificar entrega', 50, doc.y + 85, { width: 80, align: 'center' });
 
     doc.moveDown(2);
-    doc.fontSize(10).text('Gracias por su compra en Doña Yoli', { align: 'center' });
+    doc.fontSize(10).text('Gracias por su compra en Dona Yoli', { align: 'center' });
     doc.text('www.dona-yoli.com', { align: 'center' });
 
     doc.end();

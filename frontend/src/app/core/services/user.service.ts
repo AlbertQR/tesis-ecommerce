@@ -1,146 +1,57 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Address as AddressModel, Order as OrderModel, OrderStatus as OrderStatusModel, User as UserModel } from '../models/user.model';
-import { tap, catchError, of } from 'rxjs';
+import {
+  Address as AddressModel,
+  Order as OrderModel,
+  OrderStatus as OrderStatusModel,
+  UserModel as UserModel
+} from '../models/user.model';
+import { catchError, of, tap } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '@environments/environment';
 
-// Re-export types for use in components and tests
-export type Address = AddressModel;
-export type Order = OrderModel;
-export type OrderStatus = OrderStatusModel;
-export type User = UserModel;
 
-/**
- * Servicio para gestionar datos del usuario como direcciones y pedidos.
- * Utiliza signals para mantener el estado reactivo.
- * 
- * @service UserService
- * @description Proporciona métodos para cargar y gestionar direcciones de entrega,
- *              pedidos del usuario, y información del perfil. Se integra con AuthService
- *              para obtener el estado de autenticación.
- * 
- * @example
- * ```typescript
- * constructor(private userService: UserService) {
- *   const addresses = this.userService.addresses();
- *   const orders = this.userService.orders();
- * }
- * ```
- * 
- * @requires HttpClient
- * @requires AuthService
- */
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  /** URL base del API de usuarios */
-  private apiUrl = 'http://localhost:3000/api/users';
-  private ordersApiUrl = 'http://localhost:3000/api/orders';
-  
-  /** Inyección del servicio de autenticación */
+  private usersUrl = environment.usersEndpoint;
+  private ordersApiUrl = environment.ordersEndpoint;
   private authService = inject(AuthService);
-  
-  /** Signal para almacenar las direcciones del usuario */
-  private addressesSignal = signal<Address[]>([]);
-  
-  /** Signal para almacenar los pedidos del usuario */
-  private ordersSignal = signal<Order[]>([]);
-  
-  /** Computed signal con los datos del usuario desde AuthService */
-  readonly user = computed(() => this.authService.user() as User | null);
-  
-  /** Referencia de solo lectura al signal de direcciones */
+  readonly user = computed(() => this.authService.user() as UserModel | null);
+  private addressesSignal = signal<AddressModel[]>([]);
   readonly addresses = this.addressesSignal.asReadonly();
-  
-  /** Referencia de solo lectura al signal de pedidos */
-  readonly orders = this.ordersSignal.asReadonly();
-
-  /**
-   * Computed signal que retorna la dirección por defecto.
-   * Si no hay una marcada como default, retorna la primera dirección.
-   * 
-   * @readonly
-   */
-  readonly defaultAddress = computed(() => 
+  readonly defaultAddress = computed(() =>
     this.addressesSignal().find(a => a.isDefault) || this.addressesSignal()[0]
   );
-
-  /**
-   * Computed signal que retorna los pedidos pendientes o en proceso.
-   * 
-   * @readonly
-   */
-  readonly pendingOrders = computed(() => 
+  private ordersSignal = signal<OrderModel[]>([]);
+  readonly orders = this.ordersSignal.asReadonly();
+  readonly pendingOrders = computed(() =>
     this.ordersSignal().filter(o => ['pending', 'confirmed', 'preparing', 'ready'].includes(o.status as string))
   );
-
-  /**
-   * Computed signal que retorna los pedidos completados/entregados.
-   * 
-   * @readonly
-   */
-  readonly completedOrders = computed(() => 
+  readonly completedOrders = computed(() =>
     this.ordersSignal().filter(o => o.status === 'delivered')
   );
+  private http = inject(HttpClient);
 
-  /**
-   * Constructor del servicio.
-   * Inicia la carga de datos si el usuario está autenticado.
-   * 
-   * @param {HttpClient} http - Cliente HTTP de Angular
-   */
-  constructor(private http: HttpClient) {
+  constructor() {
     this.loadData();
   }
 
-  /**
-   * Carga las direcciones y pedidos del usuario.
-   * Solo se ejecuta si el usuario está autenticado.
-   * 
-   * @method loadData
-   * @private
-   */
-  private loadData(): void {
-    if (this.authService.isAuthenticated()) {
-      this.loadAddresses();
-      this.loadOrders();
-    }
-  }
-
-  /**
-   * Carga las direcciones del usuario desde el API.
-   * 
-   * @method loadAddresses
-   * @returns {void}
-   */
   loadAddresses(): void {
-    this.http.get<Address[]>(`${this.apiUrl}/addresses`).pipe(
+    this.http.get<AddressModel[]>(`${this.usersUrl}/addresses`).pipe(
       tap(addresses => this.addressesSignal.set(addresses)),
       catchError(() => of([]))
     ).subscribe();
   }
 
-  /**
-   * Carga los pedidos del usuario desde el API.
-   * 
-   * @method loadOrders
-   * @returns {void}
-   */
   loadOrders(): void {
-    this.http.get<Order[]>(`${this.ordersApiUrl}`).pipe(
+    this.http.get<OrderModel[]>(`${this.ordersApiUrl}`).pipe(
       tap(orders => this.ordersSignal.set(orders)),
       catchError(() => of([]))
     ).subscribe();
   }
 
-  /**
-   * Descarga la factura de un pedido.
-   * 
-   * @method downloadInvoice
-   * @param {string} orderId - ID del pedido
-   * @returns {void}
-   */
   downloadInvoice(orderId: string): void {
     const token = localStorage.getItem('token');
     if (token) {
@@ -148,15 +59,8 @@ export class UserService {
     }
   }
 
-  /**
-   * Cancela un pedido.
-   * 
-   * @method cancelOrder
-   * @param {string} orderId - ID del pedido
-   * @returns {void}
-   */
   cancelOrder(orderId: string): void {
-    this.http.delete<Order>(`${this.ordersApiUrl}/${orderId}`).pipe(
+    this.http.delete<OrderModel>(`${this.ordersApiUrl}/${orderId}`).pipe(
       tap(() => {
         this.loadOrders();
       }),
@@ -164,15 +68,8 @@ export class UserService {
     ).subscribe();
   }
 
-  /**
-   * Actualiza los datos del perfil del usuario.
-   * 
-   * @method updateUser
-   * @param {object} data - Datos a actualizar (name, phone, avatar)
-   * @returns {void}
-   */
   updateUser(data: { name?: string; phone?: string; avatar?: string }): void {
-    this.http.put<any>(`${this.apiUrl}/profile`, data).pipe(
+    this.http.put<any>(`${this.usersUrl}/profile`, data).pipe(
       tap(user => {
         const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
         localStorage.setItem('user', JSON.stringify({ ...currentUser, ...user }));
@@ -181,65 +78,36 @@ export class UserService {
     ).subscribe();
   }
 
-  /**
-   * Agrega una nueva dirección de entrega.
-   * 
-   * @method addAddress
-   * @param {Omit<Address, 'id'>} address - Datos de la nueva dirección
-   * @returns {void}
-   */
-  addAddress(address: Omit<Address, 'id'>): void {
-    this.http.post<Address>(`${this.apiUrl}/addresses`, address).pipe(
+  addAddress(address: Omit<AddressModel, 'id'>): void {
+    this.http.post<AddressModel>(`${this.usersUrl}/addresses`, address).pipe(
       tap(newAddress => {
         this.addressesSignal.update(addresses => [...addresses, newAddress]);
       })
     ).subscribe();
   }
 
-  /**
-   * Actualiza una dirección existente.
-   * 
-   * @method updateAddress
-   * @param {string} id - ID de la dirección a actualizar
-   * @param {Partial<Address>} address - Datos a actualizar
-   * @returns {void}
-   */
-  updateAddress(id: string, address: Partial<Address>): void {
-    this.http.put<Address>(`${this.apiUrl}/addresses/${id}`, address).pipe(
+  updateAddress(id: string, address: Partial<AddressModel>): void {
+    this.http.put<AddressModel>(`${this.usersUrl}/addresses/${id}`, address).pipe(
       tap(updated => {
-        this.addressesSignal.update(addresses => 
+        this.addressesSignal.update(addresses =>
           addresses.map(a => a.id === id ? updated : a)
         );
       })
     ).subscribe();
   }
 
-  /**
-   * Elimina una dirección de entrega.
-   * 
-   * @method deleteAddress
-   * @param {string} id - ID de la dirección a eliminar
-   * @returns {void}
-   */
   deleteAddress(id: string): void {
-    this.http.delete(`${this.apiUrl}/addresses/${id}`).pipe(
+    this.http.delete(`${this.usersUrl}/addresses/${id}`).pipe(
       tap(() => {
         this.addressesSignal.update(addresses => addresses.filter(a => a.id !== id));
       })
     ).subscribe();
   }
 
-  /**
-   * Establece una dirección como predeterminada.
-   * 
-   * @method setDefaultAddress
-   * @param {string} id - ID de la dirección a establecer como default
-   * @returns {void}
-   */
   setDefaultAddress(id: string): void {
-    this.http.put<Address>(`${this.apiUrl}/addresses/${id}/default`, {}).pipe(
+    this.http.put<AddressModel>(`${this.usersUrl}/addresses/${id}/default`, {}).pipe(
       tap(() => {
-        this.addressesSignal.update(addresses => 
+        this.addressesSignal.update(addresses =>
           addresses.map(a => ({
             ...a,
             isDefault: a.id === id
@@ -249,14 +117,7 @@ export class UserService {
     ).subscribe();
   }
 
-  /**
-   * Obtiene la etiqueta legible del estado de un pedido.
-   * 
-   * @method getStatusLabel
-   * @param {OrderStatus} status - Estado del pedido
-   * @returns {string} Etiqueta en español del estado
-   */
-  getStatusLabel(status: OrderStatus): string {
+  getStatusLabel(status: OrderStatusModel): string {
     const labels: Record<string, string> = {
       pending: 'Pendiente',
       confirmed: 'Confirmado',
@@ -268,14 +129,7 @@ export class UserService {
     return labels[status as string] || status as string;
   }
 
-  /**
-   * Obtiene las clases CSS para el estado de un pedido.
-   * 
-   * @method getStatusClass
-   * @param {OrderStatus} status - Estado del pedido
-   * @returns {string} Clases CSS para el badge del estado
-   */
-  getStatusClass(status: OrderStatus): string {
+  getStatusClass(status: OrderStatusModel): string {
     const classes: Record<string, string> = {
       pending: 'bg-yellow-100 text-yellow-800',
       confirmed: 'bg-blue-100 text-blue-800',
@@ -285,5 +139,12 @@ export class UserService {
       cancelled: 'bg-red-100 text-red-800'
     };
     return classes[status as string] || '';
+  }
+
+  private loadData(): void {
+    if (this.authService.isAuthenticated()) {
+      this.loadAddresses();
+      this.loadOrders();
+    }
   }
 }

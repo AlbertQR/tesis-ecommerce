@@ -1,16 +1,17 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Product } from '../../../core/models';
-import { CartService } from '../../../core/services/cart.service';
-import { AuthService } from '../../../core/services/auth.service';
+import { ProductModel } from '@core/models';
+import { CartService } from '@core/services/cart.service';
+import { AuthService } from '@core/services/auth.service';
+import { FormatPricePipe } from '@shares/pipes';
 
 @Component({
   selector: 'app-product-card',
-  templateUrl: './product-card.component.html',
-  styleUrl: './product-card.component.css'
+  imports: [FormatPricePipe],
+  templateUrl: './product-card.component.html'
 })
 export class ProductCardComponent {
-  @Input({ required: true }) product!: Product;
+  product = input.required<ProductModel>();
 
   private cartService = inject(CartService);
   private authService = inject(AuthService);
@@ -18,10 +19,11 @@ export class ProductCardComponent {
 
   addToCart(): void {
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login']).then(() => {
+      });
       return;
     }
-    this.cartService.addToCart(this.product);
+    this.cartService.addToCart(this.product());
   }
 
   getCategoryLabel(): string {
@@ -30,21 +32,6 @@ export class ProductCardComponent {
       'pizzeria': 'Pizzería',
       'despensa': 'Abastos'
     };
-    return labels[this.product.category] || this.product.category;
-  }
-
-  getCategoryBadgeClass(): string {
-    if (this.product.category === 'despensa') {
-      return 'bg-green-600';
-    }
-    return 'bg-brand';
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(price);
+    return labels[this.product().category] || this.product().category;
   }
 }

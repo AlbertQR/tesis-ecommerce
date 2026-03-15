@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormatPricePipe } from '@shares/pipes';
 
 interface Stats {
   title: string;
@@ -15,8 +16,8 @@ interface SalesData {
 
 @Component({
   selector: 'app-admin-dashboard',
-  templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.css'
+  imports: [FormatPricePipe],
+  templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent {
   stats: Stats[] = [
@@ -44,14 +45,6 @@ export class AdminDashboardComponent {
     { name: 'Latte Caramel', sales: 234, revenue: 2808000 },
     { name: 'Harina 1kg', sales: 312, revenue: 1404000 }
   ];
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(price);
-  }
 
   getMaxSales(): number {
     return Math.max(...this.salesData.values);

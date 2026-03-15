@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-contact',
   imports: [FormsModule],
-  templateUrl: './contact.component.html',
-  styleUrl: './contact.component.css'
+  templateUrl: './contact.component.html'
 })
 export class ContactComponent {
   formData = {
@@ -15,10 +14,8 @@ export class ContactComponent {
     subject: '',
     message: ''
   };
-
   isSubmitting = signal(false);
   submitted = signal(false);
-
   subjects = [
     { value: 'general', label: 'Consulta General' },
     { value: 'pedido', label: 'Seguimiento de Pedido' },

@@ -1,50 +1,23 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { OrderStatus } from '../../../core/models/user.model';
-
-interface Order {
-  id: string;
-  userId: string;
-  date: string;
-  status: OrderStatus;
-  items: { productId: string; productName: string; productImage: string; quantity: number; unitPrice: number; totalPrice: number }[];
-  subtotal: number;
-  shipping: number;
-  total: number;
-  deliveryAddress: {
-    label: string;
-    street: string;
-    number: string;
-    city: string;
-    neighborhood: string;
-  };
-}
+import { Order, OrderStatus } from '@core/models/user.model';
+import { environment } from '@environments/environment';
+import { FormatPricePipe } from '@shares/pipes';
 
 @Component({
   selector: 'app-admin-orders',
-  imports: [FormsModule],
-  templateUrl: './admin-orders.component.html',
-  styleUrl: './admin-orders.component.css'
+  imports: [FormsModule, FormatPricePipe],
+  templateUrl: './admin-orders.component.html'
 })
 export class AdminOrdersComponent implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
-
   orders = signal<Order[]>([]);
   statusFilter = signal<'all' | OrderStatus>('all');
   searchTerm = signal('');
   selectedOrder = signal<Order | null>(null);
   isLoading = signal(false);
-
-  statusOptions: { value: OrderStatus; label: string }[] = [
-    { value: 'pending', label: 'Pendiente' },
-    { value: 'confirmed', label: 'Confirmado' },
-    { value: 'preparing', label: 'Preparando' },
-    { value: 'ready', label: 'Listo' },
-    { value: 'delivered', label: 'Entregado' },
-    { value: 'cancelled', label: 'Cancelado' }
-  ];
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.loadOrders();
@@ -70,15 +43,11 @@ export class AdminOrdersComponent implements OnInit {
     }
     if (this.searchTerm()) {
       const search = this.searchTerm().toLowerCase();
-      result = result.filter(o => 
+      result = result.filter(o =>
         o.id.toLowerCase().includes(search)
       );
     }
     return result;
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price);
   }
 
   formatDate(date: string): string {
@@ -129,9 +98,5 @@ export class AdminOrdersComponent implements OnInit {
 
   closeModal(): void {
     this.selectedOrder.set(null);
-  }
-
-  getItemCount(items: Order['items']): number {
-    return items.reduce((sum, item) => sum + item.quantity, 0);
   }
 }
