@@ -1,0 +1,331 @@
+
+    <!-- <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+
+    Navbar -->
+    <!-- <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Logo
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">T</div>
+                    <span class="font-bold text-xl tracking-tight text-gray-900">Tienda<span class="text-brand-600">Modern</span></span>
+                </div>
+
+                <!-- Desktop Menu
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Inicio</a>
+                    <a href="#" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Productos</a>
+                    <a href="#" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Marcas</a>
+                    <a href="#" class="text-gray-600 hover:text-brand-600 font-medium transition-colors">Ofertas</a>
+                </div>
+
+                <!-- Icons
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-gray-500 hover:text-brand-600 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.687-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                        </svg>
+                    </button>
+                    <button class="p-2 text-gray-500 hover:text-brand-600 transition-colors relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.328 1.918l-1.128-1.128A2.251 2.251 0 0118 14.25m11.25 0a2.251 2.251 0 00-1.905-1.128l-1.128 1.128m-13.5 3.75H3a2.25 2.25 0 002.25 2.25h15c1.243 0 2.25-.996 2.25-2.25v-6.75A2.501 2.501 0 0018 5.25a2.5 2.5 0 00-2.25-2.25h-3.75" />
+                        </svg>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    Hero Section
+    <section class="relative overflow-hidden bg-gray-900 text-white">
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-900 via-brand-800 to-gray-900 opacity-90"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-20 pb-32">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="inline-block py-1 px-3 rounded-full bg-brand-500/20 border border-brand-400 text-brand-100 text-sm font-semibold mb-6">
+                        Nueva Colección 2024
+                    </span>
+                    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight mb-6">
+                        Estilo que <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Define tu Futuro</span>
+                    </h1>
+                    <p class="text-lg text-gray-300 mb-8 max-w-md leading-relaxed">
+                        Descubre la fusión perfecta entre tecnología avanzada y diseño minimalista. Envíos gratis en compras superiores a $50.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#" class="px-8 py-4 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-full transition-all transform hover:scale-105 shadow-lg shadow-brand-500/30">
+                            Ver Catálogo
+                        </a>
+                        <a href="#" class="px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-full transition-all border border-gray-700">
+                            Saber Más
+                        </a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <!-- Abstract shapes
+                    <div class="absolute -top-10 -right-10 w-64 h-64 bg-brand-500 rounded-full blur-3xl opacity-20"></div>
+                    <div class="absolute -bottom-10 -left-10 w-72 h-72 bg-purple-500 rounded-full blur-3xl opacity-20"></div>
+                    <!-- Product Image Placeholder
+                    <img src="https://placehold.co/600x600/1e293b/FFF?text=Producto+Hero" alt="Producto Destacado" class="relative rounded-2xl border border-gray-700 shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features / Trust
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-100">
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-2">50k+</p>
+                    <p class="text-gray-500 font-medium">Clientes Felices</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-2">1M+</p>
+                    <p class="text-gray-500 font-medium">Productos Vendidos</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-2">24/7</p>
+                    <p class="text-gray-500 font-medium">Soporte Activo</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-brand-600 mb-2">100%</p>
+                    <p class="text-gray-500 font-medium">Garantía de Calidad</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Explora por Categoría</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">Navega fácilmente entre nuestras secciones más populares para encontrar exactamente lo que buscas.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Category Card 1
+                <a href="#" class="group relative overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
+                    <div class="aspect-[4/5] w-full overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x500/e2e8f0/94a3b8?text=Electrónica" alt="Electrónica" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="font-bold text-lg">Electrónica</h3>
+                    </div>
+                </a>
+
+                <!-- Category Card 2 -
+                <a href="#" class="group relative overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
+                    <div class="aspect-[4/5] w-full overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x500/e2e8f0/94a3b8?text=Moda" alt="Moda" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="font-bold text-lg">Moda & Estilo</h3>
+                    </div>
+                </a>
+
+                <!-- Category Card 3 -->
+                <a href="#" class="group relative overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
+                    <div class="aspect-[4/5] w-full overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x500/e2e8f0/94a3b8?text=Hogar" alt="Hogar" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="font-bold text-lg">Hogar & Decoración</h3>
+                    </div>
+                </a>
+
+                <!-- Category Card 4 -->
+                <a href="#" class="group relative overflow-hidden rounded-xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
+                    <div class="aspect-[4/5] w-full overflow-hidden bg-gray-200">
+                        <img src="https://placehold.co/400x500/e2e8f0/94a3b8?text=Deportes" alt="Deportes" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="font-bold text-lg">Deportes & Actividad</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Grid -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">Tendencias de la Semana</h2>
+                    <p class="text-gray-500 mt-2">Los productos más vendidos del mes.</p>
+                </div>
+                <a href="#" class="hidden md:inline-flex items-center text-brand-600 font-semibold hover:text-brand-700 transition-colors">
+                    Ver todo <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 ml-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product Card 1 -->
+                <div class="group cursor-pointer">
+                    <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[3/4] mb-4">
+                        <span class="absolute top-4 left-4 z-10 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wide">Oferta</span>
+                        <img src="https://placehold.co/300x400/f1f5f9/64748b?text=Smartphone" alt="Producto" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <button class="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-lg text-gray-900 hover:bg-brand-600 hover:text-white transition-colors translate-y-12 group-hover:translate-y-0 duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.687-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <h3 class="font-bold text-gray-900 group-hover:text-brand-600 transition-colors">Smartphone X Pro</h3>
+                    <p class="text-sm text-gray-500 mb-2">Tecnología de punta</p>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-lg text-gray-900">$899</span>
+                        <span class="text-xs text-gray-400 line-through">$1099</span>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="group cursor-pointer">
+                    <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[3/4] mb-4">
+                        <img src="https://placehold.co/300x400/f1f5f9/64748b?text=Audio" alt="Producto" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <button class="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-lg text-gray-900 hover:bg-brand-600 hover:text-white transition-colors translate-y-12 group-hover:translate-y-0 duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.687-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <h3 class="font-bold text-gray-900 group-hover:text-brand-600 transition-colors">Auriculares Noise-Cancel</h3>
+                    <p class="text-sm text-gray-500 mb-2">Sonido inmersivo</p>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-lg text-gray-900">$199</span>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="group cursor-pointer">
+                    <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[3/4] mb-4">
+                        <img src="https://placehold.co/300x400/f1f5f9/64748b?text=Watch" alt="Producto" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <button class="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-lg text-gray-900 hover:bg-brand-600 hover:text-white transition-colors translate-y-12 group-hover:translate-y-0 duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.687-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <h3 class="font-bold text-gray-900 group-hover:text-brand-600 transition-colors">Smartwatch Series 5</h3>
+                    <p class="text-sm text-gray-500 mb-2">Monitoreo de salud</p>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-lg text-gray-900">$249</span>
+                    </div>
+                </div>
+
+                <!-- Product Card 4 -->
+                <div class="group cursor-pointer">
+                    <div class="relative bg-gray-100 rounded-2xl overflow-hidden aspect-[3/4] mb-4">
+                        <img src="https://placehold.co/300x400/f1f5f9/64748b?text=Camera" alt="Producto" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500">
+                        <button class="absolute bottom-4 right-4 bg-white p-3 rounded-full shadow-lg text-gray-900 hover:bg-brand-600 hover:text-white transition-colors translate-y-12 group-hover:translate-y-0 duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.687-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <h3 class="font-bold text-gray-900 group-hover:text-brand-600 transition-colors">Cámara Instantánea</h3>
+                    <p class="text-sm text-gray-500 mb-2">Fotografía retro</p>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-lg text-gray-900">$149</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center md:hidden">
+                 <a href="#" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">
+                    Ver todos los productos
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="bg-gray-900 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-white mb-4">Únete a nuestra lista de difusión</h2>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto">Recibe ofertas exclusivas, novedades y consejos de estilo directamente en tu correo electrónico.</p>
+
+            <form class="max-w-md mx-auto flex gap-2" onsubmit="event.preventDefault(); alert('¡Gracias por suscribirte!');">
+                <input type="email" placeholder="Tu correo electrónico" class="flex-1 px-5 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent">
+                <button type="submit" class="px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg transition-colors shadow-lg shadow-brand-500/20">
+                    Suscribirse
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Tienda</h4>
+                    <ul class="space-y-3 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Novedades</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Ofertas</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Marcas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Ayuda</h4>
+                    <ul class="space-y-3 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Envíos y Devoluciones</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Preguntas Frecuentes</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Compañía</h4>
+                    <ul class="space-y-3 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Sobre Nosotros</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Carreras</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Prensa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">Legal</h4>
+                    <ul class="space-y-3 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Privacidad</a></li>
+                        <li><a href="#" class="hover:text-brand-600 transition-colors">Términos</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-400">&copy; 2024 TiendaModern. Todos los derechos reservados.</p>
+                <div class="flex space-x-4">
+                    <!-- Social Icons -->
+                    <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-brand-600 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5"><path d="M19 0h-4V2H5v20h4V8.74c-.64.31-1.41.5-2.25.5C3.86 9.25 1 6.41 1 3c0-4.42 3.58-8 8-8s8 3.58 8 8c0 4.42-3.58 8-8 8v2h4v-2h4z"/></svg>
+                    </a>
+                    <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-brand-600 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-5 h-5"><path d="M12 2C6.477 2 2 6.484 2 12.013c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.701-4.138.929-4.809-2.041-4.809-2.041-.65-1.511-1.608-1.913-1.608-1.913-1.157-.75.083-.795.083-.795 1.172-.031 1.498.568 1.498.568.906 1.52 2.337 1.99 2.337 1.99 1.08.772 1.89.893 2.268.893.42 0 .81-.113 1.152-.297-.084-.135-.35-.557-.35-.557-.28-.37-.308-.78-.072-1.126.237-.346.69-.453 1.152-.453 1.086 0 1.783.83 1.783.83.92 1.186 1.563 1.593 1.563 1.593.78.746 1.83 1.21 1.83 1.21 1.61.872 2.19 2.24 2.19 2.24.09.178.158.37.158.566 0 .208-.088.402-.226.572A11.55 11.55 0 0112 22c-6.477 0-11.999-5.483-11.999-12C.001 6.484 5.523 2 12 2z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer> -->

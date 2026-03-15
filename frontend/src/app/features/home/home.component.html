@@ -1,0 +1,126 @@
+<!-- Hero Section -->
+<header id="inicio" class="hero-bg h-150 flex items-center justify-center text-center px-4">
+  <div class="max-w-3xl">
+    <span class="font-bold tracking-widest uppercase mb-4 text-white bg-brand/80 px-4 py-1 rounded-full inline-block">
+      Sabor Casero & Calidad
+    </span>
+    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
+      El Sabor de Casa en Cada Bocado
+    </h1>
+    <p class="text-lg text-gray-200 mb-8 max-w-2xl mx-auto">
+      Desde una pizza recién horneada hasta los mejores abastos para tu hogar. En Doña Yoli cuidamos cada detalle con ingredientes seleccionados.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a routerLink="/productos" class="bg-brand hover:bg-brand-hover text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg">
+        Ver Menú
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- Categorías Destacadas -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-800">Nuestras Especialidades</h2>
+      <div class="w-20 h-1 bg-brand mx-auto mt-4"></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (category of categories(); track category.id) {
+        <div class="group relative overflow-hidden rounded-2xl shadow-lg cursor-pointer">
+          <img [src]="category.image" [alt]="category.name" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+          <div class="absolute inset-0 bg-linear-to-t from-black/80 to-transparent flex items-end p-6">
+            <div>
+              <h3 class="text-white text-2xl font-bold">{{ category.name }}</h3>
+              <p class="text-gray-300">{{ category.description }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Productos Destacados -->
+<section id="productos" class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-end mb-12">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800">Productos Populares</h2>
+        <p class="text-gray-600 mt-2">Lo más vendido esta semana en Doña Yoli</p>
+      </div>
+      <a routerLink="/productos" class="text-brand font-bold hover:underline hidden md:block">Ver todo el catálogo →</a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      @for (product of featuredProducts(); track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+
+    <div class="mt-8 text-center md:hidden">
+      <a routerLink="/productos" class="inline-block border-2 border-brand text-brand font-bold py-2 px-6 rounded-full hover:bg-brand hover:text-white transition-colors">
+        Ver todo el catálogo
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Sección de Oferta Especial -->
+@if (featuredCombo(); as combo) {
+  <section class="py-16 bg-brand text-white">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="md:w-1/2">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">{{ combo.name }}</h2>
+          <p class="text-lg text-white/90 mb-6">{{ combo.description }}</p>
+          <ul class="mb-8 space-y-2">
+            @for (item of combo.includes; track item) {
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check"></i> {{ item }}</li>
+            }
+          </ul>
+          <button class="bg-white text-brand font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
+            Pedir Combo ({{ formatPrice(combo.price) }})
+          </button>
+        </div>
+        <div class="md:w-1/2 flex justify-center">
+          <img [src]="combo.image" [alt]="combo.name" class="rounded-lg shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-4 border-white/20">
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- Testimonios -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-800">Lo Que Dicen Nuestros Clientes</h2>
+      <div class="w-20 h-1 bg-brand mx-auto mt-4"></div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (testimonial of testimonials(); track testimonial.id) {
+        <div class="bg-white p-6 rounded-xl shadow-md">
+          <div class="flex text-yellow-400 mb-4">
+            @for (star of getStars(testimonial.rating); track $index) {
+              <i class="fa-solid fa-star"></i>
+            }
+            @if (hasHalfStar(testimonial.rating)) {
+              <i class="fa-solid fa-star-half-stroke"></i>
+            }
+          </div>
+          <p class="text-gray-600 italic mb-4">"{{ testimonial.comment }}"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-500">
+              {{ testimonial.initials }}
+            </div>
+            <div>
+              <h5 class="font-bold text-gray-800">{{ testimonial.name }}</h5>
+              <span class="text-xs text-gray-500">{{ testimonial.role }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

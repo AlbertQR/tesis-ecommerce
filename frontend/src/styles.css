@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand: #a9431f;
+  --color-brand-hover: #8a3619;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

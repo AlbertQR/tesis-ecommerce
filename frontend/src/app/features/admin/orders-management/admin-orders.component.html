@@ -1,0 +1,138 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Pedidos</h2>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+    @for (status of ['pending', 'confirmed', 'preparing', 'ready', 'delivered', 'cancelled']; track status) {
+      <button (click)="statusFilter.set($any(status))" 
+        class="bg-white rounded-lg p-4 text-center hover:shadow-md transition-shadow
+          {{ statusFilter() === status ? 'ring-2 ring-brand' : '' }}">
+        <p class="text-2xl font-bold text-gray-800">{{ orders().filter(o => o.status === status).length }}</p>
+        <p class="text-sm text-gray-500">{{ getStatusLabel($any(status)) }}</p>
+      </button>
+    }
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-xl shadow-sm p-4 flex gap-4">
+    <div class="flex-1">
+      <input type="text" placeholder="Buscar por ID o cliente..." 
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+    </div>
+    @if (statusFilter() !== 'all') {
+      <button (click)="statusFilter.set('all')" class="px-4 py-2 text-brand hover:underline">
+        Ver todos
+      </button>
+    }
+  </div>
+
+  <!-- Orders Table -->
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Pedido</th>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Cliente</th>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Fecha</th>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Total</th>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Estado</th>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Acciones</th>
+        </tr>
+      </thead>
+        <tbody>
+          @for (order of filteredOrders(); track order.id) {
+            <tr class="border-t hover:bg-gray-50">
+              <td class="py-3 px-4 font-medium">{{ order.id }}</td>
+              <td class="py-3 px-4 text-gray-600">{{ formatDate(order.date) }}</td>
+              <td class="py-3 px-4 font-bold text-brand">{{ formatPrice(order.total) }}</td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-1 rounded text-xs font-medium {{ getStatusClass(order.status) }}">
+                  {{ getStatusLabel(order.status) }}
+                </span>
+              </td>
+              <td class="py-3 px-4">
+                <div class="flex gap-2">
+                  <button (click)="viewOrder(order)" class="text-gray-500 hover:text-brand" title="Ver detalles">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                @if (order.status === 'pending' || order.status === 'confirmed') {
+                  <button (click)="updateStatus(order.id, 'preparing')" class="text-orange-500 hover:text-orange-600" title="Marcar preparando">
+                    <i class="fa-solid fa-clock"></i>
+                  </button>
+                }
+                @if (order.status === 'preparing') {
+                  <button (click)="updateStatus(order.id, 'ready')" class="text-green-500 hover:text-green-600" title="Marcar listo">
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+                }
+                @if (order.status === 'ready') {
+                  <button (click)="updateStatus(order.id, 'delivered')" class="text-blue-500 hover:text-blue-600" title="Marcar entregado">
+                    <i class="fa-solid fa-truck"></i>
+                  </button>
+                }
+                @if (order.status !== 'cancelled' && order.status !== 'delivered') {
+                  <button (click)="updateStatus(order.id, 'cancelled')" class="text-red-500 hover:text-red-600" title="Cancelar">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Order Modal -->
+  @if (selectedOrder()) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeModal()">
+      <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+        <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+          <h2 class="text-xl font-bold">Pedido {{ selectedOrder()!.id }}</h2>
+          <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-gray-500">Fecha</p>
+              <p class="font-medium">{{ formatDate(selectedOrder()!.date) }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Estado</p>
+              <span class="px-2 py-1 rounded text-xs font-medium {{ getStatusClass(selectedOrder()!.status) }}">
+                {{ getStatusLabel(selectedOrder()!.status) }}
+              </span>
+            </div>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Dirección</p>
+            <p>{{ selectedOrder()!.deliveryAddress.label }} - {{ selectedOrder()!.deliveryAddress.street }} #{{ selectedOrder()!.deliveryAddress.number }}, {{ selectedOrder()!.deliveryAddress.neighborhood }}, {{ selectedOrder()!.deliveryAddress.city }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 mb-2">Productos</p>
+            <div class="space-y-2">
+              @for (item of selectedOrder()!.items; track item.productId) {
+                <div class="flex justify-between p-2 bg-gray-50 rounded">
+                  <span>{{ item.quantity }}x {{ item.productName }}</span>
+                  <span class="font-medium">{{ formatPrice(item.unitPrice * item.quantity) }}</span>
+                </div>
+              }
+            </div>
+          </div>
+          <div class="border-t pt-4">
+            <div class="flex justify-between"><span>Subtotal</span><span>{{ formatPrice(selectedOrder()!.subtotal) }}</span></div>
+            <div class="flex justify-between"><span>Delivery</span><span>{{ formatPrice(selectedOrder()!.shipping) }}</span></div>
+            <div class="flex justify-between font-bold text-lg"><span>Total</span><span class="text-brand">{{ formatPrice(selectedOrder()!.total) }}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

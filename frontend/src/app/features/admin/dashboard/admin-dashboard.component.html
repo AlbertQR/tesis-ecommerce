@@ -1,0 +1,134 @@
+<div class="space-y-6">
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    @for (stat of stats; track stat.title) {
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-500">{{ stat.title }}</p>
+            <p class="text-2xl font-bold text-gray-800 mt-1">{{ stat.value }}</p>
+          </div>
+          <div class="w-12 h-12 bg-brand/10 rounded-full flex items-center justify-center">
+            <i class="fa-solid {{ stat.icon }} text-brand text-xl"></i>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center gap-1">
+          @if (stat.changeType === 'up') {
+            <i class="fa-solid fa-arrow-up text-green-500 text-sm"></i>
+            <span class="text-green-500 text-sm">{{ stat.change }}</span>
+          } @else if (stat.changeType === 'down') {
+            <i class="fa-solid fa-arrow-down text-red-500 text-sm"></i>
+            <span class="text-red-500 text-sm">{{ stat.change }}</span>
+          }
+          <span class="text-gray-400 text-sm">vs mes anterior</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Sales Chart -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Ventas Mensuales</h3>
+      <div class="h-64 flex items-end justify-between gap-2">
+        @for (bar of salesData.values; track $index) {
+          <div class="flex-1 flex flex-col items-center">
+            <div 
+              class="w-full bg-brand rounded-t transition-all hover:bg-brand-hover"
+              [style.height.%]="(bar / getMaxSales()) * 100"
+              [title]="formatPrice(bar)"
+            ></div>
+            <span class="text-xs text-gray-500 mt-2">{{ salesData.labels[$index] }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Productos Más Vendidos</h3>
+      <div class="space-y-4">
+        @for (product of topProducts; track product.name; let i = $index) {
+          <div class="flex items-center gap-4">
+            <span class="w-6 h-6 bg-brand/10 rounded-full flex items-center justify-center text-sm font-bold text-brand">
+              {{ i + 1 }}
+            </span>
+            <div class="flex-1">
+              <p class="font-medium text-gray-800">{{ product.name }}</p>
+              <p class="text-sm text-gray-500">{{ product.sales }} ventas</p>
+            </div>
+            <span class="font-bold text-brand">{{ formatPrice(product.revenue) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Orders & Quick Actions -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Recent Orders -->
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-gray-800">Pedidos Recientes</h3>
+        <a href="/admin/pedidos" class="text-brand hover:underline text-sm">Ver todos</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b">
+              <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Pedido</th>
+              <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Cliente</th>
+              <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Total</th>
+              <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Estado</th>
+              <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Tiempo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of recentOrders; track order.id) {
+              <tr class="border-b hover:bg-gray-50">
+                <td class="py-3 px-4 font-medium">{{ order.id }}</td>
+                <td class="py-3 px-4">{{ order.customer }}</td>
+                <td class="py-3 px-4">{{ formatPrice(order.total) }}</td>
+                <td class="py-3 px-4">
+                  <span class="px-2 py-1 rounded text-xs font-medium
+                    {{ order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                    {{ order.status === 'preparing' ? 'bg-orange-100 text-orange-800' : '' }}
+                    {{ order.status === 'delivered' ? 'bg-green-100 text-green-800' : '' }}">
+                    {{ order.status === 'pending' ? 'Pendiente' : '' }}
+                    {{ order.status === 'preparing' ? 'Preparando' : '' }}
+                    {{ order.status === 'delivered' ? 'Entregado' : '' }}
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-gray-500 text-sm">{{ order.time }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Acciones Rápidas</h3>
+      <div class="space-y-3">
+        <a href="/admin/productos/agregar" class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors">
+          <i class="fa-solid fa-plus text-brand"></i>
+          <span class="font-medium">Nuevo Producto</span>
+        </a>
+        <a href="/admin/pedidos" class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors">
+          <i class="fa-solid fa-box text-brand"></i>
+          <span class="font-medium">Ver Pedidos Pendientes</span>
+        </a>
+        <a href="/admin/usuarios" class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors">
+          <i class="fa-solid fa-user-plus text-brand"></i>
+          <span class="font-medium">Agregar Usuario</span>
+        </a>
+        <a href="/admin/contenido" class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors">
+          <i class="fa-solid fa-pen text-brand"></i>
+          <span class="font-medium">Editar Contenido</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

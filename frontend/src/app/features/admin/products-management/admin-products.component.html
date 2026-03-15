@@ -1,0 +1,163 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Productos y Combos</h2>
+    <button (click)="startAdd()" class="bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand-hover transition-colors">
+      <i class="fa-solid fa-plus mr-2"></i> Nuevo Producto
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-xl shadow-sm p-4 flex flex-wrap gap-4">
+    <div class="flex-1 min-w-64">
+      <input type="text" placeholder="Buscar productos..." 
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+    </div>
+    <select [ngModel]="categoryFilter()" (ngModelChange)="categoryFilter.set($event)"
+      class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+      <option value="all">Todas las categorías</option>
+      <option value="cafeteria">Cafetería</option>
+      <option value="pizzeria">Pizzería</option>
+      <option value="despensa">Despensa</option>
+      <option value="combo">Combos</option>
+    </select>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="text-center py-8">
+      <i class="fa-solid fa-spinner fa-spin text-2xl text-brand"></i>
+    </div>
+  } @else {
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (product of filteredProducts(); track product.id) {
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          <div class="relative h-40 bg-gray-200">
+            <img [src]="product.image" [alt]="product.name" class="w-full h-full object-cover">
+            <span class="absolute top-2 left-2 px-2 py-1 rounded text-xs font-medium {{ getCategoryClass(product.category) }}">
+              {{ getCategoryLabel(product.category) }}
+            </span>
+            @if (product.isHot) {
+              <span class="absolute top-2 right-2 bg-brand text-white text-xs font-bold px-2 py-1 rounded">Hot</span>
+            }
+          </div>
+          <div class="p-4">
+            <h3 class="font-bold text-gray-800">{{ product.name }}</h3>
+            <p class="text-sm text-gray-500 line-clamp-2 mt-1">{{ product.description }}</p>
+            <p class="text-xl font-bold text-brand mt-2">{{ formatPrice(product.price) }}</p>
+            
+            <!-- Stock -->
+            <div class="mt-3 p-2 bg-gray-50 rounded-lg">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-600">Stock:</span>
+                <div class="flex items-center gap-2">
+                  <button (click)="updateStock(product.id, -1)" 
+                    class="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center" [disabled]="product.stock <= 0">
+                    <i class="fa-solid fa-minus text-xs"></i>
+                  </button>
+                  <span class="font-bold {{ getStockClass(product.stock) }} w-8 text-center">{{ product.stock }}</span>
+                  <button (click)="updateStock(product.id, 1)" 
+                    class="w-7 h-7 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-2 mt-3">
+              <button (click)="toggleFeatured(product.id)" 
+                class="flex-1 py-1 rounded text-sm {{ product.isFeatured ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600' }}">
+                <i class="fa-solid fa-star mr-1"></i> Destacado
+              </button>
+              <button (click)="toggleHot(product.id)" 
+                class="flex-1 py-1 rounded text-sm {{ product.isHot ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600' }}">
+                <i class="fa-solid fa-fire mr-1"></i> Hot
+              </button>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button (click)="startEdit(product)" class="flex-1 bg-brand/10 text-brand py-2 rounded-lg hover:bg-brand/20">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button (click)="deleteProduct(product.id)" class="flex-1 bg-red-100 text-red-600 py-2 rounded-lg hover:bg-red-200">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Edit Modal -->
+  @if (isEditing()) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-xl max-w-lg w-full">
+        <div class="border-b px-6 py-4">
+          <h2 class="text-xl font-bold">{{ editingProduct() ? 'Editar' : 'Nuevo' }} Producto</h2>
+        </div>
+        <form (ngSubmit)="save()" class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+            <input type="text" [(ngModel)]="formData.name" name="name" required
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <textarea [(ngModel)]="formData.description" name="description" rows="2"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Precio</label>
+              <input type="number" [(ngModel)]="formData.price" name="price" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+              <input type="number" [(ngModel)]="formData.stock" name="stock" required min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+              <select [(ngModel)]="formData.category" name="category"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                <option value="cafeteria">Cafetería</option>
+                <option value="pizzeria">Pizzería</option>
+                <option value="despensa">Despensa</option>
+                <option value="combo">Combo</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">URL Imagen</label>
+              <input type="text" [(ngModel)]="formData.image" name="image"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+            </div>
+          </div>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" [(ngModel)]="formData.isFeatured" name="isFeatured" class="w-4 h-4 text-brand">
+              <span class="text-sm">Destacado</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" [(ngModel)]="formData.isHot" name="isHot" class="w-4 h-4 text-brand">
+              <span class="text-sm">Hot</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" [(ngModel)]="formData.isCombo" name="isCombo" class="w-4 h-4 text-brand">
+              <span class="text-sm">Es Combo</span>
+            </label>
+          </div>
+          <div class="flex gap-3 pt-4">
+            <button type="submit" class="flex-1 bg-brand text-white py-2 rounded-lg hover:bg-brand-hover">Guardar</button>
+            <button type="button" (click)="isEditing.set(false)" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

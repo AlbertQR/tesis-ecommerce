@@ -1,0 +1,90 @@
+<footer class="bg-gray-900 text-gray-300 pt-16 pb-8">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+      <!-- Columna 1 -->
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-32 h-16 rounded-full flex items-center justify-center text-white font-bold">
+            <img src="logo.png" alt="Doña Yoli">
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed mb-4">
+          Tu destino favorito para disfrutar de buena comida y abastecer tu hogar con calidad.
+        </p>
+        <div class="flex space-x-4">
+          <a href="#" class="text-gray-400 hover:text-brand transition-colors">
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-brand transition-colors">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-brand transition-colors">
+            <i class="fa-brands fa-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Columna 2 -->
+      <div>
+        <h4 class="text-white font-bold mb-4">Enlaces Rápidos</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a routerLink="/" class="hover:text-brand transition-colors">Inicio</a></li>
+          <li><a routerLink="/productos" class="hover:text-brand transition-colors">Menú</a></li>
+          <li><a routerLink="/despensa" class="hover:text-brand transition-colors">Despensa</a></li>
+          <li><a routerLink="/nosotros" class="hover:text-brand transition-colors">Nosotros</a></li>
+          <li><a href="#" class="hover:text-brand transition-colors">Contacto</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3 -->
+      <div>
+        <h4 class="text-white font-bold mb-4">Categorías</h4>
+        <ul class="space-y-2 text-sm">
+          <li><a routerLink="/pizzeria" class="hover:text-brand transition-colors">Pizzas Artesanales</a></li>
+          <li><a routerLink="/cafeteria" class="hover:text-brand transition-colors">Cafés & Bebidas</a></li>
+          <li><a routerLink="/despensa" class="hover:text-brand transition-colors">Harinas y Granos</a></li>
+          <li><a routerLink="/despensa" class="hover:text-brand transition-colors">Aceites y Condimentos</a></li>
+          <li><a routerLink="/cafeteria" class="hover:text-brand transition-colors">Postres</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 4 -->
+      <div>
+        <h4 class="text-white font-bold mb-4">Contacto</h4>
+        <ul class="space-y-3 text-sm">
+          <li class="flex items-start gap-3">
+            <i class="fa-solid fa-location-dot mt-1 text-brand"></i>
+            <span>Calle 123 # 45-67, Barrio Centro, Ciudad</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <i class="fa-solid fa-phone text-brand"></i>
+            <span>+57 300 123 4567</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <i class="fa-solid fa-envelope text-brand"></i>
+            <span>hola&#64;donayoli.com</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <i class="fa-solid fa-clock text-brand"></i>
+            <span>Lun - Dom: 7:00 AM - 10:00 PM</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 pt-8 text-center text-sm">
+      <p>&copy; {{ currentYear }} Doña Yoli. Todos los derechos reservados.</p>
+      <div class="mt-2 space-x-4">
+        <a routerLink="/privacidad" class="hover:text-white">Política de Privacidad</a>
+        <a routerLink="/terminos" class="hover:text-white">Términos y Condiciones</a>
+        <a routerLink="/devoluciones" class="hover:text-white">Política de Devoluciones</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Botón Flotante WhatsApp -->
+<!-- <a href="https://wa.me/1234567890" target="_blank"
+  class="fixed bottom-6 right-6 bg-green-500 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors z-50 text-3xl">
+  <i class="fa-brands fa-whatsapp"></i>
+</a> -->

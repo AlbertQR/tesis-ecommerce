@@ -1,0 +1,162 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-gray-800">Gestión de Contenido</h2>
+    <div class="flex gap-2">
+      <button (click)="activeTab.set('contents')" 
+        class="px-4 py-2 rounded-lg {{ activeTab() === 'contents' ? 'bg-brand text-white' : 'bg-gray-100 text-gray-700' }}">
+        Contenidos
+      </button>
+      <button (click)="activeTab.set('testimonials')" 
+        class="px-4 py-2 rounded-lg {{ activeTab() === 'testimonials' ? 'bg-brand text-white' : 'bg-gray-100 text-gray-700' }}">
+        Testimonios
+      </button>
+    </div>
+  </div>
+
+  @if (activeTab() === 'contents') {
+    <!-- Contents Section -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">Contenidos del Sitio</h3>
+        <button (click)="startAddContent()" class="bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand-hover">
+          <i class="fa-solid fa-plus mr-2"></i> Nuevo
+        </button>
+      </div>
+      
+      <div class="space-y-4">
+        @for (content of contents(); track content.key) {
+          <div class="border rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="font-medium">{{ content.key }}</h4>
+                <p class="text-sm text-gray-500 mt-1">{{ content.value }}</p>
+                <p class="text-xs text-gray-400 mt-2">Actualizado: {{ formatDate(content.updatedAt) }}</p>
+              </div>
+              <div class="flex gap-2">
+                <button (click)="startEditContent(content)" class="text-brand hover:text-brand-hover">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button (click)="deleteContent(content.key)" class="text-red-500 hover:text-red-600">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (activeTab() === 'testimonials') {
+    <!-- Testimonials Section -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">Testimonios</h3>
+        <button (click)="startAddTestimonial()" class="bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand-hover">
+          <i class="fa-solid fa-plus mr-2"></i> Nuevo
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (testimonial of testimonials(); track testimonial.id) {
+          <div class="border rounded-lg p-4">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold">{{ testimonial.name }}</span>
+                  <span class="text-xs text-gray-500">({{ testimonial.role }})</span>
+                </div>
+                <p class="text-sm text-gray-600 mt-2">{{ testimonial.comment }}</p>
+                <div class="flex text-yellow-400 mt-2">
+                  @for (star of [1,2,3,4,5]; track star) {
+                    <i class="fa-solid fa-star {{ star <= testimonial.rating ? 'text-yellow-400' : 'text-gray-200' }}"></i>
+                  }
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button (click)="startEditTestimonial(testimonial)" class="text-brand hover:text-brand-hover">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button (click)="deleteTestimonial(testimonial.id)" class="text-red-500 hover:text-red-600">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Content Modal -->
+  @if (isEditingContent()) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-xl max-w-lg w-full">
+        <div class="border-b px-6 py-4">
+          <h2 class="text-xl font-bold">{{ editingContent() ? 'Editar' : 'Nuevo' }} Contenido</h2>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Clave</label>
+            <input type="text" [(ngModel)]="contentForm.key" name="key" [disabled]="!!editingContent()"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg {{ editingContent() ? 'bg-gray-100' : '' }}">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+            <textarea [(ngModel)]="contentForm.value" name="value" rows="3"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+          </div>
+          <div class="flex gap-3">
+            <button (click)="editingContent() ? saveContent() : saveNewContent()" class="flex-1 bg-brand text-white py-2 rounded-lg hover:bg-brand-hover">Guardar</button>
+            <button (click)="isEditingContent.set(false)" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Testimonial Modal -->
+  @if (isEditingTestimonial()) {
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-xl max-w-lg w-full">
+        <div class="border-b px-6 py-4">
+          <h2 class="text-xl font-bold">{{ editingTestimonial() ? 'Editar' : 'Nuevo' }} Testimonio</h2>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+              <input type="text" [(ngModel)]="testimonialForm.name" name="name"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Iniciales</label>
+              <input type="text" [(ngModel)]="testimonialForm.initials" name="initials" maxlength="2"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+            <input type="text" [(ngModel)]="testimonialForm.role" name="role"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Comentario</label>
+            <textarea [(ngModel)]="testimonialForm.comment" name="comment" rows="3"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Calificación</label>
+            <input type="number" [(ngModel)]="testimonialForm.rating" name="rating" min="1" max="5"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          </div>
+          <div class="flex gap-3">
+            <button (click)="editingTestimonial() ? saveTestimonial() : saveNewTestimonial()" class="flex-1 bg-brand text-white py-2 rounded-lg hover:bg-brand-hover">Guardar</button>
+            <button (click)="isEditingTestimonial.set(false)" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

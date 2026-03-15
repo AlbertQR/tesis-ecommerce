@@ -1,0 +1,216 @@
+<section class="py-8 bg-gray-50 min-h-screen">
+  <div class="container mx-auto px-4">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Mi Perfil</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="text-center mb-6">
+            <div class="w-24 h-24 bg-brand rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
+              {{ user()?.name?.charAt(0) || 'U' }}
+            </div>
+            <h2 class="text-xl font-bold text-gray-800">{{ user()?.name || 'Usuario' }}</h2>
+            <p class="text-gray-500">{{ user()?.email || '' }}</p>
+          </div>
+          <nav class="space-y-2">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-brand text-white rounded-lg">
+              <i class="fa-solid fa-user"></i>
+              <span>Mi Perfil</span>
+            </a>
+            <a routerLink="/pedidos" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa-solid fa-box"></i>
+              <span>Mis Pedidos</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>Direcciones</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa-solid fa-heart"></i>
+              <span>Favoritos</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <i class="fa-solid fa-gear"></i>
+              <span>Configuración</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Contenido Principal -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Información Personal -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800">Información Personal</h3>
+            @if (!isEditingProfile()) {
+              <button (click)="startEditProfile()" class="text-brand hover:underline">
+                <i class="fa-solid fa-pen"></i> Editar
+              </button>
+            }
+          </div>
+
+          @if (isEditingProfile()) {
+            <form (ngSubmit)="saveProfile()" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                  <input type="text" [(ngModel)]="profileForm.name" name="name" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                  <input type="tel" [(ngModel)]="profileForm.phone" name="phone"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" [(ngModel)]="profileForm.email" name="email"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+              </div>
+              <div class="flex gap-3">
+                <button type="submit" class="bg-brand text-white px-6 py-2 rounded-lg hover:bg-brand-hover transition-colors">
+                  Guardar
+                </button>
+                <button type="button" (click)="cancelEditProfile()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          } @else {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-500 mb-1">Nombre</label>
+                <p class="font-medium text-gray-800">{{ user()?.name || '' }}</p>
+              </div>
+              <div>
+                <label class="block text-sm text-gray-500 mb-1">Teléfono</label>
+                <p class="font-medium text-gray-800">{{ user()?.phone || '' }}</p>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm text-gray-500 mb-1">Email</label>
+                <p class="font-medium text-gray-800">{{ user()?.email || '' }}</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Direcciones -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-gray-800">Mis Direcciones</h3>
+            @if (!isAddingAddress()) {
+              <button (click)="startAddAddress()" class="text-brand hover:underline">
+                <i class="fa-solid fa-plus"></i> Agregar
+              </button>
+            }
+          </div>
+
+          @if (isAddingAddress()) {
+            <form (ngSubmit)="saveAddress()" class="bg-gray-50 p-4 rounded-lg mb-6 space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Etiqueta</label>
+                  <input type="text" [(ngModel)]="addressForm.label" name="label" placeholder="Casa, Trabajo, etc."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
+                  <input type="text" [(ngModel)]="addressForm.city" name="city"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Calle</label>
+                  <input type="text" [(ngModel)]="addressForm.street" name="street"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Número</label>
+                  <input type="text" [(ngModel)]="addressForm.number" name="number"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Barrio</label>
+                  <input type="text" [(ngModel)]="addressForm.neighborhood" name="neighborhood"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                </div>
+                <div class="flex items-center">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" [(ngModel)]="addressForm.isDefault" name="isDefault"
+                      class="w-4 h-4 text-brand border-gray-300 rounded focus:ring-brand">
+                    <span class="text-sm text-gray-700">Establecer como predeterminada</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Instrucciones de entrega</label>
+                <textarea [(ngModel)]="addressForm.instructions" name="instructions" rows="2" placeholder="Apartamento, timbre, referencias..."
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"></textarea>
+              </div>
+              <div class="flex gap-3">
+                <button type="submit" class="bg-brand text-white px-6 py-2 rounded-lg hover:bg-brand-hover transition-colors">
+                  {{ editingAddressId() ? 'Actualizar' : 'Guardar' }}
+                </button>
+                <button type="button" (click)="cancelAddress()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          }
+
+          <div class="space-y-4">
+            @for (address of addresses(); track address.id) {
+              <div class="border border-gray-200 rounded-lg p-4 {{ address.isDefault ? 'border-brand bg-brand/5' : '' }}">
+                <div class="flex justify-between items-start">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="font-bold text-gray-800">{{ address.label }}</span>
+                      @if (address.isDefault) {
+                        <span class="bg-brand text-white text-xs px-2 py-0.5 rounded">Predeterminada</span>
+                      }
+                    </div>
+                    <p class="text-gray-600 text-sm">
+                      {{ address.street }} #{{ address.number }}, {{ address.neighborhood }}<br>
+                      {{ address.city }}
+                    </p>
+                    @if (address.instructions) {
+                      <p class="text-gray-500 text-sm mt-1">
+                        <i class="fa-solid fa-circle-info"></i> {{ address.instructions }}
+                      </p>
+                    }
+                  </div>
+                  <div class="flex gap-2">
+                    @if (!address.isDefault) {
+                      <button (click)="setDefaultAddress(address.id)" class="text-sm text-gray-500 hover:text-brand">
+                        <i class="fa-solid fa-star"></i>
+                      </button>
+                    }
+                    <button (click)="startEditAddress(address)" class="text-sm text-gray-500 hover:text-brand">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button (click)="deleteAddress(address.id)" class="text-sm text-gray-500 hover:text-red-500">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (addresses().length === 0 && !isAddingAddress()) {
+              <div class="text-center py-8 text-gray-500">
+                <i class="fa-solid fa-location-dot text-4xl mb-3"></i>
+                <p>No tienes direcciones guardadas</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

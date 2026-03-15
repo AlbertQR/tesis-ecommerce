@@ -1,0 +1,5 @@
+.hero-bg {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/imgs/photo-1559339352-11d035aa65de.jfif');
+  background-size: cover;
+  background-position: center;
+}
