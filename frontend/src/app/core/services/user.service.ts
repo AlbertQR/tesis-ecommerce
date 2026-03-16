@@ -18,7 +18,8 @@ export class UserService {
   private usersUrl = environment.usersEndpoint;
   private ordersApiUrl = environment.ordersEndpoint;
   private authService = inject(AuthService);
-  readonly user = computed(() => this.authService.user() as UserModel | null);
+  private userProfileSignal = signal<UserModel | null>(null);
+  readonly user = computed(() => this.userProfileSignal());
   private addressesSignal = signal<AddressModel[]>([]);
   readonly addresses = this.addressesSignal.asReadonly();
   readonly defaultAddress = computed(() =>
@@ -143,8 +144,16 @@ export class UserService {
 
   private loadData(): void {
     if (this.authService.isAuthenticated()) {
+      this.loadUserProfile();
       this.loadAddresses();
       this.loadOrders();
     }
+  }
+
+  loadUserProfile(): void {
+    this.http.get<{ user: UserModel }>(`${this.usersUrl}/profile`).pipe(
+      tap(response => this.userProfileSignal.set(response.user)),
+      catchError(() => of(null))
+    ).subscribe();
   }
 }

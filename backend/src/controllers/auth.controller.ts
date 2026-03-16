@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { User } from '../models/index.js';
 import { config } from '../config/index.js';
 import { RegisterInput, LoginInput } from '../schemas/validation.js';
+import { sendPasswordResetEmail } from '../utils/email.service.js';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -89,5 +91,77 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error('GetMe error:', error);
     res.status(500).json({ error: 'Error al obtener usuario' });
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400).json({ error: 'Email es requerido' });
+      return;
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+      return;
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetExpires = new Date(Date.now() + 60 * 60 * 1000);
+
+    await User.findByIdAndUpdate(user._id, {
+      passwordResetToken: resetToken,
+      passwordResetExpires: resetExpires
+    });
+
+    await sendPasswordResetEmail(email, resetToken);
+
+    res.json({ message: 'Se ha enviado un correo con instrucciones para restablecer tu contraseña' });
+  } catch (error) {
+    console.error('ForgotPassword error:', error);
+    res.status(500).json({ error: 'Error al procesar la solicitud' });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      res.status(400).json({ error: 'Token y nueva contraseña son requeridos' });
+      return;
+    }
+
+    if (password.length < 6) {
+      res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+      return;
+    }
+
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: new Date() }
+    });
+
+    if (!user) {
+      res.status(400).json({ error: 'Token inválido o expirado' });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.findByIdAndUpdate(user._id, {
+      password: hashedPassword,
+      passwordResetToken: undefined,
+      passwordResetExpires: undefined,
+      updatedAt: new Date()
+    });
+
+    res.json({ message: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    console.error('ResetPassword error:', error);
+    res.status(500).json({ error: 'Error al restablecer la contraseña' });
   }
 };

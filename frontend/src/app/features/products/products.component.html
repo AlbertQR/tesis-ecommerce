@@ -61,19 +61,23 @@
               Precio</label>
             <div class="flex items-center gap-2 mb-3">
               <input
-                (ngModelChange)="priceMin.set($event); updatePriceRange()"
+                (ngModelChange)="priceMin.set(validatePrice($event)); updatePriceRange()"
                 [ngModel]="priceMin()"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand text-sm"
                 placeholder="Min"
                 type="number"
+                min="0"
+                max="999999"
               >
               <span class="text-gray-400">-</span>
               <input
-                (ngModelChange)="priceMax.set($event); updatePriceRange()"
+                (ngModelChange)="priceMax.set(validatePrice($event)); updatePriceRange()"
                 [ngModel]="priceMax()"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand text-sm"
                 placeholder="Max"
                 type="number"
+                min="0"
+                max="999999"
               >
             </div>
             <div class="flex justify-between text-xs text-gray-500">
@@ -105,6 +109,25 @@
                 >
                 <span class="text-sm text-gray-700">Solo Destacados</span>
               </label>
+            </div>
+          </div>
+
+          <!-- Rating -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Calificación</label>
+            <div class="space-y-2">
+              @for (opt of ratingOptions; track opt.value) {
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input
+                    (change)="updateMinRating(opt.value)"
+                    [checked]="filters().minRating === opt.value"
+                    class="w-4 h-4 text-brand border-gray-300 rounded focus:ring-brand"
+                    type="radio"
+                    name="rating"
+                  >
+                  <span class="text-sm text-gray-700">{{ opt.label }}</span>
+                </label>
+              }
             </div>
           </div>
 

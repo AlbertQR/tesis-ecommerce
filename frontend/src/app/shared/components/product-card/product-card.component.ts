@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ProductModel } from '@core/models';
 import { CartService } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
+import { FavoritesService } from '@core/services/favorites.service';
 import { FormatPricePipe } from '@shared/pipes';
 
 @Component({
@@ -15,15 +16,36 @@ export class ProductCardComponent {
 
   private cartService = inject(CartService);
   private authService = inject(AuthService);
+  private favoritesService = inject(FavoritesService);
   private router = inject(Router);
 
-  addToCart(): void {
+  addToCart(event: Event): void {
+    event.stopPropagation();
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']).then(() => {
       });
       return;
     }
     this.cartService.addToCart(this.product());
+  }
+
+  viewProduct(event: Event): void {
+    (event.target as HTMLElement).closest('button')?.blur();
+    this.router.navigate(['/producto', this.product().id]);
+  }
+
+  toggleFavorite(event: Event): void {
+    event.stopPropagation();
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login']).then(() => {
+      });
+      return;
+    }
+    this.favoritesService.toggleFavorite(this.product().id);
+  }
+
+  isFavorite(): boolean {
+    return this.favoritesService.isFavorite(this.product().id);
   }
 
   getCategoryLabel(): string {

@@ -20,6 +20,29 @@ import { FormatPricePipe } from '@shared/pipes';
         } @else if (order()) {
           @let o = order()!;
           <div class="max-w-2xl mx-auto">
+            <!-- Estado del pago -->
+            @if (paymentStatus() === 'success') {
+              <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+                <i class="fa-solid fa-check-circle mr-2"></i>
+                ¡Pago confirmado! Tu pedido está siendo procesado.
+              </div>
+            } @else if (paymentStatus() === 'cancelled') {
+              <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
+                <i class="fa-solid fa-exclamation-triangle mr-2"></i>
+                El pago fue cancelado. Puedes intentar nuevamente desde tu historial de pedidos.
+              </div>
+            } @else if (paymentStatus() === 'error') {
+              <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                <i class="fa-solid fa-x-circle mr-2"></i>
+                Hubo un problema con el pago. Por favor contacta soporte.
+              </div>
+            } @else if (paymentStatus() === 'pending') {
+              <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-6">
+                <i class="fa-solid fa-clock mr-2"></i>
+                Tu pago está siendo procesado. Te notificaremos cuando se confirme.
+              </div>
+            }
+
             <!-- Éxito -->
             <div class="bg-white rounded-xl shadow-md p-8 text-center mb-6">
               <div
@@ -27,7 +50,7 @@ import { FormatPricePipe } from '@shared/pipes';
                 <i class="fa-solid fa-check text-4xl text-green-600"></i>
               </div>
               <h1 class="text-3xl font-bold text-gray-800 mb-2">¡Pedido Realizado!</h1>
-              <p class="text-gray-600">Tu pedido ha sido confirmado successfully.</p>
+              <p class="text-gray-600">Tu pedido ha sido confirmado exitosamente.</p>
 
               <div class="mt-6 p-4 bg-gray-50 rounded-lg inline-block">
                 <p class="text-sm text-gray-500">Número de Pedido</p>
@@ -142,11 +165,13 @@ import { FormatPricePipe } from '@shared/pipes';
 })
 export class OrderConfirmationComponent implements OnInit {
   order = signal<Order | null>(null);
+  paymentStatus = signal<string | null>(null);
   isLoading = signal(true);
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
+    this.paymentStatus.set(this.route.snapshot.queryParamMap.get('payment'));
     this.loadOrder();
   }
 

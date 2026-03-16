@@ -14,7 +14,7 @@ export interface LegalDocument {
   providedIn: 'root'
 })
 export class LegalService {
-  private apiUrl = environment.authEndpoint;
+  private apiUrl = environment.apiUrl;
   private termsSignal = signal<LegalDocument | null>(null);
   readonly terms = this.termsSignal.asReadonly();
   private privacySignal = signal<LegalDocument | null>(null);

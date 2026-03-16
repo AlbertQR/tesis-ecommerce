@@ -1,0 +1,35 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Mis Favoritos</h1>
+        <p class="text-gray-600 mt-1">Productos guardados para después</p>
+      </div>
+      @if (favoriteCount() > 0) {
+        <span class="bg-brand text-white px-4 py-2 rounded-full text-sm font-semibold">
+          {{ favoriteCount() }} {{ favoriteCount() === 1 ? 'producto' : 'productos' }}
+        </span>
+      }
+    </div>
+
+    @if (favoriteCount() === 0) {
+      <div class="bg-white rounded-xl shadow-md p-12 text-center">
+        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa-regular fa-heart text-4xl text-gray-400"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">No tienes favoritos todavía</h2>
+        <p class="text-gray-600 mb-6">Explora nuestro catálogo y guarda tus productos favoritos</p>
+        <a routerLink="/productos"
+           class="inline-block bg-brand text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand/90 transition-colors">
+          Ver Productos
+        </a>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @for (product of favorites(); track product.id) {
+          <app-product-card [product]="product" />
+        }
+      </div>
+    }
+  </div>
+</div>

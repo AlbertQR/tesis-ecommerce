@@ -8,6 +8,7 @@ export interface PaymentSettings {
   enzona_merchant_uuid: string;
   refund_percentage: string;
   refund_enabled: string;
+  enzona_configured?: string;
 }
 
 export interface PaymentResponse {

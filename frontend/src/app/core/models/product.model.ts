@@ -9,6 +9,8 @@ export interface ProductModel {
   isHot: boolean;
   isCombo: boolean;
   stock: number;
+  averageRating?: number;
+  totalReviews?: number;
 }
 
 export type ProductCategory = 'cafeteria' | 'pizzeria' | 'despensa' | 'combo';

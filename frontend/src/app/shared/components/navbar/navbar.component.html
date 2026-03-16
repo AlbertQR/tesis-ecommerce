@@ -23,14 +23,11 @@
         <a class="hover:text-brand transition-colors" routerLink="/contacto"
            routerLinkActive="text-brand">Contacto</a>
         <div class="relative group">
-          <button (blur)="closeLegalMenu()" (mouseenter)="toggleLegalMenu()"
-                  (mouseleave)="toggleLegalMenu()"
-                  class="hover:text-brand transition-colors">Información Legal
+          <button
+                  class="hover:text-brand transition-colors cursor-pointer">Información Legal <i class="fa-solid fa-chevron-down text-xs"></i>
           </button>
-          <div (mouseenter)="toggleLegalMenu()"
-               (mouseleave)="toggleLegalMenu()"
-            [class.block]="isLegalMenuOpen()"
-            class="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 hidden group-hover:block z-50">
+          <div 
+             class="absolute left-0 mt-0 pt-8 w-48 bg-white shadow-lg rounded-lg py-2 hidden group-hover:block z-50">
             <a (click)="closeLegalMenu()"
                class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
                routerLink="/terminos">Términos
@@ -66,6 +63,17 @@
         </button>
 
         @if (isAuthenticated()) {
+          <button
+            class="text-gray-600 hover:text-brand transition-colors relative"
+            routerLink="/favoritos">
+            <i class="fa-solid fa-heart text-xl"></i>
+            @if (favoriteCount() > 0) {
+              <span
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                {{ favoriteCount() }}
+              </span>
+            }
+          </button>
           @if (user()?.role === 'admin') {
             <a routerLink="/admin"
                class="text-gray-600 hover:text-brand transition-colors">
@@ -120,6 +128,8 @@
             Devoluciones</a>
         </div>
         @if (isAuthenticated()) {
+          <a routerLink="/favoritos" (click)="toggleMenu()"
+             class="hover:text-brand font-medium">Mis Favoritos</a>
           <a routerLink="/perfil" (click)="toggleMenu()"
              class="hover:text-brand font-medium">Mi Perfil</a>
           <a routerLink="/pedidos" (click)="toggleMenu()"

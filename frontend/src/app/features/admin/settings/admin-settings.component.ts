@@ -7,7 +7,20 @@ import { PaymentService } from '@core/services/payment.service';
   imports: [FormsModule],
   template: `
     <div class="p-6">
-      <h1 class="text-2xl font-bold mb-6">Configuracion de Pagos</h1>
+      <h1 class="text-2xl font-bold mb-6">Configuración de Pagos</h1>
+      
+      <!-- EnZona Status -->
+      @if (enzonaConfigured()) {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+          <i class="fa-solid fa-check-circle mr-2"></i>
+          EnZona está configurado y activo
+        </div>
+      } @else {
+        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
+          <i class="fa-solid fa-exclamation-triangle mr-2"></i>
+          EnZona no está configurado. Completa los datos para habilitar pagos.
+        </div>
+      }
       
       <div class="bg-white rounded-xl shadow-md p-6 mb-6">
         <h2 class="text-lg font-bold mb-4">EnZona</h2>
@@ -15,34 +28,39 @@ import { PaymentService } from '@core/services/payment.service';
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Consumer Key</label>
-            <input type="text" [(ngModel)]="settings.enzona_consumer_key"
+            <input type="text" [(ngModel)]="settings().enzona_consumer_key"
+                   placeholder="Ingresa el consumer key"
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <p class="text-xs text-gray-500 mt-1">Deja vacío para mantener el valor actual</p>
           </div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Consumer Secret</label>
-            <input type="password" [(ngModel)]="settings.enzona_consumer_secret"
+            <input type="password" [(ngModel)]="settings().enzona_consumer_secret"
+                   placeholder="Ingresa el consumer secret"
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <p class="text-xs text-gray-500 mt-1">Deja vacío para mantener el valor actual</p>
           </div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Merchant UUID</label>
-            <input type="text" [(ngModel)]="settings.enzona_merchant_uuid"
+            <input type="text" [(ngModel)]="settings().enzona_merchant_uuid"
+                   placeholder="Ingresa el merchant UUID"
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
           </div>
         </div>
       </div>
       
       <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-        <h2 class="text-lg font-bold mb-4">Politicas de Reembolso</h2>
+        <h2 class="text-lg font-bold mb-4">Políticas de Reembolso</h2>
         
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Porcentaje de reembolso (%)</label>
-            <input type="number" [(ngModel)]="settings.refund_percentage"
+            <input type="number" [(ngModel)]="settings().refund_percentage"
                    min="0" max="100"
                    class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-            <p class="text-sm text-gray-500 mt-1">Ejemplo: 80 significa que se reembolsara el 80% del valor</p>
+            <p class="text-sm text-gray-500 mt-1">Ejemplo: 80 significa que se reembolsará el 80% del valor</p>
           </div>
           
           <div class="flex items-center">
@@ -63,7 +81,7 @@ import { PaymentService } from '@core/services/payment.service';
           @if (isSaving()) {
             <i class="fa-solid fa-spinner fa-spin"></i> Guardando...
           } @else {
-            Guardar Configuracion
+            Guardar Configuración
           }
         </button>
         <button (click)="loadSettings()"
@@ -87,14 +105,15 @@ import { PaymentService } from '@core/services/payment.service';
 export class AdminSettingsComponent implements OnInit {
   private paymentService = inject(PaymentService);
   
-  settings = {
+  settings = signal({
     enzona_consumer_key: '',
     enzona_consumer_secret: '',
     enzona_merchant_uuid: '',
     refund_percentage: '80'
-  };
+  });
   
-  refundEnabled = true;
+  enzonaConfigured = signal(false);
+  refundEnabled = signal(true);
   isSaving = signal(false);
   message = signal('');
   messageType = signal<'success' | 'error'>('success');
@@ -106,16 +125,17 @@ export class AdminSettingsComponent implements OnInit {
   loadSettings(): void {
     this.paymentService.getSettings().subscribe({
       next: (settings) => {
-        this.settings = {
-          enzona_consumer_key: settings.enzona_consumer_key || '',
-          enzona_consumer_secret: settings.enzona_consumer_secret || '',
+        this.settings.set({
+          enzona_consumer_key: '',
+          enzona_consumer_secret: '',
           enzona_merchant_uuid: settings.enzona_merchant_uuid || '',
           refund_percentage: settings.refund_percentage || '80'
-        };
-        this.refundEnabled = settings.refund_enabled === 'true';
+        });
+        this.refundEnabled.set(settings.refund_enabled === 'true');
+        this.enzonaConfigured.set(settings.enzona_configured === 'true');
       },
       error: () => {
-        this.message.set('Error al cargar la configuracion');
+        this.message.set('Error al cargar la configuración');
         this.messageType.set('error');
       }
     });
@@ -125,21 +145,24 @@ export class AdminSettingsComponent implements OnInit {
     this.isSaving.set(true);
     this.message.set('');
     
+    const currentSettings = this.settings();
+    
     this.paymentService.updateSettings({
-      enzona_consumer_key: this.settings.enzona_consumer_key,
-      enzona_consumer_secret: this.settings.enzona_consumer_secret,
-      enzona_merchant_uuid: this.settings.enzona_merchant_uuid,
-      refund_percentage: this.settings.refund_percentage,
-      refund_enabled: this.refundEnabled ? 'true' : 'false'
+      enzona_consumer_key: currentSettings.enzona_consumer_key,
+      enzona_consumer_secret: currentSettings.enzona_consumer_secret,
+      enzona_merchant_uuid: currentSettings.enzona_merchant_uuid,
+      refund_percentage: currentSettings.refund_percentage,
+      refund_enabled: this.refundEnabled() ? 'true' : 'false'
     }).subscribe({
       next: () => {
         this.isSaving.set(false);
-        this.message.set('Configuracion guardada correctamente');
+        this.message.set('Configuración guardada correctamente');
         this.messageType.set('success');
+        this.loadSettings();
       },
       error: () => {
         this.isSaving.set(false);
-        this.message.set('Error al guardar la configuracion');
+        this.message.set('Error al guardar la configuración');
         this.messageType.set('error');
       }
     });

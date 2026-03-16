@@ -221,12 +221,11 @@ export const getPaymentSettings = async (_req: AuthRequest, res: Response): Prom
 
     const result: Record<string, string> = {};
     for (const s of settings) {
-      if (s.key === 'enzona_consumer_key' || s.key === 'enzona_consumer_secret') {
-        result[s.key] = s.value ? '***CONFIGURADO***' : '';
-      } else {
-        result[s.key] = s.value;
-      }
+      result[s.key] = s.value;
     }
+
+    result.enzona_configured = (result.enzona_consumer_key && result.enzona_consumer_secret && result.enzona_merchant_uuid) 
+      ? 'true' : 'false';
 
     res.json(result);
   } catch (error) {

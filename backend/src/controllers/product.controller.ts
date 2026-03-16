@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Product, Category } from '../models/index.js';
+import { Product, Category, Review } from '../models/index.js';
 import { AuthRequest } from '../middleware/auth.js';
 import { ProductInput, UpdateProductInput, ProductCategory } from '../schemas/validation.js';
 
@@ -14,7 +14,30 @@ export const getProducts = async (req: AuthRequest, res: Response): Promise<void
     if (combo === 'true') filter.isCombo = true;
 
     const products = await Product.find(filter);
-    res.json(products.map(p => ({ ...p.toObject(), id: p._id.toString() })));
+    
+    const productIds = products.map(p => p._id.toString());
+    const reviewStats = await Review.aggregate([
+      { $match: { productId: { $in: productIds } } },
+      {
+        $group: {
+          _id: '$productId',
+          averageRating: { $avg: '$rating' },
+          totalReviews: { $sum: 1 }
+        }
+      }
+    ]);
+    
+    const statsMap = new Map(reviewStats.map(s => [s._id, { averageRating: s.averageRating, totalReviews: s.totalReviews }]));
+    
+    res.json(products.map(p => {
+      const stats = statsMap.get(p._id.toString());
+      return {
+        ...p.toObject(),
+        id: p._id.toString(),
+        averageRating: stats?.averageRating || 0,
+        totalReviews: stats?.totalReviews || 0
+      };
+    }));
   } catch (error) {
     console.error('GetProducts error:', error);
     res.status(500).json({ error: 'Error al obtener productos' });
@@ -31,7 +54,25 @@ export const getProductById = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    res.json({ ...product.toObject(), id: product._id.toString() });
+    const reviewStats = await Review.aggregate([
+      { $match: { productId: id } },
+      {
+        $group: {
+          _id: '$productId',
+          averageRating: { $avg: '$rating' },
+          totalReviews: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const stats = reviewStats[0] || { averageRating: 0, totalReviews: 0 };
+    
+    res.json({ 
+      ...product.toObject(), 
+      id: product._id.toString(),
+      averageRating: stats.averageRating,
+      totalReviews: stats.totalReviews
+    });
   } catch (error) {
     console.error('GetProductById error:', error);
     res.status(500).json({ error: 'Error al obtener producto' });

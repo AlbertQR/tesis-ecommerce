@@ -81,6 +81,14 @@ export class AuthService {
     );
   }
 
+  forgotPassword(email: string) {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string) {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, { token, password });
+  }
+
   private loadFromStorage(): void {
     const token = localStorage.getItem('token');
     if (token) {

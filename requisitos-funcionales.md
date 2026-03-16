@@ -14,12 +14,28 @@
 - **IMPORTANTE**: Solo se almacena el token JWT, los datos del usuario se extraen del payload del JWT
 - Validación de expiración del token automáticamente
 
-### 1.3 Perfil de Usuario
+### 1.3 Recuperación de Contraseña (IMPLEMENTADO)
+- Solicitud de recuperación de contraseña mediante email
+- Token de recuperación válido por 1 hora
+- Formulario para nueva contraseña
+- Envío de email con enlace de recuperación
+- Validación de contraseña (mínimo 6 caracteres)
+- Configuración de email en backend (SMTP)
+
+### 1.4 Perfil de Usuario
 - Visualización de datos del perfil (nombre, email, teléfono)
 - Actualización de información del perfil
 - Visualización del historial de pedidos
 
-### 1.4 Gestión de Direcciones
+### 1.5 Favoritos/Wishlist (IMPLEMENTADO)
+- Agregar productos a favoritos desde cualquier página
+- Ver lista de favoritos en `/favoritos`
+- Eliminar productos de favoritos
+- Persistido en MongoDB (campo favorites en User)
+- Indicador visual en tarjeta de producto (heart icon)
+- Contador de favoritos en navbar
+
+### 1.6 Gestión de Direcciones
 - Crear nuevas direcciones de entrega
 - Editar direcciones existentes
 - Eliminar direcciones
@@ -33,9 +49,11 @@
 ### 2.1 Visualización de Productos
 - Listado de todos los productos en la página de productos
 - Filtrado por categoría (Cafetería, Pizzería, Despensa, Combos)
+- Filtrado por calificación mínima (4+, 3+, 2+ estrellas)
 - Búsqueda de productos por nombre o descripción
 - Ordenamiento por: popularidad, nombre, precio (asc/desc)
 - Visualización de productos destacados en el home
+- Visualización de rating y cantidad de reseñas en tarjetas de productos
 
 ### 2.2 Información de Productos
 - Nombre del producto
@@ -46,6 +64,8 @@
 - Indicador de producto destacado (featured)
 - Indicador de producto hot (popular)
 - Stock disponible
+- Calificación promedio (averageRating)
+- Total de reseñas (totalReviews)
 
 ### 2.3 Gestión de Productos (Administrador)
 - Crear nuevos productos
@@ -54,6 +74,23 @@
 - Gestionar stock (aumentar/disminuir cantidad)
 - Marcar como destacado o hot
 - Asignar categoría
+
+### 2.4 Detalle de Producto (IMPLEMENTADO)
+- Página dedicada para ver detalles completos de un producto
+- Navegación desde la tarjeta del producto o lista
+- Breadcrumb de navegación (Inicio > Productos > Nombre del producto)
+- Información completa: imagen, nombre, descripción, precio, categoría, stock
+- Botones para agregar al carrito y agregar a favoritos
+- Sección de reseñas integrada
+
+### 2.5 Reseñas y Calificaciones (IMPLEMENTADO)
+- Sistema de rating de 1-5 estrellas por producto
+- Los usuarios pueden escribir una reseña después de comprar (o autenticados)
+- Promedio de calificación visible en la sección de reseñas
+- Contador total de reseñas
+- Los usuarios pueden editar o eliminar sus propias reseñas
+- Validación: mínimo 5 caracteres en el comentario
+- Validación: rating requerido (1-5)
 
 ---
 
@@ -123,6 +160,11 @@
 - Redirección a plataforma de EnZona para confirmación
 - Callback para confirmación automática del pago
 - URL de cancelación para pagos fallidos
+- **CONFIRMACIÓN DE PAGO (IMPLEMENTADO)**:
+  - Página de confirmación muestra estado del pago
+  - Estados: success, cancelled, error, pending
+  - Query params en URL: `?payment=success|cancelled|error|pending`
+  - Mensajes adaptativos según estado
 
 ### 5.3 Estados de Pago
 - Estados de pago en pedido: 'pending' | 'paid' | 'refunded'
@@ -142,6 +184,11 @@ Campo transactionUuid para tracking de transacción EnZona
 - Configurar merchant_uuid de EnZona
 - Configurar porcentaje de reembolso
 - Habilitar/deshabilitar reembolsos
+- **MEJORAS IMPLEMENTADAS**:
+  - Muestra estado de configuración (configurado/no configurado)
+  - Indicates si EnZona está activo
+  - Campos de contraseña enmascarados
+  - Hint para mantener valores actuales
 
 ---
 
@@ -276,14 +323,14 @@ Campo transactionUuid para tracking de transacción EnZona
 - Misión y visión
 - Valores de la empresa
 
-### 10.3 Página de Contacto
+### 10.3 Página de Contacto (IMPLEMENTADO)
 - Información de contacto (teléfono, email, dirección)
 - Horarios de atención
 - Mapa de ubicación (opcional)
-
----
-
-## 11. Notificaciones y Estados
+- Formulario de contacto con validación
+- Envío de email al administrador
+- Campos: nombre, email, teléfono, asunto, mensaje
+- Asunto seleccionable (consulta, pedido, queja, sugerencia, trabajo, otro)
 
 ### 11.1 Notificaciones de Pedido
 - El usuario debe poder ver el estado actual de sus pedidos

@@ -12,6 +12,7 @@ export interface ProductFilters {
   sortBy: 'name' | 'price-asc' | 'price-desc' | 'popular';
   onlyHot: boolean;
   onlyFeatured: boolean;
+  minRating: number;
 }
 
 @Component({
@@ -27,7 +28,8 @@ export class ProductsComponent {
     priceRange: { min: 0, max: 100000 },
     sortBy: 'popular',
     onlyHot: false,
-    onlyFeatured: false
+    onlyFeatured: false,
+    minRating: 0
   });
   priceMin = signal(0);
   priceMax = signal(100000);
@@ -43,6 +45,12 @@ export class ProductsComponent {
     { value: 'name', label: 'Nombre A-Z' },
     { value: 'price-asc', label: 'Menor Precio' },
     { value: 'price-desc', label: 'Mayor Precio' }
+  ];
+  ratingOptions = [
+    { value: 0, label: 'Todas las calificaciones' },
+    { value: 4, label: '4+ estrellas' },
+    { value: 3, label: '3+ estrellas' },
+    { value: 2, label: '2+ estrellas' }
   ];
 
   filteredProducts = computed(() => {
@@ -71,6 +79,10 @@ export class ProductsComponent {
 
     if (f.onlyFeatured) {
       products = products.filter(p => p.isFeatured);
+    }
+
+    if (f.minRating > 0) {
+      products = products.filter(p => (p.averageRating || 0) >= f.minRating);
     }
 
     switch (f.sortBy) {
@@ -114,6 +126,10 @@ export class ProductsComponent {
     this.filters.update(f => ({ ...f, onlyFeatured: !f.onlyFeatured }));
   }
 
+  updateMinRating(rating: number): void {
+    this.filters.update(f => ({ ...f, minRating: rating }));
+  }
+
   updatePriceRange(): void {
     this.filters.update(f => ({
       ...f,
@@ -128,7 +144,8 @@ export class ProductsComponent {
       priceRange: { min: 0, max: 100000 },
       sortBy: 'popular',
       onlyHot: false,
-      onlyFeatured: false
+      onlyFeatured: false,
+      minRating: 0
     });
     this.priceMin.set(0);
     this.priceMax.set(100000);
@@ -140,6 +157,7 @@ export class ProductsComponent {
       f.category !== 'all' ||
       f.onlyHot ||
       f.onlyFeatured ||
+      f.minRating > 0 ||
       this.priceMin() > 0 ||
       this.priceMax() < 100000;
   }
@@ -154,5 +172,12 @@ export class ProductsComponent {
 
   getDespensaTotalProducts() {
     return this.dataService.products().filter(p => p.category === 'despensa').length;
+  }
+
+  validatePrice(value: number | string): number {
+    if (value === null || value === undefined || value === '') return 0;
+    const num = typeof value === 'string' ? parseInt(value, 10) : value;
+    if (isNaN(num)) return 0;
+    return Math.max(0, Math.min(num, 999999));
   }
 }

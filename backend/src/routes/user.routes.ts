@@ -9,7 +9,10 @@ import {
   setDefaultAddress,
   getAllUsers,
   updateUser,
-  deleteUser
+  deleteUser,
+  getFavorites,
+  addFavorite,
+  removeFavorite
 } from '../controllers/user.controller.js';
 import { authenticate, authorizeAdmin } from '../middleware/auth.js';
 
@@ -25,6 +28,10 @@ router.post('/addresses', createAddress);
 router.put('/addresses/:id', updateAddress);
 router.delete('/addresses/:id', deleteAddress);
 router.put('/addresses/:id/default', setDefaultAddress);
+
+router.get('/favorites', getFavorites);
+router.post('/favorites', addFavorite);
+router.delete('/favorites/:productId', removeFavorite);
 
 router.get('/admin/users', authorizeAdmin, getAllUsers);
 router.put('/admin/users/:id', authorizeAdmin, updateUser);

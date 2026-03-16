@@ -34,8 +34,11 @@ export interface IUser extends Document {
   phone: string;
   avatar?: string;
   role: 'user' | 'admin';
+  favorites: string[];
   cart: ICartItem[];
   cartExpiresAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -54,8 +57,11 @@ const UserSchema = new Schema<IUser>({
   phone: { type: String, required: true },
   avatar: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  favorites: { type: [String], default: [] },
   cart: { type: Schema.Types.Mixed as any, default: [] },
   cartExpiresAt: { type: Date },
+  passwordResetToken: { type: String },
+  passwordResetExpires: { type: Date },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

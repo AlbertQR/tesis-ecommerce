@@ -41,6 +41,7 @@
 - **QR Code**: qrcode (generación de códigos QR para verificación)
 - **File Upload**: multer (subida de imágenes)
 - **Pagos**: EnZona API (integración de pagos digitales)
+- **Email**: nodemailer (envío de emails)
 - **Base de datos**: MongoDB con Mongoose
 - **Testing**: Vitest
 
@@ -268,13 +269,13 @@ backend/src/
 ## 16. Testing
 
 ### 16.1 Unit Tests
-- **Backend (Vitest)**: 37+ tests
+- **Backend (Vitest)**: Tests de integración
   - Tests de autenticación (JWT, bcrypt)
   - Tests de productos y categorías
   - Tests de documentos legales
   - Tests de cálculos de carrito
   - Tests de estados de pedidos
-- **Frontend (Vitest + Angular)**: 19+ tests
+- **Frontend (Vitest + Angular)**: Tests de servicios
   - Tests de AuthService
   - Tests de UserService
   - Tests de DataService
@@ -310,6 +311,15 @@ npm test
 - CORS_ORIGIN para desarrollo/producción
 - NODE_ENV
 
+### 17.2 Email (SMTP)
+- EMAIL_HOST: Servidor SMTP (default: smtp.gmail.com)
+- EMAIL_PORT: Puerto SMTP (default: 587)
+- EMAIL_SECURE: Usar TLS (default: false)
+- EMAIL_USER: Usuario SMTP
+- EMAIL_PASS: Contraseña SMTP
+- EMAIL_FROM: Remitente por defecto
+- FRONTEND_URL: URL del frontend (para enlaces)
+
 ---
 
 ## 18. Internacionalización (i18n)
@@ -321,26 +331,40 @@ npm test
 
 ---
 
-## 19. Recuperación de Contraseña (Futuro)
+## 19. Recuperación de Contraseña (IMPLEMENTADO)
 
 ### 19.1 Flujo
 - Solicitud de recuperación por email
-- Token temporal
-- Nueva contraseña
+- Token temporal de 1 hora de validez
+- Nueva contraseña con validación
+- Envío de email con nodemailer
+- Configurable mediante variables de entorno SMTP
 
 ---
 
-## 20. Opiniones/Reseñas de Productos (Futuro)
+## 20. Reseñas de Productos (IMPLEMENTADO)
 
 ### 20.1 Funcionalidad
-- Usuarios pueden dejar reseñas
-- Calificación por estrellas
-- Comentarios
+- Usuarios autenticados pueden dejar reseñas
+- Calificación por estrellas (1-5)
+- Comentarios (mínimo 5 caracteres)
+- Promedio de calificación calculado automáticamente
+- Total de reseñas por producto
+- Edición y eliminación de propias reseñas
+- Datos de rating incluídos en respuesta de productos (averageRating, totalReviews)
+
+### 20.2 Filtros
+- Filtrado por calificación mínima en catálogo de productos
+- Opciones: 4+ estrellas, 3+ estrellas, 2+ estrellas
+- Visualización de rating en tarjetas de productos
 
 ---
 
-## 21. Lista de Deseos (Futuro)
+## 21. Lista de Deseos (IMPLEMENTADO)
 
 ### 21.1 Características
 - Guardar productos para después
 - Ver lista desde cualquier dispositivo
+- Persistido en MongoDB
+- Icono de corazón en tarjetas de productos
+- Ruta `/favoritos` protegida por authGuard

@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CartService } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
+import { FavoritesService } from '@core/services/favorites.service';
 import { filter } from 'rxjs';
 
 @Component({
@@ -15,6 +16,8 @@ export class NavbarComponent implements OnInit {
   isLegalMenuOpen = signal(false);
   private cartService = inject(CartService);
   cartCount = this.cartService.cartCount;
+  private favoritesService = inject(FavoritesService);
+  favoriteCount = this.favoritesService.favoriteCount;
   private authService = inject(AuthService);
   isAuthenticated = this.authService.isAuthenticated;
   user = this.authService.user;

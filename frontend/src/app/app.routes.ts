@@ -28,10 +28,23 @@ export const routes: Routes = [
         .then(m => m.ProductsComponent)
   },
   {
+    path: 'producto/:id',
+    loadComponent: () =>
+      import('./features/products/product-detail/product-detail.component')
+        .then(m => m.ProductDetailComponent)
+  },
+  {
     path: 'perfil',
     loadComponent: () =>
       import('./features/profile/profile.component')
         .then(m => m.ProfileComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'favoritos',
+    loadComponent: () =>
+      import('./features/favorites/favorites.component')
+        .then(m => m.FavoritesComponent),
     canActivate: [authGuard]
   },
   {
@@ -136,7 +149,13 @@ export const routes: Routes = [
     ]
   },
   {
+    path: '404',
+    loadComponent: () =>
+      import('./features/not-found/not-found.component')
+        .then(m => m.NotFoundComponent)
+  },
+  {
     path: '**',
-    redirectTo: ''
+    redirectTo: '404'
   }
 ];

@@ -18,3 +18,5 @@ export { Legal } from './legal.model.js';
 export type { ILegal, LegalType } from './legal.model.js';
 export { Settings, DEFAULT_SETTINGS } from './settings.model.js';
 export type { ISettings } from './settings.model.js';
+export { Review } from './review.model.js';
+export type { IReview } from './review.model.js';
