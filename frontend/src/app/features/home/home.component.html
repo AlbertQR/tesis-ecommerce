@@ -93,6 +93,7 @@
             }
           </ul>
           <button
+            (click)="addComboToCart()"
             class="bg-white text-brand font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
             Pedir Combo ({{ combo.price | formatPrice }})
           </button>

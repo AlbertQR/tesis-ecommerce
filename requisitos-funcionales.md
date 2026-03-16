@@ -74,8 +74,8 @@
 - Total general
 
 ### 3.3 Expiración del Carrito
-- **IMPLEMENTADO**: El carrito expira después de 30 minutos de inactividad
-- **IMPLEMENTADO**: Al expirar, el stock de los productos se restaura automáticamente
+- El carrito expira después de 30 minutos de inactividad
+- Al expirar, el stock de los productos se restaura automáticamente
 - Limpieza automática cada 60 segundos en el backend
 
 ---
@@ -99,18 +99,53 @@
 - Cálculo de totales
 
 ### 4.4 Expiración de Pedidos
-- **IMPLEMENTADO**: Los pedidos expiran después de 24 horas si no son entregados
-- **IMPLEMENTADO**: Al expirar, el pedido se cancela automáticamente y el stock se restaura
+- Los pedidos expiran después de 24 horas si no son entregados
+- Al expirar, el pedido se cancela automáticamente y el stock se restaura
 - Limpieza automática cada 60 segundos en el backend
 
 ### 4.5 Verificación de Entrega por QR
-- **IMPLEMENTADO**: La factura PDF incluye un código QR con el ID del pedido
-- **IMPLEMENTADO**: Endpoint público `/api/orders/verify-qr` para verificar entrega
+- La factura PDF incluye un código QR con el ID del pedido
+- Endpoint público `/api/orders/verify-qr` para verificar entrega
 - El código QR permite marcar el pedido como "entregado" escaneándolo
 
 ---
 
-## 5. Gestión de Pedidos
+## 5. Pagos con EnZona
+
+### 5.1 Integración de Pagos
+- Sistema de pagos mediante la plataforma EnZona
+- Configuración de credenciales desde el panel de administración
+- Credenciales almacenadas en base de datos (consumer_key, consumer_secret, merchant_uuid)
+
+### 5.2 Proceso de Pago
+- Selección de método de pago en checkout (efectivo / EnZona)
+- Creación de pago mediante API de EnZona
+- Redirección a plataforma de EnZona para confirmación
+- Callback para confirmación automática del pago
+- URL de cancelación para pagos fallidos
+
+### 5.3 Estados de Pago
+- Estados de pago en pedido: 'pending' | 'paid' | 'refunded'
+Campo transactionUuid para tracking de transacción EnZona
+
+### 5.4 Reembolsos
+- Porcentaje de reembolso configurable (default 80%)
+- Campo refundPercentage configurable desde admin
+- Campo refundAmount para monto reembolsado
+- Campo refundTransactionUuid para tracking de reembolso
+- Endpoint para procesar reembolsos desde admin
+
+### 5.5 Configuración de Pagos (Administrador)
+- Página de configuración en `/admin/configuracion`
+- Configurar consumer_key de EnZona
+- Configurar consumer_secret de EnZona
+- Configurar merchant_uuid de EnZona
+- Configurar porcentaje de reembolso
+- Habilitar/deshabilitar reembolsos
+
+---
+
+## 6. Gestión de Pedidos
 
 ### 5.1 Pedidos de Usuario
 - Visualización del historial de pedidos
@@ -119,8 +154,8 @@
 - Descarga de factura en PDF
 
 ### 5.2 Factura PDF con QR
-- **IMPLEMENTADO**: Generación automática de factura PDF al completar pedido
-- **IMPLEMENTADO**: Código QR en la factura para verificación de entrega
+- Generación automática de factura PDF al completar pedido
+- Código QR en la factura para verificación de entrega
 - Datos incluidos: número de pedido, fecha, datos del cliente, productos, cantidades, precios unitarios, subtotal, envío, total
 - Descarga disponible desde la lista de pedidos del usuario
 
@@ -137,7 +172,7 @@
 ### 6.1 Testimonios
 - Visualización de testimonios en el home
 - Gestión de testimonios (administrador): crear, editar, eliminar
-- **IMPLEMENTADO**: Campo opcional de imagen para testimonios
+- Campo opcional de imagen para testimonios
 
 ### 6.2 Combos
 - Visualización de combos destacados
@@ -158,20 +193,41 @@
 
 ### 7.2 Dashboard
 - Vista general del panel de administración
+- Estadísticas en tiempo real desde el backend
+- Total de usuarios registrados
+- Total de pedidos
+- Total de productos
+- Ingresos del mes actual
+- Pedidos de hoy
+- Pedidos pendientes
+- Pedidos completados
+- Pedidos pagados
+- Gráfico de ventas de los últimos 6 meses
+- Top 5 productos más vendidos
+- Lista de pedidos recientes
+- Endpoint `/api/dashboard/stats` para obtener estadísticas
 
 ### 7.3 Subida de Imágenes
-- **IMPLEMENTADO**: Endpoint `/api/upload` para subir imágenes
-- **IMPLEMENTADO**: Soporte para productos, testimonios y contenido
+- Endpoint `/api/upload` para subir imágenes
+- Soporte para productos, testimonios y contenido
 - Almacenamiento en carpeta `public/uploads/`
 - Archivos renombrados con UUID
 - Formatos permitidos: jpeg, jpg, png, gif, webp (máx 5MB)
 
 ### 7.4 Protección de Rutas
-- **IMPLEMENTADO**: Guards de autenticación para rutas protegidas
-- **IMPLEMENTADO**: AdminGuard para rutas del panel de administración
+- Guards de autenticación para rutas protegidas
+- AdminGuard para rutas del panel de administración
 - Rutas protegidas: `/perfil`, `/pedidos`, `/pedido/:id`, `/admin`
 - Redirección a login si no autenticado
 - Redirección a home si intenta acceder a admin sin permisos
+
+### 7.5 Configuración de Pagos (Administrador)
+- Página de configuración en `/admin/configuracion`
+- Configurar credenciales de EnZona (consumer_key, consumer_secret, merchant_uuid)
+- Configurar porcentaje de reembolso (default 80%)
+- Habilitar/deshabilitar opción de reembolsos
+- Credenciales almacenadas en base de datos (Settings model)
+- Validación de credenciales antes de procesar pagos
 
 ---
 
@@ -183,7 +239,7 @@
 - Archivo PDF descargable por el usuario
 
 ### 8.2 Código QR de Verificación
-- **IMPLEMENTADO**: Código QR en cada factura PDF
+- Código QR en cada factura PDF
 - El QR contiene: `{ orderId, action: 'verify' }`
 - Escaneo permite verificar y marcar pedido como entregado
 - Endpoint público para verificación: `POST /api/orders/verify-qr`
@@ -328,13 +384,13 @@
 - categories: Categorías de productos
 - testimonials: Testimonios de clientes (incluye campo `image` opcional)
 - combos: Combos promocionales
-- orders: Pedidos realizados (incluye campo `expiresAt` para expiración)
+- orders: Pedidos realizados (incluye campos `expiresAt`, `paymentStatus`, `transactionUuid`, `refundAmount`, `refundPercentage`, `refundTransactionUuid`)
 - contents: Contenido dinámico del sitio
 - legal: Documentos legales
+- settings: Configuración del sistema (EnZona, reembolsos)
 
 ### 16.3 Almacenamiento del Carrito
-- **IMPLEMENTADO**: Carrito almacenado en MongoDB (modelo User)
-- No依赖于 express-session
+- Carrito almacenado en MongoDB (modelo User)
 - Campo `cartExpiresAt` para controlar expiración de 30 minutos
 - Limpieza automática de carritos expirados
 
@@ -363,13 +419,22 @@
 
 ---
 
-## 18. Métricas y Analytics (Futuro)
+## 18. Métricas y Analytics
 
 ### 18.1 Tracking
-- Google Analytics opcional
+- Google Analytics opcional (futuro)
 - Eventos de compra
 
-### 18.2 Dashboard de Ventas
+### 18.2 Dashboard de Ventas (IMPLEMENTADO)
+- Total de usuarios registrados
 - Total de pedidos
-- Ingresos
-- Productos más vendidos
+- Total de productos
+- Ingresos del mes actual
+- Pedidos de hoy
+- Pedidos pendientes
+- Pedidos completados
+- Pedidos pagados
+- Gráfico de ventas de los últimos 6 meses
+- Top 5 productos más vendidos
+- Lista de pedidos recientes
+- Datos en tiempo real desde `/api/dashboard/stats`

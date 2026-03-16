@@ -108,6 +108,26 @@
               </div>
             }
 
+            <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fa-solid fa-credit-card"></i> Metodo de pago
+              </label>
+              <div class="flex gap-4">
+                <label class="flex items-center cursor-pointer">
+                  <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'cash'" 
+                         (change)="onPaymentMethodChange('cash')"
+                         class="text-brand focus:ring-brand">
+                  <span class="ml-2 text-sm text-gray-700">Efectivo</span>
+                </label>
+                <label class="flex items-center cursor-pointer">
+                  <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'enzona'" 
+                         (change)="onPaymentMethodChange('enzona')"
+                         class="text-brand focus:ring-brand">
+                  <span class="ml-2 text-sm text-gray-700">EnZona (Digital)</span>
+                </label>
+              </div>
+            </div>
+
             <div class="border-t pt-4 mb-4">
               <div class="flex justify-between text-xl font-bold">
                 <span>Total</span>

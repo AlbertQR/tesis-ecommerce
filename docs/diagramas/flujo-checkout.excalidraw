@@ -1,0 +1,466 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "x": 250,
+      "y": 10,
+      "text": "Diagrama de Flujo - Proceso de Compra",
+      "fontSize": 20,
+      "fontFamily": "Arial",
+      "fontWeight": "bold"
+    },
+    {
+      "id": "start",
+      "type": "ellipse",
+      "x": 380,
+      "y": 60,
+      "width": 100,
+      "height": 50,
+      "fill": "#ffc9c9",
+      "stroke": "#e03131",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "start-text"}]
+    },
+    {
+      "id": "start-text",
+      "type": "text",
+      "x": 405,
+      "y": 78,
+      "text": "INICIO",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "fontWeight": "bold",
+      "containerId": "start"
+    },
+    {
+      "id": "login",
+      "type": "rectangle",
+      "x": 340,
+      "y": 140,
+      "width": 180,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "login-text"}]
+    },
+    {
+      "id": "login-text",
+      "type": "text",
+      "x": 390,
+      "y": 158,
+      "text": "Usuario autenticado",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "login"
+    },
+    {
+      "id": "arrow1",
+      "type": "arrow",
+      "x": 430,
+      "y": 110,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "cart",
+      "type": "rectangle",
+      "x": 340,
+      "y": 220,
+      "width": 180,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "cart-text"}]
+    },
+    {
+      "id": "cart-text",
+      "type": "text",
+      "x": 370,
+      "y": 238,
+      "text": "Revisar carrito",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "cart"
+    },
+    {
+      "id": "arrow2",
+      "type": "arrow",
+      "x": 430,
+      "y": 190,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "checkout",
+      "type": "rectangle",
+      "x": 340,
+      "y": 300,
+      "width": 180,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "checkout-text"}]
+    },
+    {
+      "id": "checkout-text",
+      "type": "text",
+      "x": 385,
+      "y": 318,
+      "text": "Iniciar Checkout",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "checkout"
+    },
+    {
+      "id": "arrow3",
+      "type": "arrow",
+      "x": 430,
+      "y": 270,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "address",
+      "type": "rectangle",
+      "x": 340,
+      "y": 380,
+      "width": 180,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "address-text"}]
+    },
+    {
+      "id": "address-text",
+      "type": "text",
+      "x": 365,
+      "y": 398,
+      "text": "Seleccionar dirección",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "address"
+    },
+    {
+      "id": "arrow4",
+      "type": "arrow",
+      "x": 430,
+      "y": 350,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "delivery",
+      "type": "rectangle",
+      "x": 340,
+      "y": 460,
+      "width": 180,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "delivery-text"}]
+    },
+    {
+      "id": "delivery-text",
+      "type": "text",
+      "x": 350,
+      "y": 478,
+      "text": "¿Delivery?",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "delivery"
+    },
+    {
+      "id": "arrow5",
+      "type": "arrow",
+      "x": 430,
+      "y": 430,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "payment",
+      "type": "rectangle",
+      "x": 340,
+      "y": 540,
+      "width": 180,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "payment-text"}]
+    },
+    {
+      "id": "payment-text",
+      "type": "text",
+      "x": 360,
+      "y": 558,
+      "text": "Seleccionar método",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "payment"
+    },
+    {
+      "id": "arrow6",
+      "type": "arrow",
+      "x": 430,
+      "y": 510,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "method",
+      "type": "diamond",
+      "x": 350,
+      "y": 620,
+      "width": 160,
+      "height": 80,
+      "fill": "#ffd8a8",
+      "stroke": "#e8590c",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "method-text"}]
+    },
+    {
+      "id": "method-text",
+      "type": "text",
+      "x": 385,
+      "y": 650,
+      "text": "¿Efectivo o EnZona?",
+      "fontSize": 12,
+      "fontFamily": "Arial",
+      "containerId": "method"
+    },
+    {
+      "id": "arrow7",
+      "type": "arrow",
+      "x": 430,
+      "y": 590,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "cash-path",
+      "type": "rectangle",
+      "x": 80,
+      "y": 660,
+      "width": 150,
+      "height": 50,
+      "fill": "#b2f2bb",
+      "stroke": "#2f9e44",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "cash-text"}]
+    },
+    {
+      "id": "cash-text",
+      "type": "text",
+      "x": 115,
+      "y": 678,
+      "text": "Pago en efectivo",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "cash-path"
+    },
+    {
+      "id": "arrow-cash",
+      "type": "arrow",
+      "x": 350,
+      "y": 660,
+      "points": [[0, 0], [-270, 0]],
+      "stroke": "#2f9e44",
+      "strokeWidth": 2
+    },
+    {
+      "id": "enzona-path",
+      "type": "rectangle",
+      "x": 620,
+      "y": 660,
+      "width": 150,
+      "height": 50,
+      "fill": "#b2f2bb",
+      "stroke": "#2f9e44",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "enzona-text"}]
+    },
+    {
+      "id": "enzona-text",
+      "type": "text",
+      "x": 640,
+      "y": 678,
+      "text": "Pago con EnZona",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "enzona-path"
+    },
+    {
+      "id": "arrow-enzona",
+      "type": "arrow",
+      "x": 510,
+      "y": 660,
+      "points": [[0, 0], [110, 0]],
+      "stroke": "#2f9e44",
+      "strokeWidth": 2
+    },
+    {
+      "id": "create-order",
+      "type": "rectangle",
+      "x": 340,
+      "y": 760,
+      "width": 180,
+      "height": 50,
+      "fill": "#d0bfff",
+      "stroke": "#7048e8",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "create-order-text"}]
+    },
+    {
+      "id": "create-order-text",
+      "type": "text",
+      "x": 365,
+      "y": 778,
+      "text": "Crear pedido",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "create-order"
+    },
+    {
+      "id": "arrow-cash-end",
+      "type": "arrow",
+      "x": 155,
+      "y": 710,
+      "points": [[0, 0], [50, 0], [50, 45]],
+      "stroke": "#7048e8",
+      "strokeWidth": 2
+    },
+    {
+      "id": "arrow-enzona-end",
+      "type": "arrow",
+      "x": 695,
+      "y": 710,
+      "points": [[0, 0], [-50, 0], [-50, 45]],
+      "stroke": "#7048e8",
+      "strokeWidth": 2
+    },
+    {
+      "id": "arrow8",
+      "type": "arrow",
+      "x": 430,
+      "y": 810,
+      "points": [[0, 0], [0, 40]],
+      "stroke": "#7048e8",
+      "strokeWidth": 2
+    },
+    {
+      "id": "payment-verify",
+      "type": "diamond",
+      "x": 340,
+      "y": 870,
+      "width": 180,
+      "height": 70,
+      "fill": "#ffd8a8",
+      "stroke": "#e8590c",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "verify-text"}]
+    },
+    {
+      "id": "verify-text",
+      "type": "text",
+      "x": 370,
+      "y": 898,
+      "text": "¿Pago verificado?",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "payment-verify"
+    },
+    {
+      "id": "arrow9",
+      "type": "arrow",
+      "x": 430,
+      "y": 900,
+      "points": [[0, 0], [0, 0]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "invoice",
+      "type": "rectangle",
+      "x": 340,
+      "y": 970,
+      "width": 180,
+      "height": 50,
+      "fill": "#ffec99",
+      "stroke": "#f08c00",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "invoice-text"}]
+    },
+    {
+      "id": "invoice-text",
+      "type": "text",
+      "x": 365,
+      "y": 988,
+      "text": "Generar factura PDF",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "invoice"
+    },
+    {
+      "id": "arrow10",
+      "type": "arrow",
+      "x": 430,
+      "y": 940,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#f08c00",
+      "strokeWidth": 2
+    },
+    {
+      "id": "success",
+      "type": "ellipse",
+      "x": 380,
+      "y": 1050,
+      "width": 100,
+      "height": 50,
+      "fill": "#b2f2bb",
+      "stroke": "#2f9e44",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "success-text"}]
+    },
+    {
+      "id": "success-text",
+      "type": "text",
+      "x": 405,
+      "y": 1068,
+      "text": "FIN",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "fontWeight": "bold",
+      "containerId": "success"
+    },
+    {
+      "id": "arrow11",
+      "type": "arrow",
+      "x": 430,
+      "y": 1020,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#2f9e44",
+      "strokeWidth": 2
+    }
+  ],
+  "appState": {
+    "theme": "light",
+    "viewBackgroundColor": "#ffffff"
+  }
+}

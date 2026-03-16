@@ -68,6 +68,14 @@ export interface IOrder extends Document {
   expiresAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  paymentStatus?: 'pending' | 'paid' | 'refunded';
+  transactionUuid?: string;
+  paymentMethod?: 'cash' | 'enzona';
+  paymentConfirmUrl?: string;
+  paymentCompleteUrl?: string;
+  refundAmount?: number;
+  refundPercentage?: number;
+  refundTransactionUuid?: string;
 }
 
 /**
@@ -115,7 +123,23 @@ const OrderSchema = new Schema<IOrder>({
   invoiceUrl: { type: String },
   expiresAt: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+  paymentStatus: { 
+    type: String, 
+    enum: ['pending', 'paid', 'refunded'], 
+    default: 'pending' 
+  },
+  transactionUuid: { type: String },
+  paymentMethod: { 
+    type: String, 
+    enum: ['cash', 'enzona'],
+    default: 'cash'
+  },
+  paymentConfirmUrl: { type: String },
+  paymentCompleteUrl: { type: String },
+  refundAmount: { type: Number },
+  refundPercentage: { type: Number },
+  refundTransactionUuid: { type: String }
 });
 
 /**

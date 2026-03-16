@@ -7,7 +7,7 @@
     "paths": {
       "@core/*": ["src/app/core/*"],
       "@features/*": ["src/app/features/*"],
-      "@shares/*": ["src/app/shared/*"],
+      "@shared/*": ["src/app/shared/*"],
       "@environments/*": ["src/environments/*"],
     },
     "strict": true,

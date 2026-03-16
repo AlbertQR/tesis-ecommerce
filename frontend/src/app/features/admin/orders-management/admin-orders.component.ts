@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Order, OrderStatus } from '@core/models/user.model';
 import { environment } from '@environments/environment';
-import { FormatPricePipe } from '@shares/pipes';
+import { FormatPricePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-admin-orders',

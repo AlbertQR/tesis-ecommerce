@@ -80,7 +80,8 @@ export const cartItemSchema = z.object({
 
 export const checkoutSchema = z.object({
   addressId: z.string().min(1, 'La dirección es requerida'),
-  hasDelivery: z.boolean()
+  hasDelivery: z.boolean(),
+  paymentMethod: z.enum(['cash', 'enzona']).optional().default('cash')
 });
 
 export const updateOrderStatusSchema = z.object({

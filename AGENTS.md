@@ -110,6 +110,7 @@ export default defineConfig({
 - **PDFKit** for invoice generation
 - **QRCode** for delivery verification
 - **Multer** for image uploads
+- **EnZona** for payment processing
 
 ### TypeScript
 
@@ -276,6 +277,9 @@ npx prettier --write backend/src/**/*.ts
 - **Cart expiration**: Cart expires after 30 minutes, stock is restored automatically
 - **Order expiration**: Orders expire after 24 hours if not delivered, stock is restored
 - **Token from query**: For file downloads, token can be passed via query string (`?token=xxx`)
+- **EnZona payments**: Payment integration requires CONFIGURED EnZona credentials in admin panel
+- **Payment settings**: Configure EnZona credentials and refund percentage in `/admin/configuracion`
+- **Dashboard stats**: Real statistics from backend at `/api/dashboard/stats`
 
 ## Authentication Flow
 
@@ -360,6 +364,7 @@ Gestiona el carrito de compras con signals. Requiere autenticación.
 - `deliveryFee`: Costo de envío (computed)
 - `cartTotal`: Total con envío (computed)
 - `hasDelivery`: Indica si hay delivery activo
+- `paymentMethod`: Método de pago ('cash' | 'enzona')
 
 #### DataService (`frontend/src/app/core/services/data.service.ts`)
 Proporciona acceso a datos públicos: productos, categorías, testimonios y combos.
@@ -388,6 +393,28 @@ Gestiona documentos legales: términos, privacidad y devoluciones.
 - `terms`: Términos y condiciones (readonly)
 - `privacy`: Política de privacidad (readonly)
 - `returns`: Política de devoluciones (readonly)
+
+#### PaymentService (`frontend/src/app/core/services/payment.service.ts`)
+Gestiona los pagos con EnZona.
+
+**Métodos:**
+- `createPayment(orderId, amount)`: Crea un pago con EnZona y retorna el link de redirección
+- `processRefund(orderId, amount?)`: Procesa un reembolso (admin)
+
+#### DashboardService (`frontend/src/app/core/services/dashboard.service.ts`)
+Obtiene estadísticas del dashboard.
+
+**Métodos:**
+- `getStats()`: Obtiene estadísticas del dashboard (usuarios, pedidos, productos, ingresos)
+- `getSalesData()`: Obtiene datos de ventas para gráfico (últimos 6 meses)
+- `getTopProducts()`: Obtiene productos más vendidos
+- `getRecentOrders()`: Obtiene pedidos recientes
+
+**Señales:**
+- `stats`: Estadísticas del dashboard (readonly)
+- `salesData`: Datos de ventas (readonly)
+- `topProducts`: Productos populares (readonly)
+- `recentOrders`: Pedidos recientes (readonly)
 
 ### HTTP Interceptors
 
@@ -777,6 +804,7 @@ Componente de tarjeta para mostrar un producto.
 - `/admin/productos` - Gestión de productos
 - `/admin/contenido` - Gestión de contenido
 - `/admin/legal` - Gestión de documentos legales
+- `/admin/configuracion` - Configuración de pagos (EnZona)
 
 ---
 
@@ -977,6 +1005,17 @@ Gestiona la subida de imágenes al servidor.
 #### upload.routes.ts
 - `POST /upload` - Subir imagen (admin)
 
+#### payment.routes.ts
+- `POST /payments` - Crear pago con EnZona (protegido)
+- `GET /payments/callback` - Callback de EnZona después del pago
+- `GET /payments/cancel` - Cancelación de pago
+- `POST /payments/refund` - Procesar reembolso (admin)
+- `GET /payments/settings` - Obtener configuración de pagos (admin)
+- `PUT /payments/settings` - Actualizar configuración de pagos (admin)
+
+#### dashboard.routes.ts
+- `GET /dashboard/stats` - Obtener estadísticas del dashboard (admin)
+
 #### order.routes.ts (endpoints adicionales)
 - `POST /verify-qr` - Verificar pedido mediante QR (público)
 
@@ -1027,8 +1066,19 @@ Gestiona la subida de imágenes al servidor.
 - `stock`: Number
 - `createdAt`, `updatedAt`: Dates
 
-#### Otros modelos (Address, Order, Category, Testimonial, Combo, Content, Legal)
+#### Otros modelos (Address, Order, Category, Testimonial, Combo, Content, Legal, Settings)
 Consulte los archivos individuales en `backend/src/models/` para ver sus campos específicos.
+
+**Order incluye:**
+- `paymentStatus`: 'pending' | 'paid' | 'refunded'
+- `transactionUuid`: UUID de la transacción EnZona
+- `refundAmount`, `refundPercentage`, `refundTransactionUuid`: Campos de reembolso
+
+#### SettingsModel (`backend/src/models/settings.model.ts`)
+- `key`: String único (ej: 'enzona_consumer_key', 'refund_percentage')
+- `value`: String
+- Configuración de EnZona: consumer_key, consumer_secret, merchant_uuid
+- Configuración de reembolsos: refund_percentage, refund_enabled
 
 ---
 

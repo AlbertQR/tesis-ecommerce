@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from '@core/services/user.service';
 import { Order, OrderStatus } from '@core/models/user.model';
-import { FormatPricePipe } from '@shares/pipes';
+import { FormatPricePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-orders',

@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { NavbarComponent } from '@shares/components/navbar/navbar.component';
-import { FooterComponent } from '@shares/components/footer/footer.component';
-import { ScrollTopButton } from '@shares/components/scroll-top-button/scroll-top-button';
+import { NavbarComponent } from '@shared/components/navbar/navbar.component';
+import { FooterComponent } from '@shared/components/footer/footer.component';
+import { ScrollTopButton } from '@shared/components/scroll-top-button/scroll-top-button';
 
 @Component({
   selector: 'app-root',

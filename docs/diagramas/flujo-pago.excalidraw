@@ -1,0 +1,416 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "x": 180,
+      "y": 10,
+      "text": "Diagrama de Flujo - Pago con EnZona",
+      "fontSize": 20,
+      "fontFamily": "Arial",
+      "fontWeight": "bold"
+    },
+    {
+      "id": "start",
+      "type": "ellipse",
+      "x": 330,
+      "y": 50,
+      "width": 120,
+      "height": 50,
+      "fill": "#ffc9c9",
+      "stroke": "#e03131",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "start-text"}]
+    },
+    {
+      "id": "start-text",
+      "type": "text",
+      "x": 365,
+      "y": 68,
+      "text": "Usuario",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "fontWeight": "bold",
+      "containerId": "start"
+    },
+    {
+      "id": "select-enzona",
+      "type": "rectangle",
+      "x": 280,
+      "y": 130,
+      "width": 220,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "select-text"}]
+    },
+    {
+      "id": "select-text",
+      "type": "text",
+      "x": 330,
+      "y": 148,
+      "text": "Selecciona EnZona",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "select-enzona"
+    },
+    {
+      "id": "arrow1",
+      "type": "arrow",
+      "x": 390,
+      "y": 100,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "create-payment",
+      "type": "rectangle",
+      "x": 280,
+      "y": 210,
+      "width": 220,
+      "height": 50,
+      "fill": "#d0bfff",
+      "stroke": "#7048e8",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "create-text"}]
+    },
+    {
+      "id": "create-text",
+      "type": "text",
+      "x": 320,
+      "y": 228,
+      "text": "Backend: Crear pago",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "create-payment"
+    },
+    {
+      "id": "arrow2",
+      "type": "arrow",
+      "x": 390,
+      "y": 180,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#7048e8",
+      "strokeWidth": 2
+    },
+    {
+      "id": "enzona-api",
+      "type": "rectangle",
+      "x": 280,
+      "y": 290,
+      "width": 220,
+      "height": 50,
+      "fill": "#ffc9c9",
+      "stroke": "#e03131",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "enzona-text"}]
+    },
+    {
+      "id": "enzona-text",
+      "type": "text",
+      "x": 330,
+      "y": 308,
+      "text": "EnZona API",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "enzona-api"
+    },
+    {
+      "id": "arrow3",
+      "type": "arrow",
+      "x": 390,
+      "y": 260,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#e03131",
+      "strokeWidth": 2
+    },
+    {
+      "id": "get-link",
+      "type": "rectangle",
+      "x": 280,
+      "y": 370,
+      "width": 220,
+      "height": 50,
+      "fill": "#b2f2bb",
+      "stroke": "#2f9e44",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "link-text"}]
+    },
+    {
+      "id": "link-text",
+      "type": "text",
+      "x": 325,
+      "y": 388,
+      "text": "Obtener link de pago",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "get-link"
+    },
+    {
+      "id": "arrow4",
+      "type": "arrow",
+      "x": 390,
+      "y": 340,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#2f9e44",
+      "strokeWidth": 2
+    },
+    {
+      "id": "redirect",
+      "type": "rectangle",
+      "x": 280,
+      "y": 450,
+      "width": 220,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "redirect-text"}]
+    },
+    {
+      "id": "redirect-text",
+      "type": "text",
+      "x": 315,
+      "y": 468,
+      "text": "Redirect a EnZona",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "redirect"
+    },
+    {
+      "id": "arrow5",
+      "type": "arrow",
+      "x": 390,
+      "y": 420,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "user-pay",
+      "type": "ellipse",
+      "x": 310,
+      "y": 530,
+      "width": 160,
+      "height": 60,
+      "fill": "#e7f5ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "user-pay-text"}]
+    },
+    {
+      "id": "user-pay-text",
+      "type": "text",
+      "x": 350,
+      "y": 553,
+      "text": "Usuario paga en\nEnZona",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "user-pay"
+    },
+    {
+      "id": "arrow6",
+      "type": "arrow",
+      "x": 390,
+      "y": 500,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "callback",
+      "type": "rectangle",
+      "x": 280,
+      "y": 620,
+      "width": 220,
+      "height": 50,
+      "fill": "#d0bfff",
+      "stroke": "#7048e8",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "callback-text"}]
+    },
+    {
+      "id": "callback-text",
+      "type": "text",
+      "x": 330,
+      "y": 638,
+      "text": "Callback al backend",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "callback"
+    },
+    {
+      "id": "arrow7",
+      "type": "arrow",
+      "x": 390,
+      "y": 590,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#7048e8",
+      "strokeWidth": 2
+    },
+    {
+      "id": "verify-payment",
+      "type": "rectangle",
+      "x": 280,
+      "y": 700,
+      "width": 220,
+      "height": 50,
+      "fill": "#d0bfff",
+      "stroke": "#7048e8",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "verify-text"}]
+    },
+    {
+      "id": "verify-text",
+      "type": "text",
+      "x": 330,
+      "y": 718,
+      "text": "Verificar pago",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "verify-payment"
+    },
+    {
+      "id": "arrow8",
+      "type": "arrow",
+      "x": 390,
+      "y": 670,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#7048e8",
+      "strokeWidth": 2
+    },
+    {
+      "id": "update-order",
+      "type": "rectangle",
+      "x": 280,
+      "y": 780,
+      "width": 220,
+      "height": 50,
+      "fill": "#b2f2bb",
+      "stroke": "#2f9e44",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "update-text"}]
+    },
+    {
+      "id": "update-text",
+      "type": "text",
+      "x": 320,
+      "y": 798,
+      "text": "Actualizar pedido: paid",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "update-order"
+    },
+    {
+      "id": "arrow9",
+      "type": "arrow",
+      "x": 390,
+      "y": 750,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#2f9e44",
+      "strokeWidth": 2
+    },
+    {
+      "id": "return-user",
+      "type": "rectangle",
+      "x": 280,
+      "y": 860,
+      "width": 220,
+      "height": 50,
+      "fill": "#a5d8ff",
+      "stroke": "#1971c2",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "return-text"}]
+    },
+    {
+      "id": "return-text",
+      "type": "text",
+      "x": 310,
+      "y": 878,
+      "text": "Return a la app",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "containerId": "return-user"
+    },
+    {
+      "id": "arrow10",
+      "type": "arrow",
+      "x": 390,
+      "y": 830,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#1971c2",
+      "strokeWidth": 2
+    },
+    {
+      "id": "end",
+      "type": "ellipse",
+      "x": 330,
+      "y": 940,
+      "width": 120,
+      "height": 50,
+      "fill": "#b2f2bb",
+      "stroke": "#2f9e44",
+      "strokeWidth": 2,
+      "boundElements": [{"type": "text", "id": "end-text"}]
+    },
+    {
+      "id": "end-text",
+      "type": "text",
+      "x": 370,
+      "y": 958,
+      "text": "Pedido listo",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "fontWeight": "bold",
+      "containerId": "end"
+    },
+    {
+      "id": "arrow11",
+      "type": "arrow",
+      "x": 390,
+      "y": 910,
+      "points": [[0, 0], [0, 25]],
+      "stroke": "#2f9e44",
+      "strokeWidth": 2
+    },
+    {
+      "id": "label-backend",
+      "type": "text",
+      "x": 30,
+      "y": 210,
+      "text": "Backend",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "fontWeight": "bold"
+    },
+    {
+      "id": "label-frontend",
+      "type": "text",
+      "x": 30,
+      "y": 130,
+      "text": "Frontend",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "fontWeight": "bold"
+    },
+    {
+      "id": "label-external",
+      "type": "text",
+      "x": 30,
+      "y": 290,
+      "text": "External",
+      "fontSize": 14,
+      "fontFamily": "Arial",
+      "fontWeight": "bold"
+    }
+  ],
+  "appState": {
+    "theme": "light",
+    "viewBackgroundColor": "#ffffff"
+  }
+}

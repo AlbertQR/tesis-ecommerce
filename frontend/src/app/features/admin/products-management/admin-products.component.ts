@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ProductCategory, ProductModel } from '@core/models';
-import { FormatPricePipe } from '@shares/pipes';
+import { FormatPricePipe } from '@shared/pipes';
 import { environment } from '@environments/environment';
 
 @Component({

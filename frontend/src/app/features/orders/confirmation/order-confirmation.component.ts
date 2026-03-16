@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Order } from '@core/models/user.model';
 import { UserService } from '@core/services/user.service';
-import { FormatPricePipe } from '@shares/pipes';
+import { FormatPricePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-order-confirmation',

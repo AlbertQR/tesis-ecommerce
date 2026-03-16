@@ -39,11 +39,14 @@ export interface CartItemResponse {
 
 export type ProductCategory = ProductCategoryModel;
 
+export type PaymentMethod = 'cash' | 'enzona';
+
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
   readonly hasDelivery = signal(false);
+  readonly paymentMethod = signal<PaymentMethod>('cash');
   private apiUrl = environment.apiUrl;
   private authService = inject(AuthService);
   private items = signal<CartItem[]>([]);
@@ -123,9 +126,24 @@ export class CartService {
     ).subscribe();
   }
 
+  setPaymentMethod(method: PaymentMethod): void {
+    this.paymentMethod.set(method);
+  }
+
   checkout(addressId: string, hasDelivery: boolean) {
-    return this.http.post<any>(`${this.apiUrl}/checkout`, { addressId, hasDelivery }).pipe(
-      tap(() => this.items.set([]))
+    const paymentMethod = this.paymentMethod();
+    return this.http.post<any>(`${this.apiUrl}/checkout`, { 
+      addressId, 
+      hasDelivery,
+      paymentMethod
+    }).pipe(
+      tap(() => {
+        // Only clear cart immediately for cash payments
+        // For EnZona, cart is cleared after successful payment
+        if (paymentMethod === 'cash') {
+          this.items.set([]);
+        }
+      })
     );
   }
 

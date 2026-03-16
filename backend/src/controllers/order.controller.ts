@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import PDFDocument from 'pdfkit';
-import { Product, Address, User, Order } from '../models/index.js';
+import { Product, Address, User, Order, Combo } from '../models/index.js';
 import { AuthRequest } from '../middleware/auth.js';
 import { CartItemInput, CheckoutInput, OrderStatus } from '../schemas/validation.js';
 import fs from 'fs';
@@ -65,14 +65,38 @@ export const addToCart = async (req: AuthRequest, res: Response): Promise<void> 
     }
     
     const data = req.body as CartItemInput;
-    const product = await Product.findById(data.productId);
+    
+    // First try to find in Products collection
+    let product = await Product.findById(data.productId);
+    let isCombo = false;
+    
+    // If not found, try in Combos collection
+    if (!product) {
+      const combo = await Combo.findById(data.productId);
+      if (combo) {
+        isCombo = true;
+        // Create a virtual product object from combo
+        product = {
+          _id: combo._id,
+          name: combo.name,
+          image: combo.image,
+          price: combo.price,
+          stock: 999, // Combos don't have stock limit
+          description: combo.description,
+          category: 'combo',
+          isFeatured: combo.isFeatured || false,
+          isHot: false,
+          isCombo: true
+        } as any;
+      }
+    }
     
     if (!product) {
       res.status(404).json({ error: 'Producto no encontrado' });
       return;
     }
 
-    if (product.stock < data.quantity) {
+    if (!isCombo && product.stock < data.quantity) {
       res.status(400).json({ error: 'Stock insuficiente' });
       return;
     }
@@ -106,7 +130,9 @@ export const addToCart = async (req: AuthRequest, res: Response): Promise<void> 
       });
     }
 
-    await Product.findByIdAndUpdate(data.productId, { $inc: { stock: -quantityToDeduct } });
+    if (!isCombo) {
+      await Product.findByIdAndUpdate(data.productId, { $inc: { stock: -quantityToDeduct } });
+    }
     await User.findByIdAndUpdate(userId, { cart, cartExpiresAt: getCartExpiration() });
     res.json({ items: cart, deliveryFee: 100 });
   } catch (error) {
@@ -239,6 +265,7 @@ export const checkout = async (req: AuthRequest, res: Response): Promise<void> =
     }
     
     const data = req.body as CheckoutInput;
+    const paymentMethod = data.paymentMethod || 'cash';
     
     const user = await User.findById(userId);
     if (!user) {
@@ -295,6 +322,8 @@ export const checkout = async (req: AuthRequest, res: Response): Promise<void> =
       orderId,
       date: new Date(),
       status: 'pending' as OrderStatus,
+      paymentMethod,
+      paymentStatus: paymentMethod === 'enzona' ? 'pending' : 'paid',
       items: cart,
       subtotal,
       shipping,
@@ -313,7 +342,11 @@ export const checkout = async (req: AuthRequest, res: Response): Promise<void> =
       expiresAt
     });
 
-    await User.findByIdAndUpdate(userId, { cart: [], cartExpiresAt: undefined });
+    // Only clear cart immediately for cash payments
+    // For EnZona, cart is cleared after successful payment
+    if (paymentMethod === 'cash') {
+      await User.findByIdAndUpdate(userId, { cart: [], cartExpiresAt: undefined });
+    }
 
     res.status(201).json({ ...order.toObject(), id: order._id.toString() });
   } catch (error) {

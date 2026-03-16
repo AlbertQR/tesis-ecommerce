@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ProductModel } from '@core/models';
 import { CartService } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormatPricePipe } from '@shares/pipes';
+import { FormatPricePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-product-card',

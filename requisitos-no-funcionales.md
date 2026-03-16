@@ -40,6 +40,7 @@
 - **PDF**: PDFKit
 - **QR Code**: qrcode (generación de códigos QR para verificación)
 - **File Upload**: multer (subida de imágenes)
+- **Pagos**: EnZona API (integración de pagos digitales)
 - **Base de datos**: MongoDB con Mongoose
 - **Testing**: Vitest
 
@@ -78,6 +79,7 @@ backend/src/
 ├── models/                # Modelos Mongoose
 ├── routes/                # Definición de rutas
 ├── schemas/              # Validación Zod
+├── services/             # Servicios (EnZona API)
 ├── types/                 # Tipos TypeScript
 ├── app.ts                # Configuración de Express
 └── index.ts              # Punto de entrada

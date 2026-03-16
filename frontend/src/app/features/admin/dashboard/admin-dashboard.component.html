@@ -1,7 +1,12 @@
 <div class="space-y-6">
+  @if (isLoading()) {
+    <div class="flex items-center justify-center h-64">
+      <i class="fa-solid fa-spinner fa-spin text-4xl text-brand"></i>
+    </div>
+  } @else {
   <!-- Stats Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    @for (stat of stats; track stat.title) {
+    @for (stat of stats(); track stat.title) {
       <div class="bg-white rounded-xl shadow-sm p-6">
         <div class="flex items-center justify-between">
           <div>
@@ -15,14 +20,16 @@
           </div>
         </div>
         <div class="mt-4 flex items-center gap-1">
-          @if (stat.changeType === 'up') {
+          @if (stat.change && stat.changeType === 'up') {
             <i class="fa-solid fa-arrow-up text-green-500 text-sm"></i>
-            <span class="text-green-500 text-sm">{{ stat.change }}</span>
-          } @else if (stat.changeType === 'down') {
+            <span class="text-green-500 text-sm">{{ stat.change }}%</span>
+          } @else if (stat.change && stat.changeType === 'down') {
             <i class="fa-solid fa-arrow-down text-red-500 text-sm"></i>
-            <span class="text-red-500 text-sm">{{ stat.change }}</span>
+            <span class="text-red-500 text-sm">{{ stat.change }}%</span>
           }
-          <span class="text-gray-400 text-sm">vs mes anterior</span>
+          @if (stat.change) {
+            <span class="text-gray-400 text-sm">vs mes anterior</span>
+          }
         </div>
       </div>
     }
@@ -34,15 +41,15 @@
     <div class="bg-white rounded-xl shadow-sm p-6">
       <h3 class="text-lg font-bold text-gray-800 mb-4">Ventas Mensuales</h3>
       <div class="h-64 flex items-end justify-between gap-2">
-        @for (bar of salesData.values; track $index) {
+        @for (bar of salesData().values; track $index) {
           <div class="flex-1 flex flex-col items-center">
             <div
               class="w-full bg-brand rounded-t transition-all hover:bg-brand-hover"
-              [style.height.%]="(bar / getMaxSales()) * 100"
+              [style.height.%]="getMaxSales() > 0 ? (bar / getMaxSales()) * 100 : 0"
               [title]="bar | formatPrice"
             ></div>
             <span
-              class="text-xs text-gray-500 mt-2">{{ salesData.labels[$index] }}</span>
+              class="text-xs text-gray-500 mt-2">{{ salesData().labels[$index] }}</span>
           </div>
         }
       </div>
@@ -53,7 +60,7 @@
       <h3 class="text-lg font-bold text-gray-800 mb-4">Productos Más
         Vendidos</h3>
       <div class="space-y-4">
-        @for (product of topProducts; track product.name; let i = $index) {
+        @for (product of topProducts(); track product.name; let i = $index) {
           <div class="flex items-center gap-4">
             <span
               class="w-6 h-6 bg-brand/10 rounded-full flex items-center justify-center text-sm font-bold text-brand">
@@ -102,19 +109,14 @@
           </tr>
           </thead>
           <tbody>
-            @for (order of recentOrders; track order.id) {
+            @for (order of recentOrders(); track order.id) {
               <tr class="border-b hover:bg-gray-50">
                 <td class="py-3 px-4 font-medium">{{ order.id }}</td>
                 <td class="py-3 px-4">{{ order.customer }}</td>
                 <td class="py-3 px-4">{{ order.total | formatPrice }}</td>
                 <td class="py-3 px-4">
-                  <span class="px-2 py-1 rounded text-xs font-medium
-                    {{ order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                    {{ order.status === 'preparing' ? 'bg-orange-100 text-orange-800' : '' }}
-                    {{ order.status === 'delivered' ? 'bg-green-100 text-green-800' : '' }}">
-                    {{ order.status === 'pending' ? 'Pendiente' : '' }}
-                    {{ order.status === 'preparing' ? 'Preparando' : '' }}
-                    {{ order.status === 'delivered' ? 'Entregado' : '' }}
+                  <span class="px-2 py-1 rounded text-xs font-medium {{ getStatusClass(order.status) }}">
+                    {{ getStatusLabel(order.status) }}
                   </span>
                 </td>
                 <td class="py-3 px-4 text-gray-500 text-sm">{{ order.time }}
@@ -131,26 +133,27 @@
       <h3 class="text-lg font-bold text-gray-800 mb-4">Acciones Rápidas</h3>
       <div class="space-y-3">
         <a class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors"
-           href="/admin/productos/agregar">
+           href="/admin/productos">
           <i class="fa-solid fa-plus text-brand"></i>
           <span class="font-medium">Nuevo Producto</span>
         </a>
         <a class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors"
            href="/admin/pedidos">
           <i class="fa-solid fa-box text-brand"></i>
-          <span class="font-medium">Ver Pedidos Pendientes</span>
+          <span class="font-medium">Ver Pedidos</span>
         </a>
         <a class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors"
            href="/admin/usuarios">
           <i class="fa-solid fa-user-plus text-brand"></i>
-          <span class="font-medium">Agregar Usuario</span>
+          <span class="font-medium">Usuarios</span>
         </a>
         <a class="flex items-center gap-3 p-3 bg-brand/5 hover:bg-brand/10 rounded-lg transition-colors"
-           href="/admin/contenido">
-          <i class="fa-solid fa-pen text-brand"></i>
-          <span class="font-medium">Editar Contenido</span>
+           href="/admin/configuracion">
+          <i class="fa-solid fa-cog text-brand"></i>
+          <span class="font-medium">Configuración</span>
         </a>
       </div>
     </div>
   </div>
+  }
 </div>

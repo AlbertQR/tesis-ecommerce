@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { 
   User, Address, Product, Category, Testimonial, 
-  Combo, Order, Content, Legal 
+  Combo, Order, Content, Legal, Settings, DEFAULT_SETTINGS 
 } from '../models/index.js';
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dona-yoli';
@@ -228,6 +228,8 @@ class Database {
         isActive: true
       }
     ]);
+
+    await Settings.insertMany(DEFAULT_SETTINGS);
 
     console.log('Database seeded successfully');
   }

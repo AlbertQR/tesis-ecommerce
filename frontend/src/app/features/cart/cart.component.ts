@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { CartService } from '@core/services/cart.service';
+import { CartService, PaymentMethod } from '@core/services/cart.service';
 import { UserService } from '@core/services/user.service';
+import { PaymentService } from '@core/services/payment.service';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Address } from '@core/models/user.model';
-import { FormatPricePipe } from '@shares/pipes';
+import { FormatPricePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-cart',
@@ -14,12 +15,14 @@ import { FormatPricePipe } from '@shares/pipes';
 export class CartComponent {
   selectedAddressId = signal<string | null>(null);
   private cartService = inject(CartService);
+  private paymentService = inject(PaymentService);
   cartItems = this.cartService.cartItems;
   cartTotal = this.cartService.cartTotal;
   cartCount = this.cartService.cartCount;
   subtotal = this.cartService.subtotal;
   deliveryFee = this.cartService.deliveryFee;
   hasDelivery = this.cartService.hasDelivery;
+  paymentMethod = this.cartService.paymentMethod;
   private userService = inject(UserService);
   addresses = this.userService.addresses;
   private router = inject(Router);
@@ -30,6 +33,10 @@ export class CartComponent {
 
   getSelectedAddress(): Address | undefined {
     return this.addresses().find(a => a.id === this.selectedAddressId());
+  }
+
+  onPaymentMethodChange(method: PaymentMethod): void {
+    this.cartService.setPaymentMethod(method);
   }
 
   onAddressChange(): void {
@@ -67,10 +74,23 @@ export class CartComponent {
       return;
     }
 
+    const paymentMethod = this.paymentMethod();
+
     this.cartService.checkout(addressId!, hasDelivery).subscribe({
       next: (order) => {
-        this.router.navigate(['/pedido', order.id]).then(() => {
-        });
+        if (paymentMethod === 'enzona') {
+          this.paymentService.createPayment(order.orderId).subscribe({
+            next: (payment) => {
+              window.location.href = payment.confirmUrl;
+            },
+            error: (err) => {
+              alert('Error al crear el pago: ' + (err.error?.error || 'Error desconocido'));
+            }
+          });
+        } else {
+          this.router.navigate(['/pedido', order.id]).then(() => {
+          });
+        }
       },
       error: (err) => {
         alert('Error al procesar el pedido: ' + (err.error?.error || 'Error desconocido'));

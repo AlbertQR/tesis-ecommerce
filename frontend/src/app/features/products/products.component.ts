@@ -1,9 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '@core/services/data.service';
-import { ProductCardComponent } from '@shares/components/product-card/product-card.component';
+import { ProductCardComponent } from '@shared/components/product-card/product-card.component';
 import { ProductCategory } from '@core/models';
-import { FormatPricePipe } from '@shares/pipes';
+import { FormatPricePipe } from '@shared/pipes';
 
 export interface ProductFilters {
   search: string;
