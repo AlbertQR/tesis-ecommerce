@@ -119,7 +119,7 @@ export const updateProduct = async (req: AuthRequest, res: Response): Promise<vo
     if (data.isCombo !== undefined) updateData.isCombo = data.isCombo;
     if (data.stock !== undefined) updateData.stock = data.stock;
 
-    const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
+    const product = await Product.findByIdAndUpdate(id, updateData, { returnDocument: 'after' });
     
     if (!product) {
       res.status(404).json({ error: 'Producto no encontrado' });
@@ -186,7 +186,7 @@ export const updateCategory = async (req: AuthRequest, res: Response): Promise<v
     const category = await Category.findOneAndUpdate(
       { id },
       { ...(name && { name }), ...(description && { description }), ...(image && { image }) },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!category) {

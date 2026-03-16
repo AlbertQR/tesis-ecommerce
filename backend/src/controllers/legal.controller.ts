@@ -82,7 +82,7 @@ export const updateLegalDocument = async (req: AuthRequest, res: Response): Prom
         ...(data.isActive !== undefined && { isActive: data.isActive }),
         updatedAt: new Date()
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!document) {

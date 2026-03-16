@@ -50,7 +50,7 @@ export const updateProfile = async (req: AuthRequest, res: Response): Promise<vo
         ...(data.avatar && { avatar: data.avatar }),
         updatedAt: new Date()
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!user) {
@@ -147,7 +147,7 @@ export const updateAddress = async (req: AuthRequest, res: Response): Promise<vo
         ...(data.isDefault !== undefined && { isDefault: data.isDefault }),
         updatedAt: new Date()
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!address) {
@@ -215,7 +215,7 @@ export const setDefaultAddress = async (req: AuthRequest, res: Response): Promis
     const address = await Address.findOneAndUpdate(
       { _id: new mongoose.Types.ObjectId(id), userId: new mongoose.Types.ObjectId(userId) },
       { isDefault: true, updatedAt: new Date() },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!address) {
@@ -255,7 +255,7 @@ export const updateUser = async (req: AuthRequest, res: Response): Promise<void>
         ...(data.email && { email: data.email }),
         updatedAt: new Date()
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!user) {

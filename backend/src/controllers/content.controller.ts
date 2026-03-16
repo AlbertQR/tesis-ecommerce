@@ -47,7 +47,7 @@ export const updateTestimonial = async (req: AuthRequest, res: Response): Promis
         ...(data.rating && { rating: data.rating }),
         ...(data.initials && { initials: data.initials })
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!testimonial) {
@@ -149,7 +149,7 @@ export const updateCombo = async (req: AuthRequest, res: Response): Promise<void
         ...(data.isFeatured !== undefined && { isFeatured: data.isFeatured }),
         ...(data.discount && { discount: data.discount })
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!combo) {
@@ -256,7 +256,7 @@ export const updateContent = async (req: AuthRequest, res: Response): Promise<vo
         ...(data.type && { type: data.type }),
         updatedAt: new Date()
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     if (!content) {

@@ -546,7 +546,7 @@ export const updateOrderStatus = async (req: AuthRequest, res: Response): Promis
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
       { status, updatedAt: new Date() },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     res.json({ ...updatedOrder!.toObject(), id: updatedOrder!._id.toString() });
@@ -584,7 +584,7 @@ export const cancelOrder = async (req: AuthRequest, res: Response): Promise<void
     const updatedOrder = await Order.findByIdAndUpdate(
       id,
       { status: 'cancelled', updatedAt: new Date() },
-      { new: true }
+      { returnDocument: 'after' }
     );
     
     res.json({ ...updatedOrder!.toObject(), id: updatedOrder!._id.toString() });
