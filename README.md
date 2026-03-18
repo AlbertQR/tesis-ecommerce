@@ -4,6 +4,16 @@
 
 **Doña Yoli** es una aplicación de comercio electrónico completa para un negocio de cafetería, pizzeria y despensa. Permite a los clientes explorar productos, agregar al carrito, realizar pedidos y gestionar su perfil.
 
+## Proyectos
+
+Este repositorio contiene múltiples proyectos:
+
+| Proyecto | Descripción | Tecnología |
+|---------|-------------|-------------|
+| **frontend** | Tienda online para clientes | Angular 21 + Tailwind |
+| **backend** | API REST del sistema | Node.js + Express |
+| **tpv** | App móvil para empleados | Flutter |
+
 ## Características
 
 ### Para Clientes
@@ -49,7 +59,7 @@
 ## Estructura del Proyecto
 
 ```
-├── frontend/                 # Aplicación Angular
+├── frontend/                 # Aplicación Angular (Tienda)
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── core/       # Servicios, interceptores, guards
@@ -68,6 +78,12 @@
 │   │   └── config/         # Configuración
 │   └── package.json
 │
+├── tpv/                     # App Flutter (Punto de Venta)
+│   ├── lib/
+│   │   ├── services/       # Servicios API y Auth
+│   │   └── screens/        # Pantallas de la app
+│   └── pubspec.yaml
+│
 ├── Screenshot.png           # Captura de pantalla del proyecto
 ├── requisitos-funcionales.md
 ├── requisitos-no-funcionales.md
@@ -79,6 +95,7 @@
 ### Prerequisites
 - Node.js 18+
 - MongoDB (local o Atlas)
+- Flutter 3.7+ (para TPV)
 - npm o yarn
 
 ### Backend
@@ -101,6 +118,16 @@ npm start
 ```
 
 La aplicación estará disponible en `http://localhost:4200`
+
+### TPV (App Móvil)
+
+```bash
+cd tpv
+flutter pub get
+flutter run
+```
+
+La app móvil estará disponible en el dispositivo/emulador.
 
 ## Credenciales de Prueba
 

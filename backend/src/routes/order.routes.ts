@@ -14,7 +14,7 @@ import {
   verifyOrderByQR,
   cancelOrder
 } from '../controllers/order.controller.js';
-import { authenticate, authorizeAdmin } from '../middleware/auth.js';
+import { authenticate, authorizeAdmin, authorizeStaff } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -33,7 +33,7 @@ router.get('/orders/:id/invoice', authenticate, downloadInvoice);
 
 router.post('/verify-qr', verifyOrderByQR);
 
-router.get('/admin/orders', authenticate, authorizeAdmin, getAllOrders);
-router.put('/admin/orders/:id/status', authenticate, authorizeAdmin, updateOrderStatus);
+router.get('/admin/orders', authenticate, authorizeStaff, getAllOrders);
+router.put('/admin/orders/:id/status', authenticate, authorizeStaff, updateOrderStatus);
 
 export default router;

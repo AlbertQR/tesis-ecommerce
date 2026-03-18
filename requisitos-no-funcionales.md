@@ -45,6 +45,13 @@
 - **Base de datos**: MongoDB con Mongoose
 - **Testing**: Vitest
 
+### 2.3 TPV (Flutter)
+- **Framework**: Flutter 3.7+
+- **Estado**: Provider
+- **Escaneo QR**: mobile_scanner
+- **HTTP**: http package
+- **Almacenamiento**: shared_preferences
+
 ---
 
 ## 3. Arquitectura
@@ -84,6 +91,20 @@ backend/src/
 ├── types/                 # Tipos TypeScript
 ├── app.ts                # Configuración de Express
 └── index.ts              # Punto de entrada
+```
+
+#### TPV (Flutter)
+```
+tpv/lib/
+├── main.dart              # Punto de entrada
+├── services/
+│   ├── api_service.dart   # Comunicación HTTP
+│   └── auth_service.dart  # Estado de autenticación
+└── screens/
+    ├── login_screen.dart   # Login de empleados
+    ├── home_screen.dart    # Menú principal
+    ├── scanner_screen.dart # Escáner QR
+    └── orders_screen.dart # Pedidos pendientes
 ```
 
 ### 3.2 Patrones de Diseño

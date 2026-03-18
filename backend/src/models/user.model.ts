@@ -21,7 +21,7 @@ interface ICartItem {
  * @property {string} name - Nombre completo del usuario
  * @property {string} phone - Número de teléfono de contacto
  * @property {string} [avatar] - URL opcional de la foto de perfil
- * @property {'user' | 'admin'} role - Rol del usuario en el sistema
+ * @property {'user' | 'admin' | 'employee' | 'delivery'} role - Rol del usuario en el sistema
  * @property {ICartItem[]} cart - Carrito de compras del usuario
  * @property {Date} cartExpiresAt - Fecha de expiración del carrito (30 min)
  * @property {Date} createdAt - Fecha de creación del registro
@@ -33,7 +33,7 @@ export interface IUser extends Document {
   name: string;
   phone: string;
   avatar?: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'employee' | 'delivery';
   favorites: string[];
   cart: ICartItem[];
   cartExpiresAt?: Date;
@@ -56,7 +56,7 @@ const UserSchema = new Schema<IUser>({
   name: { type: String, required: true },
   phone: { type: String, required: true },
   avatar: { type: String },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  role: { type: String, enum: ['user', 'admin', 'employee', 'delivery'], default: 'user' },
   favorites: { type: [String], default: [] },
   cart: { type: Schema.Types.Mixed as any, default: [] },
   cartExpiresAt: { type: Date },

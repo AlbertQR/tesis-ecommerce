@@ -5,6 +5,7 @@
 Full-stack cafe/restaurant website project ("Doña Yoli") with:
 - **Frontend**: Angular 21 + Tailwind CSS 4
 - **Backend**: Node.js + Express + TypeScript
+- **TPV**: Flutter mobile app for employees
 
 ## Build, Lint, and Test Commands
 
@@ -51,6 +52,21 @@ npm start
 npm test           # Run tests in watch mode
 npm run test:run   # Run tests once
 npm run test:coverage  # Run tests with coverage
+```
+
+### TPV (Flutter App)
+
+```bash
+cd tpv
+
+# Install dependencies
+flutter pub get
+
+# Run on emulator/device
+flutter run
+
+# Build APK
+flutter build apk --release
 ```
 
 ### Running Tests
@@ -232,6 +248,20 @@ npx prettier --write backend/src/**/*.ts
 │   ├── tsconfig.spec.json
 │   └── .prettierrc
 │
+├── tpv/                       # Flutter TPV App
+│   ├── lib/
+│   │   ├── main.dart
+│   │   ├── services/
+│   │   │   ├── api_service.dart
+│   │   │   └── auth_service.dart
+│   │   └── screens/
+│   │       ├── login_screen.dart
+│   │       ├── home_screen.dart
+│   │       ├── scanner_screen.dart
+│   │       └── orders_screen.dart
+│   ├── pubspec.yaml
+│   └── test/
+│
 ├── requisitos-funcionales.md
 ├── requisitos-no-funcionales.md
 └── AGENTS.md
@@ -259,6 +289,13 @@ npx prettier --write backend/src/**/*.ts
 - multer (file uploads)
 - cors
 - dotenv
+
+### TPV (Flutter)
+- Flutter 3.7+
+- Provider (state management)
+- mobile_scanner (QR scanning)
+- http (API calls)
+- shared_preferences (local storage)
 
 ## Database
 

@@ -47,6 +47,15 @@ export const authorizeAdmin = (req: AuthRequest, res: Response, next: NextFuncti
   next();
 };
 
+export const authorizeStaff = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  const allowedRoles = ['admin', 'employee', 'delivery'];
+  if (!req.user || !allowedRoles.includes(req.user.role)) {
+    res.status(403).json({ error: 'Acceso denegado. Se requiere rol de empleado o administrador' });
+    return;
+  }
+  next();
+};
+
 export const optionalAuth = (req: AuthRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 

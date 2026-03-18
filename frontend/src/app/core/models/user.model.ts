@@ -4,7 +4,7 @@ export interface UserModel {
   email: string;
   phone?: string;
   avatar?: string;
-  role?: 'user' | 'admin';
+  role?: 'user' | 'admin' | 'employee' | 'delivery';
 }
 
 export interface Address {

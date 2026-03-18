@@ -7,7 +7,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'employee' | 'delivery';
   createdAt: string;
 }
 
@@ -23,8 +23,15 @@ export class AdminUsersComponent implements OnInit {
 
   users = signal<User[]>([]);
   searchTerm = signal('');
-  roleFilter = signal<'all' | 'user' | 'admin'>('all');
+  roleFilter = signal<'all' | 'user' | 'admin' | 'employee' | 'delivery'>('all');
   isLoading = signal(false);
+
+  roles = [
+    { value: 'user', label: 'Cliente' },
+    { value: 'admin', label: 'Administrador' },
+    { value: 'employee', label: 'Empleado' },
+    { value: 'delivery', label: 'Repartidor' }
+  ];
 
   ngOnInit(): void {
     this.loadUsers();
@@ -59,19 +66,30 @@ export class AdminUsersComponent implements OnInit {
   }
 
   getRoleLabel(role: string): string {
-    return role === 'admin' ? 'Administrador' : 'Cliente';
+    const labels: Record<string, string> = {
+      'user': 'Cliente',
+      'admin': 'Administrador',
+      'employee': 'Empleado',
+      'delivery': 'Repartidor'
+    };
+    return labels[role] || role;
   }
 
   getRoleClass(role: string): string {
-    return role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
+    const classes: Record<string, string> = {
+      'user': 'bg-blue-100 text-blue-800',
+      'admin': 'bg-purple-100 text-purple-800',
+      'employee': 'bg-green-100 text-green-800',
+      'delivery': 'bg-orange-100 text-orange-800'
+    };
+    return classes[role] || 'bg-gray-100 text-gray-800';
   }
 
   formatDate(date: string): string {
     return new Date(date).toLocaleDateString('es-CO');
   }
 
-  toggleRole(user: User): void {
-    const newRole = user.role === 'admin' ? 'user' : 'admin';
+  updateRole(user: User, newRole: string): void {
     this.http.put<User>(`${this.apiUrl}/admin/users/${user.id}`, { role: newRole }).subscribe({
       next: (updated) => {
         this.users.update(users => users.map(u => u.id === updated.id ? updated : u));

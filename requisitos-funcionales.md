@@ -485,3 +485,49 @@ Campo transactionUuid para tracking de transacción EnZona
 - Top 5 productos más vendidos
 - Lista de pedidos recientes
 - Datos en tiempo real desde `/api/dashboard/stats`
+
+---
+
+## 19. TPV - Aplicación Móvil (IMPLEMENTADO)
+
+### 19.1 Descripción
+Aplicación móvil Flutter para que los empleados y repartidores puedan escanear códigos QR de las facturas y actualizar el estado de los pedidos.
+
+### 19.2 Funcionalidades
+- **Login de empleados**: Autenticación con credenciales del sistema
+- **Escaneo de QR**: Uso de la cámara para escanear códigos QR
+- **Verificación de pedidos**: Al escanear, el sistema verifica y actualiza el estado a "entregado"
+- **Lista de pedidos**: Visualización de pedidos pendientes
+- **Cerrar sesión**: Opción para cerrar sesión
+
+### 19.3 Flujo de Uso
+1. El empleado/repartidor inicia sesión en la app TPV
+2. Selecciona "Escanear QR" del menú
+3. Apunta la cámara al código QR de la factura del cliente
+4. El sistema verifica el pedido y actualiza el estado a "entregado"
+5. Se muestra confirmación del cambio de estado
+
+### 19.4 Tecnologías
+- Flutter 3.7+
+- Provider para gestión de estado
+- mobile_scanner para escaneo de QR
+- http para comunicación con API
+
+### 19.5 Estructura
+```
+tpv/lib/
+├── main.dart              # Punto de entrada
+├── services/
+│   ├── api_service.dart   # Comunicación con API REST
+│   └── auth_service.dart  # Autenticación
+└── screens/
+    ├── login_screen.dart   # Login de empleados
+    ├── home_screen.dart    # Menú principal
+    ├── scanner_screen.dart # Escáner QR
+    └── orders_screen.dart # Lista de pedidos
+```
+
+### 19.6 API Endpoints Utilizados
+- `POST /api/auth/login` - Autenticación
+- `POST /api/verify-qr` - Verificación de pedido por QR
+- `GET /api/admin/orders` - Lista de pedidos (admin/empleado)
