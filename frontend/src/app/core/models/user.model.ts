@@ -42,9 +42,3 @@ export interface OrderItem {
   unitPrice: number;
   totalPrice?: number;
 }
-
-export interface UserProfile {
-  user: UserModel;
-  addresses: Address[];
-  orders: Order[];
-}

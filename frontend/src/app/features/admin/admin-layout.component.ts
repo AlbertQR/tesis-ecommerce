@@ -4,7 +4,6 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-admin-layout',
   imports: [RouterLink, RouterLinkActive, RouterOutlet],
-  templateUrl: './admin-layout.component.html',
-  styleUrl: './admin-layout.component.css',
+  templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {}

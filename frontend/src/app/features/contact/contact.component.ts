@@ -9,9 +9,6 @@ import { environment } from '@environments/environment';
   templateUrl: './contact.component.html'
 })
 export class ContactComponent {
-  private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl;
-  
   formData = {
     name: '',
     email: '',
@@ -30,6 +27,8 @@ export class ContactComponent {
     { value: 'trabajo', label: 'Trabaja con Nosotros' },
     { value: 'otro', label: 'Otro' }
   ];
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
   onSubmit(): void {
     if (!this.formData.name || !this.formData.email || !this.formData.message) {
@@ -45,18 +44,19 @@ export class ContactComponent {
     this.isSubmitting.set(true);
     this.error.set('');
 
-    this.http.post<{ message: string }>(`${this.apiUrl}/contact`, this.formData).subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        this.submitted.set(true);
-        this.formData = { name: '', email: '', phone: '', subject: '', message: '' };
-        setTimeout(() => this.submitted.set(false), 5000);
-      },
-      error: (err) => {
-        this.isSubmitting.set(false);
-        this.error.set(err.error?.error || 'Error al enviar el mensaje');
-      }
-    });
+    this.http.post<{ message: string }>(`${this.apiUrl}/contact`, this.formData)
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          this.submitted.set(true);
+          this.formData = { name: '', email: '', phone: '', subject: '', message: '' };
+          setTimeout(() => this.submitted.set(false), 5000);
+        },
+        error: (err) => {
+          this.isSubmitting.set(false);
+          this.error.set(err.error?.error || 'Error al enviar el mensaje');
+        }
+      });
   }
 
   isValidForm(): boolean {

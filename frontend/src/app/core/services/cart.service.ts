@@ -75,9 +75,7 @@ export class CartService {
   }
 
   addToCart(product: ProductModel): boolean {
-    if (!this.authService.isAuthenticated()) {
-      return false;
-    }
+    if (!this.authService.isAuthenticated()) return false;
 
     this.http.post<{ items: CartItemResponse[] }>(`${this.apiUrl}/cart`, {
       productId: product.id,
@@ -90,19 +88,15 @@ export class CartService {
   }
 
   removeFromCart(productId: string): void {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
+    if (!this.authService.isAuthenticated()) return;
 
-    this.http.delete<{ items: CartItemResponse[] }>(`${this.apiUrl}/cart/${productId}`).pipe(
-      tap(response => this.items.set(this.transformItems(response.items)))
+    this.http.delete<{ items: CartItemResponse[] }>(`${this.apiUrl}/cart/${productId}`)
+      .pipe(tap(response => this.items.set(this.transformItems(response.items)))
     ).subscribe();
   }
 
   updateQuantity(productId: string, quantity: number): void {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
+    if (!this.authService.isAuthenticated()) return;
 
     if (quantity <= 0) {
       this.removeFromCart(productId);
@@ -117,9 +111,7 @@ export class CartService {
   }
 
   clearCart(): void {
-    if (!this.authService.isAuthenticated()) {
-      return;
-    }
+    if (!this.authService.isAuthenticated()) return;
 
     this.http.delete(`${this.apiUrl}/cart`).pipe(
       tap(() => this.items.set([]))
@@ -132,17 +124,15 @@ export class CartService {
 
   checkout(addressId: string, hasDelivery: boolean) {
     const paymentMethod = this.paymentMethod();
-    return this.http.post<any>(`${this.apiUrl}/checkout`, { 
-      addressId, 
+    return this.http.post<any>(`${this.apiUrl}/checkout`, {
+      addressId,
       hasDelivery,
       paymentMethod
     }).pipe(
       tap(() => {
         // Only clear cart immediately for cash payments
         // For EnZona, cart is cleared after successful payment
-        if (paymentMethod === 'cash') {
-          this.items.set([]);
-        }
+        if (paymentMethod === 'cash') this.items.set([]);
       })
     );
   }

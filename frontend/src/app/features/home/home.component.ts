@@ -14,14 +14,13 @@ import { FormatPricePipe } from '@shared/pipes';
 })
 export class HomeComponent {
   private dataService = inject(DataService);
-  private cartService = inject(CartService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-
   categories = this.dataService.categories;
   featuredProducts = this.dataService.products;
   featuredCombo = this.dataService.featuredCombo;
   testimonials = this.dataService.testimonials;
+  private cartService = inject(CartService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   getStars(rating: number): number[] {
     return Array(Math.floor(rating)).fill(0);
@@ -36,7 +35,7 @@ export class HomeComponent {
     if (!combo) return;
 
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login']).then(() => {});
       return;
     }
 

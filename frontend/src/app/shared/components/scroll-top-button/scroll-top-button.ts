@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, HostListener, signal } from '@angular/core';
 
 @Component({
   selector: 'app-scroll-top-button',
@@ -13,13 +13,12 @@ import { Component, OnInit, signal } from '@angular/core';
     }
   `,
 })
-export class ScrollTopButton implements OnInit {
+export class ScrollTopButton {
   showScrollTop = signal(false);
 
-  ngOnInit(): void {
-    window.addEventListener('scroll', () => {
-      this.showScrollTop.set(window.scrollY > 300);
-    });
+  @HostListener('window:scroll', [])
+  onScroll(): void {
+    this.showScrollTop.set(window.scrollY > 300);
   }
 
   scrollToTop(): void {

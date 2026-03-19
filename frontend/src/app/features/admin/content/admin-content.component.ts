@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
+import { FormatDatePipe } from '@shared/pipes';
 
 interface Content {
   id: string;
@@ -23,7 +24,7 @@ interface Testimonial {
 
 @Component({
   selector: 'app-admin-content',
-  imports: [FormsModule],
+  imports: [FormsModule, FormatDatePipe],
   templateUrl: './admin-content.component.html'
 })
 export class AdminContentComponent implements OnInit {
@@ -161,10 +162,6 @@ export class AdminContentComponent implements OnInit {
         }
       });
     }
-  }
-
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-CO');
   }
 
   onImageSelected(event: Event, type: 'content' | 'testimonial'): void {

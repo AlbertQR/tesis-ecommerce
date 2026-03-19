@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { UserService } from '@core/services/user.service';
 import { Order, OrderStatus } from '@core/models/user.model';
 import { FormatPricePipe } from '@shared/pipes';
+import { FormatDatePipe } from '@shared/pipes/format-date-pipe';
 
 @Component({
   selector: 'app-orders',
-  imports: [RouterLink, FormatPricePipe],
+  imports: [RouterLink, FormatPricePipe, FormatDatePipe],
   templateUrl: './orders.component.html'
 })
 export class OrdersComponent {
@@ -38,14 +39,6 @@ export class OrdersComponent {
 
   getStatusClass(status: OrderStatus): string {
     return this.userService.getStatusClass(status);
-  }
-
-  formatDate(date: string | Date): string {
-    return new Date(date).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
   }
 
   downloadInvoice(orderId: string): void {

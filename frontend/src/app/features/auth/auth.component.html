@@ -8,18 +8,34 @@
       </a>
       <h2 class="mt-6 text-3xl font-bold text-gray-800">
         @switch (currentMode) {
-          @case ('login') { Bienvenido de nuevo }
-          @case ('register') { Crear cuenta }
-          @case ('forgot') { Recuperar contraseña }
-          @case ('reset') { Nueva contraseña }
+          @case ('login') {
+            Bienvenido de nuevo
+          }
+          @case ('register') {
+            Crear cuenta
+          }
+          @case ('forgot') {
+            Recuperar contraseña
+          }
+          @case ('reset') {
+            Nueva contraseña
+          }
         }
       </h2>
       <p class="mt-2 text-gray-600">
         @switch (currentMode) {
-          @case ('login') { Ingresa a tu cuenta }
-          @case ('register') { Regístrate para pedidos rápidos }
-          @case ('forgot') { Ingresa tu email para recuperar tu contraseña }
-          @case ('reset') { Crea una nueva contraseña }
+          @case ('login') {
+            Ingresa a tu cuenta
+          }
+          @case ('register') {
+            Regístrate para pedidos rápidos
+          }
+          @case ('forgot') {
+            Ingresa tu email para recuperar tu contraseña
+          }
+          @case ('reset') {
+            Crea una nueva contraseña
+          }
         }
       </p>
     </div>
@@ -35,7 +51,8 @@
     <!-- Success Message -->
     @if (successMessage()) {
       <div
-        class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+        class="mb-4 bg-green-100 border border-green-400
+        text-green-700 px-4 py-3 rounded">
         {{ successMessage() }}
       </div>
     }
@@ -46,30 +63,42 @@
           <!-- Login Form -->
           <form (ngSubmit)="onLogin()" class="space-y-4">
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-              <input type="email" [(ngModel)]="loginForm.email" name="email"
-                     required email
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                     placeholder="tu@email.com">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Email *
+              </label>
+              <input
+                type="email" [(ngModel)]="loginForm.email" name="email"
+                required email
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                     focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="tu@email.com">
               @if (loginForm.email && !isValidEmail(loginForm.email)) {
                 <p class="text-red-500 text-sm mt-1">Ingresa un email válido</p>
               }
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña *</label>
-              <input type="password" [(ngModel)]="loginForm.password"
-                     name="password" required minlength="6"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                     placeholder="••••••••">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Contraseña *
+              </label>
+              <input
+                type="password" [(ngModel)]="loginForm.password"
+                name="password" required minlength="6"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                 focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="••••••••">
             </div>
             <div class="flex items-center justify-center">
-              <button type="button" (click)="showForgot()" class="text-sm text-brand hover:underline">
+              <button type="button"
+                      (click)="showForgot()"
+                      class="text-sm text-brand hover:underline">
                 ¿Olvidaste tu contraseña?
               </button>
             </div>
-            <button type="submit" [disabled]="isLoading() || !loginForm.email || !loginForm.password"
-                    class="w-full bg-brand text-white font-bold py-3 rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50">
+            <button
+              type="submit"
+              [disabled]="isLoading() || !loginForm.email || !loginForm.password"
+              class="w-full bg-brand text-white font-bold py-3 rounded-lg
+              hover:bg-brand-hover transition-colors disabled:opacity-50">
               @if (isLoading()) {
                 <i
                   class="fa-solid fa-circle-notch fa-spin mr-2"></i> Ingresando...
@@ -83,61 +112,90 @@
           <!-- Register Form -->
           <form (ngSubmit)="onRegister()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo *</label>
-              <input type="text" [(ngModel)]="registerForm.name" name="name"
-                     required minlength="2" maxlength="100"
-                     pattern="^[a-zA-Z\sáéíóúÁÉÍÓÚñÑ]+$"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                     placeholder="Juan Pérez">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Nombre completo *
+              </label>
+              <input
+                type="text" [(ngModel)]="registerForm.name" name="name"
+                required minlength="2" maxlength="100"
+                pattern="^[a-zA-Z\sáéíóúÁÉÍÓÚñÑ]+$"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="Juan Pérez">
               @if (registerForm.name && !isValidName(registerForm.name)) {
-                <p class="text-red-500 text-sm mt-1">El nombre debe tener al menos 2 letras</p>
+                <p class="text-red-500 text-sm mt-1">
+                  El nombre debe tener al menos 2 letras
+                </p>
               }
             </div>
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-              <input type="email" [(ngModel)]="registerForm.email" name="email"
-                     required email
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                     placeholder="tu@email.com">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Email *
+              </label>
+              <input
+                type="email" [(ngModel)]="registerForm.email" name="email"
+                required email
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                    focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="tu@email.com">
             </div>
             <div>
               <label
-                class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-              <input type="tel" [(ngModel)]="registerForm.phone" name="phone"
-                     pattern="^\+?[\d\s\-()]{10,}$"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                     placeholder="+57 300 123 4567">
+                class="block text-sm font-medium text-gray-700 mb-1">
+                Teléfono
+              </label>
+              <input
+                type="tel" [(ngModel)]="registerForm.phone" name="phone"
+                pattern="^\+?[\d\s\-()]{10,}$"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="+57 300 123 4567">
               @if (registerForm.phone && !isValidPhone(registerForm.phone)) {
-                <p class="text-red-500 text-sm mt-1">Ingresa un teléfono válido (mínimo 10 dígitos)</p>
+                <p class="text-red-500 text-sm mt-1">
+                  Ingresa un teléfono válido (mínimo 10 dígitos)
+                </p>
               }
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña *</label>
-              <input type="password" [(ngModel)]="registerForm.password"
-                     name="password" required minlength="6" maxlength="50"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                     placeholder="••••••••">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Contraseña *
+              </label>
+              <input
+                type="password" [(ngModel)]="registerForm.password"
+                name="password" required minlength="6" maxlength="50"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="••••••••">
               @if (registerForm.password && registerForm.password.length < 6) {
                 <p class="text-red-500 text-sm mt-1">Mínimo 6 caracteres</p>
               }
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar
-                contraseña *</label>
-              <input type="password" [(ngModel)]="registerForm.confirmPassword"
-                     name="confirmPassword" required
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                     placeholder="••••••••">
-              @if (registerForm.confirmPassword && registerForm.password !== registerForm.confirmPassword) {
-                <p class="text-red-500 text-sm mt-1">Las contraseñas no coinciden</p>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Confirmar contraseña *
+              </label>
+              <input
+                type="password" [(ngModel)]="registerForm.confirmPassword"
+                name="confirmPassword" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="••••••••">
+              @if (registerForm.confirmPassword
+              && registerForm.password
+              !== registerForm.confirmPassword) {
+                <p class="text-red-500 text-sm mt-1">
+                  Las contraseñas no coinciden
+                </p>
               }
             </div>
-            <button type="submit" [disabled]="isLoading() || !isValidRegister()"
-                    class="w-full bg-brand text-white font-bold py-3 rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50">
+            <button
+              type="submit" [disabled]="isLoading() || !isValidRegister()"
+              class="w-full bg-brand text-white font-bold py-3
+                   rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50">
               @if (isLoading()) {
                 <i
-                  class="fa-solid fa-circle-notch fa-spin mr-2"></i> Creando cuenta...
+                  class="fa-solid fa-circle-notch fa-spin mr-2"></i>
+                Creando cuenta...
               } @else {
                 Crear cuenta
               }
@@ -149,14 +207,17 @@
           <form (ngSubmit)="onForgotPassword()" class="space-y-4">
             <div>
               <label
-                class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                class="block text-sm font-medium text-gray-700 mb-1">Email
+                *</label>
               <input type="email" [(ngModel)]="forgotEmail" name="email"
                      required email
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                      focus:ring-2 focus:ring-brand focus:border-brand"
                      placeholder="tu@email.com">
             </div>
             <button type="submit" [disabled]="isLoading() || !forgotEmail"
-                    class="w-full bg-brand text-white font-bold py-3 rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50">
+                    class="w-full bg-brand text-white font-bold py-3 rounded-lg
+                     hover:bg-brand-hover transition-colors disabled:opacity-50">
               @if (isLoading()) {
                 <i
                   class="fa-solid fa-circle-notch fa-spin mr-2"></i> Enviando...
@@ -170,31 +231,42 @@
           <!-- Reset Password Form -->
           <form (ngSubmit)="onResetPassword()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña *</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nueva
+                contraseña *</label>
               <input type="password" [(ngModel)]="resetPassword"
                      name="password" required minlength="6" maxlength="50"
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                      focus:ring-2 focus:ring-brand focus:border-brand"
                      placeholder="••••••••">
               @if (resetPassword && resetPassword.length < 6) {
                 <p class="text-red-500 text-sm mt-1">Mínimo 6 caracteres</p>
               }
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar
-                contraseña *</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Confirmar contraseña *
+              </label>
               <input type="password" [(ngModel)]="resetConfirmPassword"
                      name="confirmPassword" required
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                     focus:ring-2 focus:ring-brand focus:border-brand"
                      placeholder="••••••••">
               @if (resetConfirmPassword && resetPassword !== resetConfirmPassword) {
-                <p class="text-red-500 text-sm mt-1">Las contraseñas no coinciden</p>
+                <p class="text-red-500 text-sm mt-1">Las contraseñas no
+                  coinciden</p>
               }
             </div>
-            <button type="submit" [disabled]="isLoading() || !resetPassword || !resetConfirmPassword || resetPassword !== resetConfirmPassword"
-                    class="w-full bg-brand text-white font-bold py-3 rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50">
+            <button type="submit"
+                    [disabled]="isLoading() || !resetPassword
+                    || !resetConfirmPassword || resetPassword
+                    !== resetConfirmPassword"
+                    class="w-full bg-brand text-white font-bold py-3
+                     rounded-lg hover:bg-brand-hover transition-colors
+                     disabled:opacity-50">
               @if (isLoading()) {
                 <i
-                  class="fa-solid fa-circle-notch fa-spin mr-2"></i> Actualizando...
+                  class="fa-solid fa-circle-notch fa-spin mr-2"></i>
+                Actualizando...
               } @else {
                 Actualizar contraseña
               }
@@ -209,7 +281,8 @@
           @case ('login') {
             <p class="text-gray-600">
               ¿No tienes cuenta?
-              <button (click)="toggleMode()" class="text-brand font-medium hover:underline ml-1">
+              <button (click)="toggleMode()"
+                      class="text-brand font-medium hover:underline ml-1">
                 Regístrate
               </button>
             </p>
@@ -217,7 +290,8 @@
           @case ('register') {
             <p class="text-gray-600">
               ¿Ya tienes cuenta?
-              <button (click)="toggleMode()" class="text-brand font-medium hover:underline ml-1">
+              <button (click)="toggleMode()"
+                      class="text-brand font-medium hover:underline ml-1">
                 Ingresa
               </button>
             </p>
@@ -225,7 +299,8 @@
           @case ('forgot') {
             <p class="text-gray-600">
               ¿Recordaste tu contraseña?
-              <button (click)="backToLogin()" class="text-brand font-medium hover:underline ml-1">
+              <button (click)="backToLogin()"
+                      class="text-brand font-medium hover:underline ml-1">
                 Ingresa
               </button>
             </p>
@@ -233,7 +308,8 @@
           @case ('reset') {
             <p class="text-gray-600">
               ¿Prefieres solicitar un nuevo enlace?
-              <button (click)="backToLogin()" class="text-brand font-medium hover:underline ml-1">
+              <button (click)="backToLogin()"
+                      class="text-brand font-medium hover:underline ml-1">
                 Volver
               </button>
             </p>

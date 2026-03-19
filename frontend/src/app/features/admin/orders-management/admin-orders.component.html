@@ -48,7 +48,7 @@
           @for (order of filteredOrders(); track order.id) {
             <tr class="border-t hover:bg-gray-50">
               <td class="py-3 px-4 font-medium">{{ order.id }}</td>
-              <td class="py-3 px-4 text-gray-600">{{ formatDate(order.date) }}</td>
+              <td class="py-3 px-4 text-gray-600">{{ order.date | formatDate }}</td>
               <td class="py-3 px-4 font-bold text-brand">{{ order.total | formatPrice }}</td>
               <td class="py-3 px-4">
                 <span class="px-2 py-1 rounded text-xs font-medium {{ getStatusClass(order.status) }}">
@@ -102,7 +102,7 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <p class="text-sm text-gray-500">Fecha</p>
-              <p class="font-medium">{{ formatDate(selectedOrder()!.date) }}</p>
+              <p class="font-medium">{{ selectedOrder()!.date | formatDate }}</p>
             </div>
             <div>
               <p class="text-sm text-gray-500">Estado</p>

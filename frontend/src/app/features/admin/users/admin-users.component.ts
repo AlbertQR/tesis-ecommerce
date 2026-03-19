@@ -1,6 +1,8 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { FormatDatePipe } from '@shared/pipes';
+import { environment } from '@environments/environment';
 
 interface User {
   id: string;
@@ -13,25 +15,16 @@ interface User {
 
 @Component({
   selector: 'app-admin-users',
-  imports: [FormsModule],
-  templateUrl: './admin-users.component.html',
-  styleUrl: './admin-users.component.css'
+  imports: [FormsModule, FormatDatePipe],
+  templateUrl: './admin-users.component.html'
 })
 export class AdminUsersComponent implements OnInit {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/users';
-
   users = signal<User[]>([]);
   searchTerm = signal('');
   roleFilter = signal<'all' | 'user' | 'admin' | 'employee' | 'delivery'>('all');
   isLoading = signal(false);
-
-  roles = [
-    { value: 'user', label: 'Cliente' },
-    { value: 'admin', label: 'Administrador' },
-    { value: 'employee', label: 'Empleado' },
-    { value: 'delivery', label: 'Repartidor' }
-  ];
+  private http = inject(HttpClient);
+  private apiUrl = environment.usersEndpoint;
 
   ngOnInit(): void {
     this.loadUsers();
@@ -54,14 +47,13 @@ export class AdminUsersComponent implements OnInit {
     let result = this.users();
     if (this.searchTerm()) {
       const search = this.searchTerm().toLowerCase();
-      result = result.filter(u => 
-        u.name.toLowerCase().includes(search) || 
+      result = result.filter(u =>
+        u.name.toLowerCase().includes(search) ||
         u.email.toLowerCase().includes(search)
       );
     }
-    if (this.roleFilter() !== 'all') {
+    if (this.roleFilter() !== 'all')
       result = result.filter(u => u.role === this.roleFilter());
-    }
     return result;
   }
 
@@ -83,10 +75,6 @@ export class AdminUsersComponent implements OnInit {
       'delivery': 'bg-orange-100 text-orange-800'
     };
     return classes[role] || 'bg-gray-100 text-gray-800';
-  }
-
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-CO');
   }
 
   updateRole(user: User, newRole: string): void {

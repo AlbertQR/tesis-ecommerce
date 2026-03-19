@@ -5,7 +5,8 @@
       <!-- Logo -->
       <a class="flex items-center gap-2 group" routerLink="/">
         <div
-          class="w-20 h-4 rounded-full flex items-center justify-center text-white text-xl font-bold">
+          class="w-20 h-4 rounded-full flex items-center justify-center
+          text-white text-xl font-bold">
           <img alt="Doña Yoli" src="logo.png">
         </div>
       </a>
@@ -23,23 +24,22 @@
         <a class="hover:text-brand transition-colors" routerLink="/contacto"
            routerLinkActive="text-brand">Contacto</a>
         <div class="relative group">
-          <button
-                  class="hover:text-brand transition-colors cursor-pointer">Información Legal <i class="fa-solid fa-chevron-down text-xs"></i>
+          <button class="hover:text-brand transition-colors cursor-pointer">
+            Información Legal
+            <i class="fa-solid fa-chevron-down text-xs"></i>
           </button>
-          <div 
-             class="absolute left-0 mt-0 pt-8 w-48 bg-white shadow-lg rounded-lg py-2 hidden group-hover:block z-50">
+          <div
+            class="absolute left-0 mt-0 pt-8 w-52 bg-white shadow-lg
+             rounded-lg py-2 hidden group-hover:block z-50">
             <a (click)="closeLegalMenu()"
                class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-               routerLink="/terminos">Términos
-              y Condiciones</a>
+               routerLink="/terminos">Términos y Condiciones</a>
             <a (click)="closeLegalMenu()"
                class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-               routerLink="/privacidad">Política
-              de Privacidad</a>
+               routerLink="/privacidad">Política de Privacidad</a>
             <a (click)="closeLegalMenu()"
                class="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-               routerLink="/devoluciones">Política
-              de Devoluciones</a>
+               routerLink="/devoluciones">Política de Devoluciones</a>
           </div>
         </div>
       </div>
@@ -56,7 +56,8 @@
           <i class="fa-solid fa-cart-shopping text-xl"></i>
           @if (cartCount() > 0) {
             <span
-              class="absolute -top-2 -right-2 bg-brand text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+              class="absolute -top-2 -right-2 bg-brand text-white text-xs
+              font-bold w-5 h-5 rounded-full flex items-center justify-center">
               {{ cartCount() }}
             </span>
           }
@@ -69,7 +70,8 @@
             <i class="fa-solid fa-heart text-xl"></i>
             @if (favoriteCount() > 0) {
               <span
-                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs
+                font-bold w-5 h-5 rounded-full flex items-center justify-center">
                 {{ favoriteCount() }}
               </span>
             }

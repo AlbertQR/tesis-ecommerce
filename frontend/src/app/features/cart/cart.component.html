@@ -7,7 +7,8 @@
         <i class="fa-solid fa-cart-shopping text-6xl text-gray-300 mb-4"></i>
         <p class="text-gray-600 text-lg mb-6">Tu carrito está vacío</p>
         <a routerLink="/productos"
-           class="inline-block bg-brand text-white font-bold py-3 px-8 rounded-full hover:bg-brand-hover transition-colors">
+           class="inline-block bg-brand text-white font-bold py-3 px-8
+            rounded-full hover:bg-brand-hover transition-colors">
           Ver Productos
         </a>
       </div>
@@ -20,11 +21,17 @@
               <img [src]="item.product.image" [alt]="item.product.name"
                    class="w-24 h-24 object-cover rounded-lg">
               <div class="flex-1">
-                <h3 class="font-bold text-gray-800">{{ item.product.name }}</h3>
+                <h3 class="font-bold text-gray-800">
+                  {{ item.product.name }}
+                </h3>
                 <p
-                  class="text-gray-600 text-sm">{{ item.product.description }}</p>
+                  class="text-gray-600 text-sm">
+                  {{ item.product.description }}
+                </p>
                 <p
-                  class="text-brand font-bold mt-2">{{ item.product.price | formatPrice }}</p>
+                  class="text-brand font-bold mt-2">
+                  {{ item.product.price | formatPrice }}
+                </p>
               </div>
               <div class="flex flex-col items-end justify-between">
                 <button (click)="removeFromCart(item.product.id)"
@@ -34,14 +41,16 @@
                 <div class="flex items-center gap-2">
                   <button
                     (click)="updateQuantity(item.product.id, item.quantity - 1)"
-                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200
+                     flex items-center justify-center">
                     <i class="fa-solid fa-minus"></i>
                   </button>
                   <span
                     class="w-8 text-center font-bold">{{ item.quantity }}</span>
                   <button
                     (click)="updateQuantity(item.product.id, item.quantity + 1)"
-                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200
+                    flex items-center justify-center">
                     <i class="fa-solid fa-plus"></i>
                   </button>
                 </div>
@@ -73,13 +82,14 @@
             @if (hasDelivery()) {
               <div class="mb-4 p-3 bg-gray-50 rounded-lg">
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                  <i class="fa-solid fa-location-dot"></i> Seleccionar dirección
-                  de entrega
+                  <i class="fa-solid fa-location-dot"></i>
+                  Seleccionar dirección de entrega
                 </label>
                 @if (addresses().length > 0) {
                   <select (change)="onAddressChange()"
                           [(ngModel)]="selectedAddressId"
-                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                          class="w-full px-3 py-2 border border-gray-300
+                          rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
                     <option [ngValue]="null">Selecciona una dirección</option>
                     @for (address of addresses(); track address.id) {
                       <option [ngValue]="address.id">
@@ -101,8 +111,9 @@
                 } @else {
                   <p class="text-sm text-gray-500">
                     No tienes direcciones guardadas.
-                    <a routerLink="/perfil" class="text-brand hover:underline">Agregar
-                      dirección</a>
+                    <a routerLink="/perfil" class="text-brand hover:underline">
+                      Agregar dirección
+                    </a>
                   </p>
                 }
               </div>
@@ -114,13 +125,15 @@
               </label>
               <div class="flex gap-4">
                 <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'cash'" 
+                  <input type="radio" name="paymentMethod"
+                         [checked]="paymentMethod() === 'cash'"
                          (change)="onPaymentMethodChange('cash')"
                          class="text-brand focus:ring-brand">
                   <span class="ml-2 text-sm text-gray-700">Efectivo</span>
                 </label>
                 <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="paymentMethod" [checked]="paymentMethod() === 'enzona'" 
+                  <input type="radio" name="paymentMethod"
+                         [checked]="paymentMethod() === 'enzona'"
                          (change)="onPaymentMethodChange('enzona')"
                          class="text-brand focus:ring-brand">
                   <span class="ml-2 text-sm text-gray-700">EnZona (Digital)</span>
@@ -136,7 +149,9 @@
             </div>
             <button (click)="processCheckout()"
                     [disabled]="hasDelivery() && !selectedAddressId()"
-                    class="w-full bg-brand text-white font-bold py-3 rounded-full hover:bg-brand-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="w-full bg-brand text-white font-bold py-3
+                    rounded-full hover:bg-brand-hover transition-colors
+                    disabled:opacity-50 disabled:cursor-not-allowed">
               Proceder al Pago
             </button>
             <button (click)="clearCart()"

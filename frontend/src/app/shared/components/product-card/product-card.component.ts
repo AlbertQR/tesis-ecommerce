@@ -13,7 +13,6 @@ import { FormatPricePipe } from '@shared/pipes';
 })
 export class ProductCardComponent {
   product = input.required<ProductModel>();
-
   private cartService = inject(CartService);
   private authService = inject(AuthService);
   private favoritesService = inject(FavoritesService);
@@ -31,7 +30,8 @@ export class ProductCardComponent {
 
   viewProduct(event: Event): void {
     (event.target as HTMLElement).closest('button')?.blur();
-    this.router.navigate(['/producto', this.product().id]);
+    this.router.navigate(['/producto', this.product().id]).then(() => {
+    });
   }
 
   toggleFavorite(event: Event): void {

@@ -22,13 +22,12 @@ export class UserService {
   readonly user = computed(() => this.userProfileSignal());
   private addressesSignal = signal<AddressModel[]>([]);
   readonly addresses = this.addressesSignal.asReadonly();
-  readonly defaultAddress = computed(() =>
-    this.addressesSignal().find(a => a.isDefault) || this.addressesSignal()[0]
-  );
   private ordersSignal = signal<OrderModel[]>([]);
   readonly orders = this.ordersSignal.asReadonly();
   readonly pendingOrders = computed(() =>
-    this.ordersSignal().filter(o => ['pending', 'confirmed', 'preparing', 'ready'].includes(o.status as string))
+    this.ordersSignal()
+      .filter(o => ['pending', 'confirmed', 'preparing', 'ready']
+        .includes(o.status as string))
   );
   readonly completedOrders = computed(() =>
     this.ordersSignal().filter(o => o.status === 'delivered')
@@ -55,9 +54,8 @@ export class UserService {
 
   downloadInvoice(orderId: string): void {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token)
       window.open(`${this.ordersApiUrl}/${orderId}/invoice?token=${token}`, '_blank');
-    }
   }
 
   cancelOrder(orderId: string): void {
@@ -142,18 +140,18 @@ export class UserService {
     return classes[status as string] || '';
   }
 
+  loadUserProfile(): void {
+    this.http.get<{ user: UserModel }>(`${this.usersUrl}/profile`).pipe(
+      tap(response => this.userProfileSignal.set(response.user)),
+      catchError(() => of(null))
+    ).subscribe();
+  }
+
   private loadData(): void {
     if (this.authService.isAuthenticated()) {
       this.loadUserProfile();
       this.loadAddresses();
       this.loadOrders();
     }
-  }
-
-  loadUserProfile(): void {
-    this.http.get<{ user: UserModel }>(`${this.usersUrl}/profile`).pipe(
-      tap(response => this.userProfileSignal.set(response.user)),
-      catchError(() => of(null))
-    ).subscribe();
   }
 }

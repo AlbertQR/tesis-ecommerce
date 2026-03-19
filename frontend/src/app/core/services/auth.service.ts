@@ -24,7 +24,6 @@ export interface AuthResponse {
 })
 export class AuthService {
   private apiUrl = environment.authEndpoint;
-
   private userSignal = signal<UserModel | null>(null);
   readonly user = this.userSignal.asReadonly();
   readonly isAdmin = computed(() => this.userSignal()?.role === 'admin');
@@ -70,7 +69,8 @@ export class AuthService {
     this.tokenSignal.set(null);
     this.userSignal.set(null);
     localStorage.removeItem('token');
-    this.router.navigate(['/']).then(() => {});
+    this.router.navigate(['/']).then(() => {
+    });
   }
 
   refreshUser() {
@@ -86,7 +86,10 @@ export class AuthService {
   }
 
   resetPassword(token: string, password: string) {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, { token, password });
+    return this.http.post<{ message: string }>(`${this.apiUrl}/reset-password`, {
+      token,
+      password
+    });
   }
 
   private loadFromStorage(): void {
@@ -118,9 +121,7 @@ export class AuthService {
     if (!token) return false;
     try {
       const payload = jwtDecode<JwtPayload>(token);
-      if (payload.exp) {
-        return Date.now() < payload.exp * 1000;
-      }
+      if (payload.exp) return Date.now() < payload.exp * 1000;
       return true;
     } catch {
       return false;

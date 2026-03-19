@@ -1,68 +1,91 @@
-import { Component, Input, inject, signal, OnInit, computed } from '@angular/core';
+import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ReviewsService, Review, ProductReviews } from '@core/services/reviews.service';
+import { ProductReviews, Review } from '@core/models';
+import { ReviewsService } from '@core/services/reviews.service';
 import { AuthService } from '@core/services/auth.service';
+import { FormatDatePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-product-reviews',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FormatDatePipe],
   template: `
     <div class="bg-white rounded-xl shadow-md p-6 mt-6">
       <h3 class="text-xl font-bold text-gray-800 mb-4">Reseñas del Producto</h3>
-      
+
       <!-- Rating Summary -->
       <div class="flex items-center gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
         <div class="text-center">
-          <div class="text-4xl font-bold text-brand">{{ reviewsData()?.averageRating || 0 }}</div>
+          <div class="text-4xl font-bold text-brand">
+            {{ reviewsData()?.averageRating || 0 }}
+          </div>
           <div class="flex justify-center gap-1 my-1">
-            @for (star of [1,2,3,4,5]; track star) {
-              <i [class]="star <= (reviewsData()?.averageRating || 0) ? 'fa-solid fa-star text-yellow-400' : 'fa-regular fa-star text-gray-300'"></i>
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <i
+                [class]="star <= (reviewsData()?.averageRating || 0)
+                ? 'fa-solid fa-star text-yellow-400'
+                : 'fa-regular fa-star text-gray-300'"></i>
             }
           </div>
-          <div class="text-sm text-gray-500">{{ reviewsData()?.totalReviews || 0 }} reseñas</div>
+          <div class="text-sm text-gray-500">{{ reviewsData()?.totalReviews || 0 }}
+            reseñas
+          </div>
         </div>
       </div>
 
       <!-- Add Review Button -->
       @if (isAuthenticated() && !userReview()) {
-        <button (click)="showAddReview.set(true)"
-                class="w-full mb-4 py-2 px-4 bg-brand text-white rounded-lg hover:bg-brand-hover transition-colors">
-          <i class="fa-solid fa-pen mr-2"></i> Escribir una reseña
+        <button
+          (click)="showAddReview.set(true)"
+          class="w-full mb-4 py-2 px-4 bg-brand text-white rounded-lg
+          hover:bg-brand-hover transition-colors">
+            <i class="fa-solid fa-pen mr-2"></i> Escribir una reseña
         </button>
       }
 
       <!-- Add/Edit Review Form -->
       @if (showAddReview() || userReview()) {
-        <form (ngSubmit)="submitReview()" class="mb-6 p-4 border border-gray-200 rounded-lg">
-          <h4 class="font-semibold mb-3">{{ userReview() ? 'Editar mi reseña' : 'Nueva reseña' }}</h4>
-          
+        <form
+          (ngSubmit)="submitReview()"
+          class="mb-6 p-4 border border-gray-200 rounded-lg">
+
+          <h4 class="font-semibold mb-3">
+            {{ userReview() ? 'Editar mi reseña' : 'Nueva reseña' }}
+          </h4>
+
           <div class="mb-3">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Calificación</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Calificación
+            </label>
             <div class="flex gap-2">
-              @for (star of [1,2,3,4,5]; track star) {
+              @for (star of [1, 2, 3, 4, 5]; track star) {
                 <button type="button" (click)="setRating(star)"
                         class="text-2xl transition-colors"
                         [class.text-yellow-400]="star <= (rating() || userReview()?.rating || 0)"
                         [class.text-gray-300]="star > (rating() || userReview()?.rating || 0)">
-                  <i [class]="star <= (rating() || userReview()?.rating || 0) ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
+                  <i
+                    [class]="star <= (rating() || userReview()?.rating || 0)
+                    ? 'fa-solid fa-star' : 'fa-regular fa-star'"></i>
                 </button>
               }
             </div>
           </div>
-          
+
           <div class="mb-3">
             <label class="block text-sm font-medium text-gray-700 mb-1">Comentario</label>
             <textarea [(ngModel)]="comment" name="comment" rows="3"
                       minlength="5" maxlength="500" required
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
+                      class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                      focus:ring-2 focus:ring-brand focus:border-brand"
                       placeholder="Comparte tu experiencia con este producto..."></textarea>
             <p class="text-xs text-gray-500 mt-1">{{ comment.length }}/500 caracteres</p>
           </div>
-          
+
           <div class="flex gap-2">
-            <button type="submit" [disabled]="isSubmitting() || !rating() || comment.length < 5"
-                    class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-hover disabled:opacity-50 transition-colors">
+            <button type="submit"
+                    [disabled]="isSubmitting() || !rating() || comment.length < 5"
+                    class="px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-hover
+                    disabled:opacity-50 transition-colors">
               @if (isSubmitting()) {
                 <i class="fa-solid fa-spinner fa-spin"></i>
               } @else {
@@ -70,7 +93,8 @@ import { AuthService } from '@core/services/auth.service';
               }
             </button>
             <button type="button" (click)="cancelReview()"
-                    class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                    class="px-4 py-2 border border-gray-300 rounded-lg
+                    hover:bg-gray-100 transition-colors">
               Cancelar
             </button>
           </div>
@@ -85,27 +109,32 @@ import { AuthService } from '@core/services/auth.service';
               <div>
                 <span class="font-semibold text-gray-800">{{ review.userName }}</span>
                 <div class="flex gap-1 my-1">
-                  @for (star of [1,2,3,4,5]; track star) {
-                    <i [class]="star <= review.rating ? 'fa-solid fa-star text-yellow-400 text-sm' : 'fa-regular fa-star text-gray-300 text-sm'"></i>
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+                    <i
+                      [class]="star <= review.rating
+                      ? 'fa-solid fa-star text-yellow-400 text-sm'
+                      : 'fa-regular fa-star text-gray-300 text-sm'"></i>
                   }
                 </div>
               </div>
-              <span class="text-sm text-gray-500">{{ formatDate(review.createdAt) }}</span>
+              <span class="text-sm text-gray-500">{{ review.createdAt | formatDate }}</span>
             </div>
             <p class="text-gray-600">{{ review.comment }}</p>
             @if (review.userId === currentUserId()?.id) {
               <div class="mt-2 flex gap-2">
-                <button (click)="editReview(review)" class="text-sm text-brand hover:underline">
+                <button (click)="editReview(review)"
+                        class="text-sm text-brand hover:underline">
                   <i class="fa-solid fa-pen"></i> Editar
                 </button>
-                <button (click)="deleteReview(review.id)" class="text-sm text-red-500 hover:underline">
+                <button (click)="deleteReview(review.id)"
+                        class="text-sm text-red-500 hover:underline">
                   <i class="fa-solid fa-trash"></i> Eliminar
                 </button>
               </div>
             }
           </div>
         }
-        
+
         @if (reviewList().length === 0) {
           <div class="text-center py-8 text-gray-500">
             <i class="fa-regular fa-comments text-4xl mb-3"></i>
@@ -119,23 +148,20 @@ import { AuthService } from '@core/services/auth.service';
 })
 export class ProductReviewsComponent implements OnInit {
   @Input() productId!: string;
-  
-  private reviewsService = inject(ReviewsService);
-  private authService = inject(AuthService);
-  
   reviewsData = signal<ProductReviews | null>(null);
   userReview = signal<Review | null>(null);
   showAddReview = signal(false);
   isSubmitting = signal(false);
   rating = signal<number | null>(null);
   comment = '';
-
   reviewList = computed(() => this.reviewsData()?.reviews || []);
-  
+  private reviewsService = inject(ReviewsService);
+  private authService = inject(AuthService);
+
   get isAuthenticated() {
     return this.authService.isAuthenticated;
   }
-  
+
   get currentUserId() {
     return this.authService.user;
   }
@@ -175,9 +201,9 @@ export class ProductReviewsComponent implements OnInit {
 
   submitReview(): void {
     if (!this.rating() || this.comment.length < 5) return;
-    
+
     this.isSubmitting.set(true);
-    
+
     const request = this.userReview()
       ? this.reviewsService.updateReview(this.userReview()!.id, this.rating()!, this.comment)
       : this.reviewsService.addReview(this.productId, this.rating()!, this.comment);
@@ -204,7 +230,7 @@ export class ProductReviewsComponent implements OnInit {
 
   deleteReview(reviewId: string): void {
     if (!confirm('¿Estás seguro de que quieres eliminar esta reseña?')) return;
-    
+
     this.reviewsService.deleteReview(reviewId).subscribe({
       next: () => {
         this.userReview.set(null);
@@ -226,13 +252,5 @@ export class ProductReviewsComponent implements OnInit {
       this.rating.set(null);
       this.comment = '';
     }
-  }
-
-  formatDate(date: Date | string): string {
-    return new Date(date).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
   }
 }

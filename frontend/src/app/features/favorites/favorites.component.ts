@@ -11,15 +11,14 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
 })
 export class FavoritesComponent {
   private favoritesService = inject(FavoritesService);
+  favorites = this.favoritesService.favorites;
+  favoriteCount = this.favoritesService.favoriteCount;
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  favorites = this.favoritesService.favorites;
-  favoriteCount = this.favoritesService.favoriteCount;
-
   constructor() {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
-    }
+    if (!this.authService.isAuthenticated())
+      this.router.navigate(['/login']).then(() => {
+      });
   }
 }

@@ -18,7 +18,8 @@
           <div class="space-y-6">
             <div class="flex items-start gap-4">
               <div
-                class="w-12 h-12 bg-brand/10 rounded-full flex items-center justify-center flex-shrink-0">
+                class="w-12 h-12 bg-brand/10 rounded-full flex items-center
+                justify-center flex-shrink-0">
                 <i class="fa-solid fa-location-dot text-brand"></i>
               </div>
               <div>
@@ -30,7 +31,8 @@
 
             <div class="flex items-start gap-4">
               <div
-                class="w-12 h-12 bg-brand/10 rounded-full flex items-center justify-center flex-shrink-0">
+                class="w-12 h-12 bg-brand/10 rounded-full flex items-center
+                justify-center flex-shrink-0">
                 <i class="fa-solid fa-phone text-brand"></i>
               </div>
               <div>
@@ -41,7 +43,8 @@
 
             <div class="flex items-start gap-4">
               <div
-                class="w-12 h-12 bg-brand/10 rounded-full flex items-center justify-center flex-shrink-0">
+                class="w-12 h-12 bg-brand/10 rounded-full flex items-center
+                justify-center flex-shrink-0">
                 <i class="fa-solid fa-envelope text-brand"></i>
               </div>
               <div>
@@ -53,7 +56,8 @@
 
             <div class="flex items-start gap-4">
               <div
-                class="w-12 h-12 bg-brand/10 rounded-full flex items-center justify-center flex-shrink-0">
+                class="w-12 h-12 bg-brand/10 rounded-full flex items-center
+                justify-center flex-shrink-0">
                 <i class="fa-solid fa-clock text-brand"></i>
               </div>
               <div>
@@ -67,37 +71,29 @@
           <div class="mt-8 pt-6 border-t">
             <h3 class="font-bold text-gray-800 mb-4">Síguenos en redes</h3>
             <div class="flex gap-4">
-              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center hover:bg-brand hover:text-white transition-colors"
+              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center
+              justify-center hover:bg-brand hover:text-white transition-colors"
                  href="#">
                 <i class="fa-brands fa-facebook-f"></i>
               </a>
-              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center hover:bg-brand hover:text-white transition-colors"
+              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center
+              justify-center hover:bg-brand hover:text-white transition-colors"
                  href="#">
                 <i class="fa-brands fa-instagram"></i>
               </a>
-              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center hover:bg-brand hover:text-white transition-colors"
+              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center
+              justify-center hover:bg-brand hover:text-white transition-colors"
                  href="#">
                 <i class="fa-brands fa-whatsapp"></i>
               </a>
-              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center justify-center hover:bg-brand hover:text-white transition-colors"
+              <a class="w-10 h-10 bg-brand/10 rounded-full flex items-center
+              justify-center hover:bg-brand hover:text-white transition-colors"
                  href="#">
                 <i class="fa-brands fa-twitter"></i>
               </a>
             </div>
           </div>
         </div>
-
-        <!-- Mapa -->
-        <!-- <div class="mt-6 bg-white rounded-xl shadow-md overflow-hidden h-64">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.123456789!2d-74.006!3d4.711!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDfCsDQyJzQ2LjEiTiA3NMKwMDAnMjEuNiJX!5e0!3m2!1ses!2sco!4v1234567890"
-            width="100%"
-            height="100%"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy">
-          </iframe>
-        </div> -->
       </div>
 
       <!-- Formulario de Contacto -->
@@ -105,53 +101,69 @@
         @if (submitted()) {
           <div class="text-center py-12">
             <div
-              class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              class="w-16 h-16 bg-green-100 rounded-full flex items-center
+              justify-center mx-auto mb-4">
               <i class="fa-solid fa-check text-green-600 text-2xl"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">¡Mensaje
-              Enviado!</h3>
-            <p class="text-gray-600">Gracias por contactarnos. Te responderemos
-              pronto.</p>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">
+              ¡Mensaje Enviado!
+            </h3>
+            <p class="text-gray-600">
+              Gracias por contactarnos. Te responderemos pronto.
+            </p>
           </div>
         } @else {
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Envíanos un
-            Mensaje</h2>
-          
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">
+            Envíanos un Mensaje
+          </h2>
+
           @if (error()) {
-            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4
+             py-3 rounded">
               {{ error() }}
             </div>
           }
-          
+
           <form (ngSubmit)="onSubmit()" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre
-                  *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre *
+                </label>
                 <input type="text" [(ngModel)]="formData.name" name="name"
                        required minlength="2" maxlength="100"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+                       class="w-full px-4 py-2 border border-gray-300
+                       rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                <input type="tel" [(ngModel)]="formData.phone" name="phone"
-                       pattern="^\+?[\d\s\-()]{10,}$"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                       placeholder="+57 300 123 4567">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Teléfono
+                </label>
+                <input
+                  type="tel" [(ngModel)]="formData.phone" name="phone"
+                  pattern="^\+?[\d\s\-()]{10,}$"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                       focus:ring-2 focus:ring-brand focus:border-brand"
+                  placeholder="+57 300 123 4567">
               </div>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Email
                 *</label>
-              <input type="email" [(ngModel)]="formData.email" name="email"
-                     required email
-                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+              <input
+                type="email" [(ngModel)]="formData.email" name="email"
+                required email
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                 focus:ring-2 focus:ring-brand focus:border-brand">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Asunto
-                *</label>
-              <select [(ngModel)]="formData.subject" name="subject" required
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Asunto *
+              </label>
+              <select
+                [(ngModel)]="formData.subject" name="subject" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-brand focus:border-brand">
                 <option value="">Selecciona un asunto</option>
                 @for (subject of subjects; track subject.value) {
                   <option [value]="subject.value">{{ subject.label }}</option>
@@ -159,16 +171,23 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Mensaje
-                *</label>
-              <textarea [(ngModel)]="formData.message" name="message" rows="5"
-                        required minlength="10" maxlength="1000"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand focus:border-brand"
-                        placeholder="Escribe tu mensaje aquí..."></textarea>
-              <p class="text-xs text-gray-500 mt-1">{{ formData.message.length }}/1000 caracteres</p>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Mensaje *
+              </label>
+              <textarea
+                [(ngModel)]="formData.message" name="message" rows="5"
+                required minlength="10" maxlength="1000"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="Escribe tu mensaje aquí..."></textarea>
+              <p class="text-xs text-gray-500 mt-1">
+                {{ formData.message.length }}/1000 caracteres
+              </p>
             </div>
-            <button type="submit" [disabled]="isSubmitting() || !isValidForm()"
-                    class="w-full bg-brand text-white font-bold py-3 rounded-lg hover:bg-brand-hover transition-colors disabled:opacity-50">
+            <button
+              type="submit" [disabled]="isSubmitting() || !isValidForm()"
+              class="w-full bg-brand text-white font-bold py-3 rounded-lg
+                  hover:bg-brand-hover transition-colors disabled:opacity-50">
               @if (isSubmitting()) {
                 <i
                   class="fa-solid fa-circle-notch fa-spin mr-2"></i> Enviando...

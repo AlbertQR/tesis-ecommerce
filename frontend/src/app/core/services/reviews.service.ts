@@ -1,24 +1,8 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '@environments/environment';
-
-export interface Review {
-  id: string;
-  productId: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  createdAt: Date | string;
-}
-
-export interface ProductReviews {
-  reviews: Review[];
-  averageRating: number;
-  totalReviews: number;
-}
+import { ProductReviews, Review } from '@core/models';
 
 @Injectable({
   providedIn: 'root'
@@ -33,9 +17,7 @@ export class ReviewsService {
   }
 
   getUserReview(productId: string) {
-    if (!this.authService.isAuthenticated()) {
-      return null;
-    }
+    if (!this.authService.isAuthenticated()) return null;
     return this.http.get<Review | null>(`${this.apiUrl}/products/${productId}/reviews/me`);
   }
 

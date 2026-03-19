@@ -20,10 +20,6 @@ export class AuthComponent {
   resetPassword = '';
   resetConfirmPassword = '';
   resetToken = '';
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-
   loginForm = {
     email: '',
     password: ''
@@ -35,6 +31,9 @@ export class AuthComponent {
     password: '',
     confirmPassword: ''
   };
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   constructor() {
     this.route.queryParams.subscribe(params => {

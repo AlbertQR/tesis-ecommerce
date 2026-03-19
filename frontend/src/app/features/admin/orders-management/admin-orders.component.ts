@@ -3,11 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Order, OrderStatus } from '@core/models/user.model';
 import { environment } from '@environments/environment';
-import { FormatPricePipe } from '@shared/pipes';
+import { FormatPricePipe, FormatDatePipe } from '@shared/pipes';
+import { getStatusLabel, getStatusClass } from '@shared/utils/order-helpers';
 
 @Component({
   selector: 'app-admin-orders',
-  imports: [FormsModule, FormatPricePipe],
+  imports: [FormsModule, FormatPricePipe, FormatDatePipe],
   templateUrl: './admin-orders.component.html'
 })
 export class AdminOrdersComponent implements OnInit {
@@ -50,39 +51,8 @@ export class AdminOrdersComponent implements OnInit {
     return result;
   }
 
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
-  getStatusLabel(status: OrderStatus): string {
-    const labels: Record<OrderStatus, string> = {
-      pending: 'Pendiente',
-      confirmed: 'Confirmado',
-      preparing: 'Preparando',
-      ready: 'Listo',
-      delivered: 'Entregado',
-      cancelled: 'Cancelado'
-    };
-    return labels[status];
-  }
-
-  getStatusClass(status: OrderStatus): string {
-    const classes: Record<OrderStatus, string> = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      confirmed: 'bg-blue-100 text-blue-800',
-      preparing: 'bg-orange-100 text-orange-800',
-      ready: 'bg-green-100 text-green-800',
-      delivered: 'bg-gray-100 text-gray-800',
-      cancelled: 'bg-red-100 text-red-800'
-    };
-    return classes[status];
-  }
+  getStatusLabel = getStatusLabel;
+  getStatusClass = getStatusClass;
 
   updateStatus(orderId: string, newStatus: OrderStatus): void {
     this.http.put<Order>(`${this.apiUrl}/admin/orders/${orderId}/status`, { status: newStatus }).subscribe({

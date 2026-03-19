@@ -32,9 +32,13 @@ export class ProfileComponent {
   addresses = this.userService.addresses;
 
   startEditProfile(): void {
-    const u = this.user();
-    if (u) {
-      this.profileForm = { name: u.name ?? '', email: u.email ?? '', phone: u.phone ?? '' };
+    const user = this.user();
+    if (user) {
+      this.profileForm = {
+        name: user.name ?? '',
+        email: user.email ?? '',
+        phone: user.phone ?? ''
+      };
       this.isEditingProfile.set(true);
     }
   }
@@ -91,9 +95,8 @@ export class ProfileComponent {
   }
 
   deleteAddress(id: string): void {
-    if (confirm('¿Estás seguro de eliminar esta dirección?')) {
+    if (confirm('¿Estás seguro de eliminar esta dirección?'))
       this.userService.deleteAddress(id);
-    }
   }
 
   setDefaultAddress(id: string): void {

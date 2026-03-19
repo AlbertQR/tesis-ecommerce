@@ -33,7 +33,7 @@
                 <h4 class="font-medium">{{ content.key }}</h4>
                 <p class="text-sm text-gray-500 mt-1">{{ content.value }}</p>
                 <p class="text-xs text-gray-400 mt-2">
-                  Actualizado: {{ formatDate(content.updatedAt) }}</p>
+                  Actualizado: {{ content.updatedAt | formatDate }}</p>
               </div>
               <div class="flex gap-2">
                 <button (click)="startEditContent(content)"

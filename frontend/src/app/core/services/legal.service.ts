@@ -1,14 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
-
-export interface LegalDocument {
-  id: string;
-  type: 'terms' | 'privacy' | 'returns';
-  title: string;
-  content: string;
-  isActive: boolean;
-}
+import { LegalDocument } from '@core/models';
 
 @Injectable({
   providedIn: 'root'

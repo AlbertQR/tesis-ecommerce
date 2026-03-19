@@ -3,18 +3,19 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Order } from '@core/models/user.model';
 import { UserService } from '@core/services/user.service';
-import { FormatPricePipe } from '@shared/pipes';
+import { FormatPricePipe, FormatDatePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-order-confirmation',
-  imports: [CommonModule, RouterLink, FormatPricePipe],
+  imports: [CommonModule, RouterLink, FormatPricePipe, FormatDatePipe],
   template: `
     <section class="py-16 bg-gray-50 min-h-screen">
       <div class="container mx-auto px-4">
         @if (isLoading()) {
           <div class="text-center py-16">
             <div
-              class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand"></div>
+              class="inline-block animate-spin rounded-full h-12 w-12 border-b-2
+              border-brand"></div>
             <p class="mt-4 text-gray-600">Cargando...</p>
           </div>
         } @else if (order()) {
@@ -22,22 +23,29 @@ import { FormatPricePipe } from '@shared/pipes';
           <div class="max-w-2xl mx-auto">
             <!-- Estado del pago -->
             @if (paymentStatus() === 'success') {
-              <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+              <div
+                class="bg-green-100 border border-green-400 text-green-700 px-4
+                py-3 rounded mb-6">
                 <i class="fa-solid fa-check-circle mr-2"></i>
                 ¡Pago confirmado! Tu pedido está siendo procesado.
               </div>
             } @else if (paymentStatus() === 'cancelled') {
-              <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
+              <div
+                class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4
+                py-3 rounded mb-6">
                 <i class="fa-solid fa-exclamation-triangle mr-2"></i>
-                El pago fue cancelado. Puedes intentar nuevamente desde tu historial de pedidos.
+                El pago fue cancelado. Puedes intentar nuevamente desde
+                tu historial de pedidos.
               </div>
             } @else if (paymentStatus() === 'error') {
-              <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+              <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3
+                rounded mb-6">
                 <i class="fa-solid fa-x-circle mr-2"></i>
                 Hubo un problema con el pago. Por favor contacta soporte.
               </div>
             } @else if (paymentStatus() === 'pending') {
-              <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-6">
+              <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3
+                rounded mb-6">
                 <i class="fa-solid fa-clock mr-2"></i>
                 Tu pago está siendo procesado. Te notificaremos cuando se confirme.
               </div>
@@ -46,7 +54,8 @@ import { FormatPricePipe } from '@shared/pipes';
             <!-- Éxito -->
             <div class="bg-white rounded-xl shadow-md p-8 text-center mb-6">
               <div
-                class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                class="w-20 h-20 bg-green-100 rounded-full flex items-center
+                  justify-center mx-auto mb-4">
                 <i class="fa-solid fa-check text-4xl text-green-600"></i>
               </div>
               <h1 class="text-3xl font-bold text-gray-800 mb-2">¡Pedido Realizado!</h1>
@@ -65,18 +74,19 @@ import { FormatPricePipe } from '@shared/pipes';
               <div class="space-y-3">
                 <div class="flex justify-between">
                   <span class="text-gray-600">Fecha:</span>
-                  <span class="font-medium">{{ formatDate(o.date) }}</span>
+                  <span class="font-medium">{{ o.date | formatDate }}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Estado:</span>
-                  <span class="font-medium" [class]="getStatusClass(o.status)">
-                    {{ getStatusLabel(o.status) }}
+                  <span class="font-medium" [class]="userService.getStatusClass(o.status)">
+                    {{ userService.getStatusLabel(o.status) }}
                   </span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-gray-600">Tipo:</span>
                   <span class="font-medium">
-                    @if (o.deliveryAddress && o.deliveryAddress.label && o.deliveryAddress.label !== 'Recogida en tienda') {
+                    @if (o.deliveryAddress && o.deliveryAddress.label
+                    && o.deliveryAddress.label !== 'Recogida en tienda') {
                       <i class="fa-solid fa-truck"></i> Delivery
                     } @else {
                       <i class="fa-solid fa-store"></i> Recogida en tienda
@@ -89,7 +99,8 @@ import { FormatPricePipe } from '@shared/pipes';
                 </div>
               </div>
 
-              @if (o.deliveryAddress && o.deliveryAddress.label && o.deliveryAddress.label !== 'Recogida en tienda') {
+              @if (o.deliveryAddress && o.deliveryAddress.label
+              && o.deliveryAddress.label !== 'Recogida en tienda') {
                 <div class="mt-4 pt-4 border-t">
                   <h3 class="font-medium text-gray-700 mb-2">Dirección de Entrega:</h3>
                   <p class="text-gray-600">
@@ -115,7 +126,9 @@ import { FormatPricePipe } from '@shared/pipes';
                       <span class="font-medium">{{ item.productName }}</span>
                     </div>
                     <span
-                      class="text-brand font-medium">{{ (item.unitPrice * item.quantity) | formatPrice }}</span>
+                      class="text-brand font-medium">
+                      {{ (item.unitPrice * item.quantity) | formatPrice }}
+                    </span>
                   </div>
                 }
               </div>
@@ -139,11 +152,13 @@ import { FormatPricePipe } from '@shared/pipes';
             <!-- Botones -->
             <div class="flex gap-4">
               <a routerLink="/pedidos"
-                 class="flex-1 bg-brand text-white font-bold py-3 rounded-lg text-center hover:bg-brand-hover transition-colors">
+                 class="flex-1 bg-brand text-white font-bold py-3 rounded-lg
+                 text-center hover:bg-brand-hover transition-colors">
                 Ver Mis Pedidos
               </a>
               <a routerLink="/productos"
-                 class="flex-1 border border-brand text-brand font-bold py-3 rounded-lg text-center hover:bg-brand hover:text-white transition-colors">
+                 class="flex-1 border border-brand text-brand font-bold py-3
+                 rounded-lg text-center hover:bg-brand hover:text-white transition-colors">
                 Seguir Comprando
               </a>
             </div>
@@ -154,7 +169,8 @@ import { FormatPricePipe } from '@shared/pipes';
             <h2 class="text-2xl font-bold text-gray-800 mb-2">Pedido no encontrado</h2>
             <p class="text-gray-600 mb-6">No se encontró el pedido que buscas.</p>
             <a routerLink="/productos"
-               class="inline-block bg-brand text-white font-bold py-3 px-8 rounded-lg hover:bg-brand-hover transition-colors">
+               class="inline-block bg-brand text-white font-bold py-3 px-8 rounded-lg
+               hover:bg-brand-hover transition-colors">
               Volver a la tienda
             </a>
           </div>
@@ -167,7 +183,7 @@ export class OrderConfirmationComponent implements OnInit {
   order = signal<Order | null>(null);
   paymentStatus = signal<string | null>(null);
   isLoading = signal(true);
-  private userService = inject(UserService);
+  protected userService = inject(UserService);
   private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
@@ -189,40 +205,12 @@ export class OrderConfirmationComponent implements OnInit {
   getExpiresAt(): string {
     const o = this.order();
     if (!o?.expiresAt) return 'N/A';
-    return this.formatDate(o.expiresAt);
-  }
-
-  formatDate(date: string | Date): string {
-    return new Date(date).toLocaleString('es-CO', {
+    return new Date(o.expiresAt).toLocaleString('es-CO', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     });
-  }
-
-  getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      'pending': 'Pendiente',
-      'confirmed': 'Confirmado',
-      'preparing': 'Preparando',
-      'ready': 'Listo',
-      'delivered': 'Entregado',
-      'cancelled': 'Cancelado'
-    };
-    return labels[status] || status;
-  }
-
-  getStatusClass(status: string): string {
-    const classes: Record<string, string> = {
-      'pending': 'text-yellow-600',
-      'confirmed': 'text-blue-600',
-      'preparing': 'text-orange-600',
-      'ready': 'text-green-600',
-      'delivered': 'text-green-600',
-      'cancelled': 'text-red-600'
-    };
-    return classes[status] || '';
   }
 }

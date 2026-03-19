@@ -15,7 +15,6 @@ import { FormatPricePipe } from '@shared/pipes';
 export class CartComponent {
   selectedAddressId = signal<string | null>(null);
   private cartService = inject(CartService);
-  private paymentService = inject(PaymentService);
   cartItems = this.cartService.cartItems;
   cartTotal = this.cartService.cartTotal;
   cartCount = this.cartService.cartCount;
@@ -23,6 +22,7 @@ export class CartComponent {
   deliveryFee = this.cartService.deliveryFee;
   hasDelivery = this.cartService.hasDelivery;
   paymentMethod = this.cartService.paymentMethod;
+  private paymentService = inject(PaymentService);
   private userService = inject(UserService);
   addresses = this.userService.addresses;
   private router = inject(Router);

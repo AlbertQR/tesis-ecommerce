@@ -14,13 +14,19 @@
 
     @if (favoriteCount() === 0) {
       <div class="bg-white rounded-xl shadow-md p-12 text-center">
-        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center
+        justify-center mx-auto mb-4">
           <i class="fa-regular fa-heart text-4xl text-gray-400"></i>
         </div>
-        <h2 class="text-xl font-semibold text-gray-800 mb-2">No tienes favoritos todavía</h2>
-        <p class="text-gray-600 mb-6">Explora nuestro catálogo y guarda tus productos favoritos</p>
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">
+          No tienes favoritos todavía
+        </h2>
+        <p class="text-gray-600 mb-6">
+          Explora nuestro catálogo y guarda tus productos favoritos
+        </p>
         <a routerLink="/productos"
-           class="inline-block bg-brand text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand/90 transition-colors">
+           class="inline-block bg-brand text-white px-6 py-3 rounded-lg
+           font-semibold hover:bg-brand/90 transition-colors">
           Ver Productos
         </a>
       </div>

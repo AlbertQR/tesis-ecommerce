@@ -3,10 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { LegalDocument } from '@core/models';
+import { FormatDatePipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-admin-legal',
-  imports: [FormsModule],
+  imports: [FormsModule, FormatDatePipe],
   templateUrl: './admin-legal.component.html'
 })
 export class AdminLegalComponent implements OnInit {
@@ -79,9 +80,5 @@ export class AdminLegalComponent implements OnInit {
         this.documents.update(list => list.map(d => d.type === updated.type ? updated : d));
       }
     });
-  }
-
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('es-CO');
   }
 }

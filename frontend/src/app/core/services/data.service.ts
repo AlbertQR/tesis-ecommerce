@@ -5,7 +5,7 @@ import {
   Combo as ComboModel,
   ProductModel as ProductModel,
   Testimonial as TestimonialModel
-} from '../models/product.model';
+} from '@core/models';
 import { tap } from 'rxjs';
 import { environment } from '@environments/environment';
 

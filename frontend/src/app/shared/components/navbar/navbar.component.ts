@@ -35,10 +35,6 @@ export class NavbarComponent implements OnInit {
     this.isMenuOpen.update((v) => !v);
   }
 
-  toggleLegalMenu(): void {
-    this.isLegalMenuOpen.update((v) => !v);
-  }
-
   closeLegalMenu(): void {
     this.isLegalMenuOpen.set(false);
   }

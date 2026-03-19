@@ -22,15 +22,6 @@ export interface Category {
   image: string;
 }
 
-export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  comment: string;
-  rating: number;
-  initials: string;
-}
-
 export interface Combo {
   id: string;
   name: string;
@@ -41,4 +32,14 @@ export interface Combo {
   includes: string[];
   isFeatured?: boolean;
   discount?: number;
+}
+
+export interface ProductFilters {
+  search: string;
+  category: ProductCategory | 'all';
+  priceRange: { min: number; max: number };
+  sortBy: 'name' | 'price-asc' | 'price-desc' | 'popular';
+  onlyHot: boolean;
+  onlyFeatured: boolean;
+  minRating: number;
 }

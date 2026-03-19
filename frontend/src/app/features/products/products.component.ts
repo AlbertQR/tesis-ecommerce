@@ -2,18 +2,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '@core/services/data.service';
 import { ProductCardComponent } from '@shared/components/product-card/product-card.component';
-import { ProductCategory } from '@core/models';
+import { ProductCategory, ProductFilters } from '@core/models';
 import { FormatPricePipe } from '@shared/pipes';
-
-export interface ProductFilters {
-  search: string;
-  category: ProductCategory | 'all';
-  priceRange: { min: number; max: number };
-  sortBy: 'name' | 'price-asc' | 'price-desc' | 'popular';
-  onlyHot: boolean;
-  onlyFeatured: boolean;
-  minRating: number;
-}
 
 @Component({
   selector: 'app-products',
@@ -55,37 +45,33 @@ export class ProductsComponent {
 
   filteredProducts = computed(() => {
     let products = [...this.dataService.products()];
-    const f = this.filters();
+    const filters = this.filters();
 
-    if (f.search) {
-      const search = f.search.toLowerCase();
-      products = products.filter(p =>
-        p.name.toLowerCase().includes(search) ||
-        p.description.toLowerCase().includes(search)
+    if (filters.search) {
+      const search = filters.search.toLowerCase();
+      products = products.filter(product =>
+        product.name.toLowerCase().includes(search) ||
+        product.description.toLowerCase().includes(search)
       );
     }
 
-    if (f.category !== 'all') {
-      products = products.filter(p => p.category === f.category);
-    }
+    if (filters.category !== 'all')
+      products = products.filter(product => product.category === filters.category);
 
-    products = products.filter(p =>
-      p.price >= this.priceMin() && p.price <= this.priceMax()
+    products = products.filter(product =>
+      product.price >= this.priceMin() && product.price <= this.priceMax()
     );
 
-    if (f.onlyHot) {
-      products = products.filter(p => p.isHot);
+    if (filters.onlyHot) products = products.filter(product => product.isHot);
+
+    if (filters.onlyFeatured) products = products.filter(product => product.isFeatured);
+
+    if (filters.minRating > 0) {
+      products = products
+        .filter(product => (product.averageRating || 0) >= filters.minRating);
     }
 
-    if (f.onlyFeatured) {
-      products = products.filter(p => p.isFeatured);
-    }
-
-    if (f.minRating > 0) {
-      products = products.filter(p => (p.averageRating || 0) >= f.minRating);
-    }
-
-    switch (f.sortBy) {
+    switch (filters.sortBy) {
       case 'name':
         products.sort((a, b) => a.name.localeCompare(b.name));
         break;
@@ -107,32 +93,33 @@ export class ProductsComponent {
   productCount = computed(() => this.filteredProducts().length);
 
   updateSearch(value: string): void {
-    this.filters.update(f => ({ ...f, search: value }));
+    this.filters.update(filter => ({ ...filter, search: value }));
   }
 
   updateCategory(category: ProductCategory | 'all'): void {
-    this.filters.update(f => ({ ...f, category }));
+    this.filters.update(filter => ({ ...filter, category }));
   }
 
   updateSort(sortBy: string): void {
-    this.filters.update(f => ({ ...f, sortBy: sortBy as ProductFilters['sortBy'] }));
+    this.filters.update(filter =>
+      ({ ...filter, sortBy: sortBy as ProductFilters['sortBy'] }));
   }
 
   toggleHot(): void {
-    this.filters.update(f => ({ ...f, onlyHot: !f.onlyHot }));
+    this.filters.update(filter => ({ ...filter, onlyHot: !filter.onlyHot }));
   }
 
   toggleFeatured(): void {
-    this.filters.update(f => ({ ...f, onlyFeatured: !f.onlyFeatured }));
+    this.filters.update(filter => ({ ...filter, onlyFeatured: !filter.onlyFeatured }));
   }
 
   updateMinRating(rating: number): void {
-    this.filters.update(f => ({ ...f, minRating: rating }));
+    this.filters.update(filter => ({ ...filter, minRating: rating }));
   }
 
   updatePriceRange(): void {
-    this.filters.update(f => ({
-      ...f,
+    this.filters.update(filter => ({
+      ...filter,
       priceRange: { min: this.priceMin(), max: this.priceMax() }
     }));
   }
@@ -152,26 +139,29 @@ export class ProductsComponent {
   }
 
   hasActiveFilters(): boolean {
-    const f = this.filters();
-    return f.search !== '' ||
-      f.category !== 'all' ||
-      f.onlyHot ||
-      f.onlyFeatured ||
-      f.minRating > 0 ||
+    const filters = this.filters();
+    return filters.search !== '' ||
+      filters.category !== 'all' ||
+      filters.onlyHot ||
+      filters.onlyFeatured ||
+      filters.minRating > 0 ||
       this.priceMin() > 0 ||
       this.priceMax() < 100000;
   }
 
   getCafeteriaTotalProducts() {
-    return this.dataService.products().filter(p => p.category === 'cafeteria').length;
+    return this.dataService.products()
+      .filter(product => product.category === 'cafeteria').length;
   }
 
   getPizzeriaTotalProducts() {
-    return this.dataService.products().filter(p => p.category === 'pizzeria').length;
+    return this.dataService.products()
+      .filter(product => product.category === 'pizzeria').length;
   }
 
   getDespensaTotalProducts() {
-    return this.dataService.products().filter(p => p.category === 'despensa').length;
+    return this.dataService.products()
+      .filter(product => product.category === 'despensa').length;
   }
 
   validatePrice(value: number | string): number {
