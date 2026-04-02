@@ -16,6 +16,7 @@ import paymentRoutes from './routes/payment.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import reviewRoutes from './routes/review.routes.js';
+import exportRoutes from './routes/export.routes.js';
 import { cleanupExpiredCarts, cleanupExpiredOrders } from './controllers/order.controller.js';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -59,6 +60,7 @@ app.use('/api', paymentRoutes);
 app.use('/api', dashboardRoutes);
 app.use('/api', contactRoutes);
 app.use('/api', reviewRoutes);
+app.use('/api', exportRoutes);
 
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });

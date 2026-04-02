@@ -1,40 +1,48 @@
 import { Router } from 'express';
 import {
-  getTestimonials,
-  createTestimonial,
-  updateTestimonial,
-  deleteTestimonial,
-  getCombos,
-  getComboById,
   createCombo,
-  updateCombo,
-  deleteCombo,
-  getContents,
-  getContentByKey,
   createContent,
+  createTestimonial,
+  deleteCombo,
+  deleteContent,
+  deleteTestimonial,
+  getComboById,
+  getCombos,
+  getContentByKey,
+  getContents,
+  getTestimonials,
+  updateCombo,
   updateContent,
-  deleteContent
+  updateTestimonial
 } from '../controllers/content.controller.js';
 import { authenticate, authorizeAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/testimonials', getTestimonials);
-router.get('/combos', getCombos);
-router.get('/combos/:id', getComboById);
-router.get('/contents', getContents);
-router.get('/contents/:key', getContentByKey);
+router.route('/testimonials')
+  .get(getTestimonials)
+  .post(authenticate, authorizeAdmin, createTestimonial);
 
-router.post('/testimonials', authenticate, authorizeAdmin, createTestimonial);
-router.put('/testimonials/:id', authenticate, authorizeAdmin, updateTestimonial);
-router.delete('/testimonials/:id', authenticate, authorizeAdmin, deleteTestimonial);
+router.route('/testimonials/:id')
+  .put(authenticate, authorizeAdmin, updateTestimonial)
+  .delete(authenticate, authorizeAdmin, deleteTestimonial);
 
-router.post('/combos', authenticate, authorizeAdmin, createCombo);
-router.put('/combos/:id', authenticate, authorizeAdmin, updateCombo);
-router.delete('/combos/:id', authenticate, authorizeAdmin, deleteCombo);
+router.route('/combos')
+  .get(getCombos)
+  .post(authenticate, authorizeAdmin, createCombo);
 
-router.post('/contents', authenticate, authorizeAdmin, createContent);
-router.put('/contents/:key', authenticate, authorizeAdmin, updateContent);
-router.delete('/contents/:key', authenticate, authorizeAdmin, deleteContent);
+router.route('/combos/:id')
+  .get(getComboById)
+  .put(authenticate, authorizeAdmin, updateCombo)
+  .delete(authenticate, authorizeAdmin, deleteCombo);
+
+router.route('/contents')
+  .get(getContents)
+  .post(authenticate, authorizeAdmin, createContent);
+
+router.route('/contents/:key')
+  .get(getContentByKey)
+  .put(authenticate, authorizeAdmin, updateContent)
+  .delete(authenticate, authorizeAdmin, deleteContent);
 
 export default router;

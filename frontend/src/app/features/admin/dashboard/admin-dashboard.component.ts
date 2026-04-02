@@ -1,6 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { DashboardService } from '@core/services/dashboard.service';
 import { FormatPricePipe } from '@shared/pipes';
+import { environment } from '@environments/environment';
 
 interface Stats {
   title: string;
@@ -21,7 +24,7 @@ interface RecentOrder {
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [FormatPricePipe],
+  imports: [FormatPricePipe, FormsModule],
   templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent implements OnInit {
@@ -30,7 +33,17 @@ export class AdminDashboardComponent implements OnInit {
   recentOrders = signal<RecentOrder[]>([]);
   topProducts = signal<{ name: string; sales: number; revenue: number }[]>([]);
   isLoading = signal(true);
+  isExporting = signal(false);
+  exportingType = signal<'sales' | 'orders' | 'inventory' | null>(null);
+  
+  salesStartDate = '';
+  salesEndDate = '';
+  ordersStartDate = '';
+  ordersEndDate = '';
+  
   private dashboardService = inject(DashboardService);
+  private http = inject(HttpClient);
+  private apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -156,5 +169,59 @@ export class AdminDashboardComponent implements OnInit {
   getMaxSales(): number {
     const values = this.salesData().values;
     return values.length > 0 ? Math.max(...values) : 0;
+  }
+
+  exportSalesReport(): void {
+    this.isExporting.set(true);
+    this.exportingType.set('sales');
+    
+    let url = `${this.apiUrl}/export/sales`;
+    const params: string[] = [];
+    if (this.salesStartDate) params.push(`startDate=${this.salesStartDate}`);
+    if (this.salesEndDate) params.push(`endDate=${this.salesEndDate}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
+    
+    this.downloadFile(url, `reporte_ventas_${new Date().toISOString().split('T')[0]}.xlsx`);
+  }
+
+  exportOrdersReport(): void {
+    this.isExporting.set(true);
+    this.exportingType.set('orders');
+    
+    let url = `${this.apiUrl}/export/orders`;
+    const params: string[] = [];
+    if (this.ordersStartDate) params.push(`startDate=${this.ordersStartDate}`);
+    if (this.ordersEndDate) params.push(`endDate=${this.ordersEndDate}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
+    
+    this.downloadFile(url, `reporte_pedidos_${new Date().toISOString().split('T')[0]}.xlsx`);
+  }
+
+  exportInventoryReport(): void {
+    this.isExporting.set(true);
+    this.exportingType.set('inventory');
+    
+    const url = `${this.apiUrl}/export/inventory`;
+    this.downloadFile(url, `reporte_inventario_${new Date().toISOString().split('T')[0]}.xlsx`);
+  }
+
+  private downloadFile(url: string, filename: string): void {
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (blob: Blob) => {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        this.isExporting.set(false);
+        this.exportingType.set(null);
+      },
+      error: (err) => {
+        console.error('Error exporting report:', err);
+        alert('Error al exportar el reporte. Verifica que tienes permisos de administrador.');
+        this.isExporting.set(false);
+        this.exportingType.set(null);
+      }
+    });
   }
 }

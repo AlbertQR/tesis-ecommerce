@@ -4,15 +4,14 @@
 
 1. [Requisitos del Sistema](#1-requisitos-del-sistema)
 2. [Estructura del Proyecto](#2-estructura-del-proyecto)
-3. [Instalación de Herramientas](#3-instalación-de-herramientas)
-4. [Configuración del Entorno](#4-configuración-del-entorno)
-5. [Instalación del Backend](#5-instalación-del-backend)
-6. [Instalación del Frontend](#6-instalación-del-frontend)
-7. [Configuración de MongoDB](#7-configuración-de-mongodb)
-8. [Ejecución del Proyecto](#8-ejecución-del-proyecto)
-9. [Configuración de Pagos EnZona](#9-configuración-de-pagos-enzona)
-10. [Verificación de la Instalación](#10-verificación-de-la-instalación)
-11. [Solución de Problemas](#11-solución-de-problemas)
+3. [Instalación con Docker (Recomendado)](#3-instalación-con-docker-recomendado)
+4. [Instalación Manual](#4-instalación-manual)
+5. [Instalación de la App TPV](#5-instalación-de-la-app-tpv)
+6. [Configuración de MongoDB](#6-configuración-de-mongodb)
+7. [Ejecución del Proyecto](#7-ejecución-del-proyecto)
+8. [Configuración de Pagos EnZona](#8-configuración-de-pagos-enzona)
+9. [Verificación de la Instalación](#9-verificación-de-la-instalación)
+10. [Solución de Problemas](#10-solución-de-problemas)
 
 ---
 
@@ -21,32 +20,35 @@
 ### Hardware Mínimo
 - **Procesador**: Intel Core i3 o equivalente
 - **Memoria RAM**: 4 GB (recomendado 8 GB)
-- **Espacio en Disco**: 2 GB libres
-- **Conexión a Internet**: Required para descargar dependencias
+- **Espacio en Disco**: 10 GB libres
+- **Conexión a Internet**: Requerida para descargar dependencias
 
 ### Software Requerido
 - **Sistema Operativo**: Windows 10/11, macOS, o Linux
-- **Node.js**: Versión 18.x o superior
-- **npm**: Versión 9.x o superior (incluido con Node.js)
+- **Docker**: Versión 20.x o superior (para instalación con Docker)
+- **Docker Compose**: Versión 2.x o superior
 - **Git**: Versión 2.x o superior
-- **MongoDB**: Versión 6.x o superior (Community Server)
 - **Editor de Código**: Visual Studio Code (recomendado)
+
+### Para App TPV (Flutter)
+- **Flutter SDK**: Versión 3.7 o superior
+- **Android Studio** (para Android) o Xcode (para iOS)
+- **Dispositivo**: Android 5.0+ o iOS 12+
 
 ---
 
 ## 2. Estructura del Proyecto
 
 ```
-D:\software\
+software/
 ├── backend/                 # Servidor Express + TypeScript
 │   ├── src/
 │   │   ├── app.ts          # Configuración de Express
 │   │   ├── controllers/    # Controladores de rutas
-│   │   ├── middleware/      # Middleware de autenticación
-│   │   ├── models/         # Modelos Mongoose
-│   │   ├── routes/         # Definición de rutas
-│   │   ├── schemas/        # Esquemas de validación Zod
-│   │   ├── services/       # Servicios (EnZona API)
+│   │   ├── middleware/    # Middleware de autenticación
+│   │   ├── models/        # Modelos Mongoose
+│   │   ├── routes/        # Definición de rutas
+│   │   ├── schemas/       # Esquemas de validación Zod
 │   │   └── utils/         # Utilidades
 │   ├── package.json
 │   └── tsconfig.json
@@ -62,56 +64,210 @@ D:\software\
 │   ├── angular.json
 │   └── package.json
 │
-├── requisitos-funcionales.md
-├── requisitos-no-funcionales.md
-├── AGENTS.md
-└── README.md
+├── tpv/                    # App Flutter para empleados
+│   ├── lib/
+│   │   ├── main.dart
+│   │   ├── screens/       # Pantallas de la app
+│   │   └── services/      # Servicios API
+│   └── pubspec.yaml
+│
+├── docker-compose.yml      # Configuración Docker
+├── Dockerfile.backend      # Imagen del backend
+├── Dockerfile.frontend    # Imagen del frontend
+└── nginx.conf            # Configuración nginx
 ```
 
 ---
 
-## 3. Instalación de Herramientas
+## 3. Instalación con Docker (Recomendado)
 
-### 3.1 Instalar Node.js
+### 3.1 Instalar Docker
 
-1. Descargar Node.js desde: https://nodejs.org/
-2. Seleccionar la versión LTS (recomendada)
-3. Ejecutar el instalador y seguir las instrucciones
+#### Windows/macOS
+1. Descargar Docker Desktop desde: https://www.docker.com/products/docker-desktop/
+2. Ejecutar el instalador
+3. Seguir las instrucciones del asistente
 4. Verificar instalación:
    ```bash
-   node --version    # Debe mostrar v18.x.x o superior
-   npm --version     # Debe mostrar 9.x.x o superior
+   docker --version
+   docker-compose --version
    ```
 
-### 3.2 Instalar Git
+#### Linux (Ubuntu)
+```bash
+sudo apt update
+sudo apt install docker.io docker-compose
+sudo systemctl start docker
+sudo systemctl enable docker
+```
 
-1. Descargar Git desde: https://git-scm.com/
-2. Ejecutar el instalador con opciones por defecto
-3. Verificar instalación:
+### 3.2 Configuración de Docker
+
+El proyecto incluye `docker-compose.yml` con todos los servicios:
+
+```yaml
+version: '3.8'
+services:
+  mongodb:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../Dockerfile.backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/dona-yoli
+      - JWT_SECRET=dona_yoli_secret_key_2024
+      - CORS_ORIGIN=http://localhost
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+```
+
+### 3.3 Archivos Dockerfile
+
+**Dockerfile.backend:**
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY dist ./dist
+EXPOSE 3000
+CMD ["node", "dist/app.js"]
+```
+
+**Dockerfile.frontend:**
+```dockerfile
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist/angular21-tailwind/browser /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+**nginx.conf:**
+```nginx
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api {
+        proxy_pass http://backend:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### 3.4 Iniciar con Docker
+
+```bash
+# Clonar repositorio
+cd software
+
+# Construir e iniciar todos los servicios
+docker-compose up -d --build
+
+# Ver logs
+docker-compose logs -f
+
+# Ver estado de servicios
+docker-compose ps
+```
+
+### 3.5 Servicios Disponibles
+
+| Servicio | URL |
+|----------|-----|
+| Frontend | http://localhost |
+| Backend API | http://localhost/api |
+| MongoDB | localhost:27017 |
+
+### 3.6 Detener Docker
+
+```bash
+# Detener servicios
+docker-compose down
+
+# Detener y eliminar volúmenes
+docker-compose down -v
+
+# Reiniciar
+docker-compose restart
+```
+
+---
+
+## 4. Instalación Manual
+
+### 4.1 Requisitos Previos
+
+- **Node.js**: Versión 18.x o superior
+- **npm**: Versión 9.x o superior
+- **MongoDB**: Versión 6.x o superior
+- **Git**: Versión 2.x o superior
+
+### 4.2 Instalar Node.js
+
+1. Descargar desde: https://nodejs.org/
+2. Seleccionar versión LTS
+3. Verificar:
    ```bash
-   git --version
+   node --version
+   npm --version
    ```
 
-### 3.3 Instalar MongoDB
+### 4.3 Instalar MongoDB
 
 #### Windows
-1. Descargar MongoDB Community Server desde: https://www.mongodb.com/try/download/community
-2. Seleccionar:
-   - Version: 6.0 (o latest)
-   - Package: MSI
-   - Platform: Windows
-3. Ejecutar el instalador
-4. Seleccionar "Complete" installation
-5. Marcar "Install MongoDB as a Service"
-6. Completed la instalación
+1. Descargar desde: https://www.mongodb.com/try/download/community
+2. Ejecutar instalador MSI
+3. Instalar como servicio
 
-#### macOS (con Homebrew)
+#### macOS
 ```bash
 brew tap mongodb/brew
 brew install mongodb-community
 ```
 
-#### Linux (Ubuntu/Debian)
+#### Linux
 ```bash
 sudo apt update
 sudo apt install gnupg curl
@@ -121,342 +277,293 @@ sudo apt update
 sudo apt install mongodb-org
 ```
 
-### 3.4 Instalar Visual Studio Code (Opcional)
-
-1. Descargar desde: https://code.visualstudio.com/
-2. Ejecutar el instalador
-3. Instalar extensiones recomendadas:
-   - Angular Language Service
-   - Prettier - Code formatter
-   - ESLint
-   - MongoDB for VS Code
-
----
-
-## 4. Configuración del Entorno
-
-### 4.1 Clonar el Repositorio
+### 4.4 Clonar el Repositorio
 
 ```bash
-cd D:\
 git clone <URL_DEL_REPOSITORIO> software
 cd software
 ```
 
-### 4.2 Variables de Entorno
+### 4.5 Instalar Backend
 
-El proyecto usa un archivo `.env` en el backend. El archivo ya debería estar configurado con los valores predeterminados:
+```bash
+cd backend
+npm install
+npm run build
+```
+
+### 4.6 Instalar Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+### 4.7 Variables de Entorno
+
+Crear archivo `backend/.env`:
 
 ```env
-# Backend
 PORT=3000
 NODE_ENV=development
 MONGODB_URI=mongodb://localhost:27017/dona-yoli
 JWT_SECRET=dona_yoli_secret_key_2024
 CORS_ORIGIN=http://localhost:4200
-
-# EnZona (se configura desde el panel de admin)
-# No es necesario configurar aquí
 ```
 
 ---
 
-## 5. Instalación del Backend
+## 5. Instalación de la App TPV
 
-### 5.1 Navegar al Directorio del Backend
+La app TPV (Terminal Punto de Venta) es una aplicación Flutter para que los empleados gestionen pedidos.
 
+### 5.1 Requisitos
+
+- **Flutter SDK**: 3.7 o superior
+- **Android Studio** (Android) o Xcode (iOS)
+- **Dispositivo físico** o **emulador**
+
+### 5.2 Instalar Flutter
+
+#### Windows
+1. Descargar Flutter SDK desde: https://docs.flutter.dev/get-started/install/windows
+2. Extraer en `C:\flutter`
+3. Agregar al PATH: `C:\flutter\bin`
+4. Verificar:
+   ```bash
+   flutter doctor
+   flutter --version
+   ```
+
+#### macOS
 ```bash
-cd D:\software\backend
+brew install flutter
+flutter doctor
 ```
 
-### 5.2 Instalar Dependencias
-
+#### Linux
 ```bash
-npm install
+sudo snap install flutter --classic
+flutter doctor
 ```
 
-Este comando instalará:
-- express: Framework web
-- mongoose: ODM para MongoDB
-- jsonwebtoken: Autenticación JWT
-- zod: Validación de datos
-- pdfkit: Generación de PDFs
-- qrcode: Generación de códigos QR
-- multer: Upload de archivos
-- cors: Cross-origin resource sharing
-- dotenv: Variables de entorno
-- bcryptjs: Hash de contraseñas
--typescript: Lenguaje
-- ts-node-dev: Ejecución en desarrollo
-- vitest: Testing
+### 5.3 Configurar Dispositivo
 
-### 5.3 Compilar el Proyecto
+**Android:**
+1. Habilitar Debug USB en el dispositivo
+2. Conectar por USB
+3. Verificar:
+   ```bash
+   flutter devices
+   ```
 
+**Emulador Android:**
 ```bash
-npm run build
+flutter emulators --create --name android_device
+flutter emulators --launch android_device
 ```
 
-### 5.4 Verificar Instalación
+### 5.4 Instalar Dependencias
 
 ```bash
-# Verificar que se crearon los archivos compilados
-ls dist/
+cd tpv
+flutter pub get
 ```
+
+### 5.5 Configuración de API
+
+Editar `lib/services/api_service.dart`:
+
+```dart
+class ApiService {
+  // Para desarrollo local (web)
+  static const String baseUrl = 'http://localhost:3000/api';
+  
+  // Para producción (cambiar IP)
+  // static const String baseUrl = 'http://192.168.1.100:3000/api';
+}
+```
+
+### 5.6 Ejecutar en Modo Desarrollo
+
+```bash
+cd tpv
+flutter run
+```
+
+### 5.7 Construir APK
+
+```bash
+cd tpv
+
+# Debug APK
+flutter build apk --debug
+
+# Release APK
+flutter build apk --release
+```
+
+La APK se genera en: `tpv/build/app/outputs/flutter-apk/app-release.apk`
+
+### 5.8 Instalar APK en Dispositivo
+
+```bash
+# Con dispositivo conectado por USB
+flutter install
+
+# O instalar manualmente
+adb install build/app/outputs/flutter-apk/app-release.apk
+```
+
+### 5.9 Roles de Usuario en TPV
+
+| Rol | Descripción | Permisos |
+|-----|-------------|----------|
+| **employee** | Empleado de tienda | Ver pedidos, actualizar estados, escanear QR |
+| **delivery** | Repartidor | Ver pedidos listos, marcar como entregados |
+
+### 5.10 Usar la App TPV
+
+1. **Login**: Usar credenciales de empleado/delivery
+2. **Órdenes**: Ver lista de pedidos pendientes
+3. **Scanner**: Escanear código QR de la factura del cliente
+4. **Actualizar Estados**: Cambiar estado del pedido
 
 ---
 
-## 6. Instalación del Frontend
+## 6. Configuración de MongoDB
 
-### 6.1 Navegar al Directorio del Frontend
-
-```bash
-cd D:\software\frontend
-```
-
-### 6.2 Instalar Dependencias
+### 6.1 Iniciar MongoDB
 
 ```bash
-npm install
-```
-
-Este comando instalará:
-- @angular/core: Framework Angular
-- @angular/router: Routing
-- @angular/forms: Formularios
-- tailwindcss: Estilos
-- jwt-decode: Decodificación de JWT
-
-### 6.3 Verificar Instalación
-
-```bash
-# Verificar node_modules
-ls node_modules/@angular/core
-```
-
----
-
-## 7. Configuración de MongoDB
-
-### 7.1 Iniciar MongoDB
-
-#### Windows (como servicio)
-MongoDB debería iniciarse automáticamente como servicio. Verificar:
-
-```bash
-# En PowerShell como Administrador
-Get-Service MongoDB
-```
-
-Si no está ejecutándose:
-```bash
+# Windows (servicio)
 Start-Service MongoDB
+
+# Linux/Mac
+sudo systemctl start mongod
 ```
 
-#### Manual (todas las plataformas)
-```bash
-mongod --dbpath "C:\data\db"
-```
-
-### 7.2 Verificar Conexión
+### 6.2 Verificar Conexión
 
 ```bash
-# Conectar a MongoDB shell
 mongosh
-
-# Ver bases de datos
 show dbs
-
-# Salir
 exit
 ```
 
-### 7.3 Datos Iniciales (Seed)
+### 6.3 Datos Iniciales (Seed)
 
-El proyecto incluye un sistema de seed automático que crea:
-- Usuario administrador: `admin@dona-yoli.com` / `admin123`
-- Categorías: Cafetería, Pizzería, Despensa, Combos
-- Productos de ejemplo en cada categoría
-- Testimonios de clientes
-- Contenido del sitio
-- Documentos legales (términos, privacidad, devoluciones)
-
-Los datos se crean automáticamente al iniciar el backend por primera vez.
+El proyecto incluye seed automático:
+- Admin: `admin@dona-yoli.com` / `admin123`
+- Categorías y productos de ejemplo
+- Testimonios y contenido
+- Documentos legales
 
 ---
 
-## 8. Ejecución del Proyecto
+## 7. Ejecución del Proyecto
 
-### 8.1 Iniciar el Backend
+### 7.1 Con Docker
 
 ```bash
-cd D:\software\backend
+docker-compose up -d
+```
+
+### 7.2 Manual
+
+**Terminal 1 - Backend:**
+```bash
+cd backend
 npm run dev
 ```
 
-Debería ver:
-```
-Server running on port 3000
-Database connected: mongodb://localhost:27017/dona-yoli
-```
-
-### 8.2 Iniciar el Frontend
-
-En una nueva terminal:
-
+**Terminal 2 - Frontend:**
 ```bash
-cd D:\software\frontend
+cd frontend
 npm start
 ```
 
-Debería ver:
-```
-Local: http://localhost:4200/
-```
+### 7.3 URLs
 
-### 8.3 Acceder a la Aplicación
-
-1. Abrir navegador en: http://localhost:4200/
-2. Verificar que la página principal carga correctamente
+| Servicio | URL |
+|----------|-----|
+| Frontend | http://localhost:4200 |
+| Backend API | http://localhost:3000/api |
+| TPV App | http://localhost (dispositivo) |
 
 ---
 
-## 9. Configuración de Pagos EnZona
+## 8. Configuración de Pagos EnZona
 
-### 9.1 Obtener Credenciales EnZona
+### 8.1 Obtener Credenciales
 
 1. Registrarse en https://www.enzona.net/
-2. Acceder al panel de comerciante
-3. Obtener:
-   - Consumer Key
-   - Consumer Secret
-   - Merchant UUID
+2. Obtener: Consumer Key, Consumer Secret, Merchant UUID
 
-### 9.2 Configurar desde el Panel de Admin
+### 8.2 Configurar en Admin
 
-1. Iniciar sesión como administrador
+1. Login como admin
 2. Ir a: http://localhost:4200/admin/configuracion
-3. Ingresar las credenciales de EnZona
-4. Configurar porcentaje de reembolso (default 80%)
-5. Guardar configuración
-
-### 9.3 Verificar Configuración
-
-Los pagos ahora estarán disponibles en el checkout:
-- Efectivo (pago contra entrega)
-- EnZona (pago digital)
+3. Ingresar credenciales de EnZona
+4. Configurar porcentaje de reembolso
 
 ---
 
-## 10. Verificación de la Instalación
+## 9. Verificación de la Instalación
 
-### 10.1 Pruebas de Funcionalidad
+### 9.1 Probar Frontend
+1. Abrir http://localhost:4200/
+2. Verificar página principal
 
-#### Registro e Inicio de Sesión
+### 9.2 Probar API
+```bash
+curl http://localhost:3000/api/products
+```
+
+### 9.3 Probar Login
 1. Ir a /registro
-2. Crear una cuenta nueva
-3. Verificar que inicia sesión automáticamente
+2. Crear cuenta
+3. Verificar autenticación
 
-#### Catálogo de Productos
-1. Ir a /productos
-2. Verificar que se cargan los productos
-3. Probar filtros por categoría
-
-#### Carrito de Compras
-1. Agregar productos al carrito
-2. Verificar que aparecen en el carrito
-3. Modificar cantidades
-
-#### Checkout
-1. Completar el checkout
-2. Seleccionar método de pago
-3. Verificar creación del pedido
-
-#### Descarga de Factura
-1. Ir a /pedidos
-2. Seleccionar un pedido
-3. Descargar factura PDF
-
-### 10.2 Pruebas de Admin
-
-#### Dashboard
-1. Iniciar sesión como admin
-2. Ir a /admin
-3. Verificar estadísticas en tiempo real
-
-#### Gestión de Productos
-1. Ir a /admin/productos
-2. Crear, editar, eliminar productos
-
-#### Configuración de Pagos
-1. Ir a /admin/configuracion
-2. Configurar credenciales EnZona
-3. Guardar y verificar
+### 9.4 Probar TPV
+1. Conectar dispositivo o emulador
+2. Ejecutar `flutter run`
+3. Login con credenciales de empleado
 
 ---
 
-## 11. Solución de Problemas
+## 10. Solución de Problemas
 
 ### Error: MongoDB connection failed
-
-**Problema**: No se puede conectar a MongoDB
-
-**Solución**:
-1. Verificar que MongoDB está ejecutándose:
-   ```bash
-   # Windows
-   Get-Service MongoDB
-   
-   # Linux/Mac
-   sudo systemctl status mongod
-   ```
-2. Verificar que la URI en `.env` es correcta:
-   ```
-   MONGODB_URI=mongodb://localhost:27017/dona-yoli
-   ```
+```bash
+# Verificar servicio
+Get-Service MongoDB    # Windows
+sudo systemctl status mongod  # Linux
+```
 
 ### Error: Puerto en uso
-
-**Problema**: El puerto 3000 o 4200 está ocupado
-
-**Solución**:
-1. Cambiar puerto en la configuración
-2. O matar el proceso que usa el puerto:
-   ```bash
-   # Windows
-   netstat -ano | findstr :3000
-   taskkill /PID <PID> /F
-   ```
-
-### Error: Dependencias no instaladas
-
-**Problema**: Faltan módulos de node
-
-**Solución**:
 ```bash
-# Limpiar cache e instalar
-rm -rf node_modules package-lock.json
-npm install
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
 ```
 
-### Error: TypeScript compilation errors
-
-**Problema**: Errores de compilación TypeScript
-
-**Solución**:
+### Error: Docker containers no inician
 ```bash
-# Reinstalar dependencias de TypeScript
-npm install typescript@latest -g
-cd backend
-npm install
+docker-compose logs backend
+docker-compose logs frontend
 ```
 
-### Error: CORS policy
+### Error: TPV no conecta al backend
+1. Verificar que backend está ejecutándose
+2. Verificar IP en ApiService
+3. Verificar firewall
 
-**Problema**: Error de CORS en el navegador
-
-**Solución**:
-1. Verificar CORS_ORIGIN en `.env`
-2. Debe coincidir con la URL del frontend
+### Error: Flutter doctor muestra errores
+```bash
+flutter doctor --android-licenses
+flutter doctor
+```
 
 ---
 
@@ -465,42 +572,42 @@ npm install
 | Rol | Email | Contraseña |
 |-----|-------|------------|
 | Administrador | admin@dona-yoli.com | admin123 |
-| Cliente | cliente@test.com | cliente123 |
+| Empleado | empleado@dona-yoli.com | empleado123 |
+| Repartidor | repartidor@dona-yoli.com | repartidor123 |
 
 ---
 
 ## Comandos Rápidos
 
 ```bash
-# Iniciar todo el proyecto
-# Terminal 1 - Backend
+# Docker - Iniciar todo
+docker-compose up -d
+
+# Docker - Ver logs
+docker-compose logs -f
+
+# Docker - Detener
+docker-compose down
+
+# Backend
 cd backend && npm run dev
 
-# Terminal 2 - Frontend
+# Frontend
 cd frontend && npm start
 
-# Tests backend
+# TPV - Desarrollo
+cd tpv && flutter run
+
+# TPV - Build APK
+cd tpv && flutter build apk --release
+
+# Tests
 cd backend && npm test:run
-
-# Tests frontend
 cd frontend && npm test
-
-# Build producción
-cd backend && npm run build
-cd frontend && npm run build
 ```
 
 ---
 
-## Soporte
-
-Para problemas o preguntas:
-- Consultar AGENTS.md para detalles técnicos
-- Revisar requisitos-funcionales.md para funcionalidades
-- Revisar requisitos-no-funcionales.md para especificaciones técnicas
-
----
-
-**Versión del Documento**: 1.0
-**Fecha de Creación**: Marzo 2026
+**Versión del Documento**: 2.0
+**Fecha de Actualización**: Marzo 2026
 **Proyecto**: Doña Yoli Ecommerce

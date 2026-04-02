@@ -28,7 +28,7 @@ class Database {
     }
 
     console.log('Seeding database...');
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    const hashedPassword = await bcrypt.hash('4dminRoot', 10);
 
     await User.create({
       email: 'admin@dona-yoli.com',

@@ -11,8 +11,10 @@
 7. [Mis Pedidos](#7-mis-pedidos)
 8. [Gestión de Cuenta](#8-gestión-de-cuenta)
 9. [Panel de Administración](#9-panel-de-administración)
-10. [Información Legal](#10-información-legal)
-11. [Preguntas Frecuentes](#11-preguntas-frecuentes)
+10. [App TPV para Empleados](#10-app-tpv-para-empleados)
+11. [Verificación de Pedidos con QR](#11-verificación-de-pedidos-con-qr)
+12. [Información Legal](#12-información-legal)
+13. [Preguntas Frecuentes](#13-preguntas-frecuentes)
 
 ---
 
@@ -20,21 +22,28 @@
 
 Bienvenido a **Doña Yoli**, tu tienda en línea de cafetería, pizzeria y despensa. Este manual te guiará a través de todas las funcionalidades del sitio.
 
-### 1.1 Requisitos
-- Navegador web moderno (Chrome, Firefox, Safari, Edge)
-- Cuenta de usuario registrada
-- Conexión a internet
+### 1.1 Tipos de Usuario
+
+| Rol | Descripción | Acceso |
+|-----|-------------|--------|
+| **Cliente** | Usuario que compra productos | Sitio web público + área de usuario |
+| **Administrador** | Gestiona el negocio | Panel de administración completo |
+| **Empleado** | Gestiona pedidos en tienda | App TPV |
+| **Repartidor** | Entrega pedidos | App TPV |
 
 ### 1.2 Datos de Acceso
+
 | Rol | Email | Contraseña |
 |-----|-------|------------|
 | Administrador | admin@dona-yoli.com | admin123 |
+| Empleado | empleado@dona-yoli.com | empleado123 |
+| Repartidor | repartidor@dona-yoli.com | repartidor123 |
 
 ---
 
 ## 2. Registro e Inicio de Sesión
 
-### 2.1 Crear una Cuenta
+### 2.1 Crear una Cuenta (Cliente)
 
 1. Haz clic en **"Registrarse"** en el menú superior
 2. Completa el formulario:
@@ -97,6 +106,7 @@ En el footer encontrarás enlaces a:
    - Precio
    - Categoría
    - Indicador de "Hot" o "Destacado"
+   - Calificación promedio
 
 ### 4.2 Filtrar Productos
 
@@ -106,17 +116,26 @@ En el footer encontrarás enlaces a:
 - Despensa
 - Combos
 
-Haz clic en una categoría para filtrar.
-
 **Por Búsqueda:**
 - Usa el campo de búsqueda para encontrar productos por nombre
+
+**Por Calificación:**
+- Filtra por estrellas (1-5)
 
 **Por Orden:**
 - Popularidad
 - Nombre (A-Z, Z-A)
 - Precio (menor a mayor, mayor a menor)
 
-### 4.3 Productos Destacados
+### 4.3 Detalle de Producto
+
+Al hacer clic en un producto:
+- Ver imagen ampliada
+- Leer descripción completa
+- Ver reseñas de otros clientes
+- Escribir tu propia reseña (si estás logueado)
+
+### 4.4 Productos Destacados
 
 En la página de inicio verás:
 - Productos destacados (badge azul)
@@ -194,8 +213,8 @@ Haz clic en el ícono del carrito en el menú superior para:
 **Opción 2: EnZona**
 - Paga de forma digital con EnZona
 - Serás redirigido a la plataforma de pagos
-- Completa el pago y返回 al sitio
-- El pedido se confirma após verificação do pagamento
+- Completa el pago y regresa al sitio
+- El pedido se confirma tras verificación
 
 ### 6.5 Confirmar Pedido
 
@@ -204,6 +223,7 @@ Haz clic en el ícono del carrito en el menú superior para:
 3. Recibirás:
    - Número de pedido
    - Factura PDF (descargable)
+   - Código QR para verificación
    - Estado del pedido
 
 ### 6.6 Estados del Pedido
@@ -212,7 +232,7 @@ Haz clic en el ícono del carrito en el menú superior para:
 |--------|-------------|
 | Pendiente | Esperando confirmación |
 | Confirmado | Pedido confirmado |
-| Preparando | En preparación |
+| Preparando | En preparación en cocina |
 | Listo | Listo para entrega/recolección |
 | Entregado | Entregado al cliente |
 | Cancelado | Pedido cancelado |
@@ -229,12 +249,14 @@ Haz clic en el ícono del carrito en el menú superior para:
 
 ### 7.2 Estados
 
-- **Pendiente**: Esperando confirmación de pago
-- **Confirmado**: Pagado y confirmado
-- **Preparando**: En preparación
-- **Listo**: Listo para entregar
-- **Entregado**: Completado
-- **Cancelado**: Cancelado (se restaura el stock)
+| Estado | Descripción |
+|--------|-------------|
+| Pendiente | Esperando confirmación de pago |
+| Confirmado | Pagado y confirmado |
+| Preparando | En preparación |
+| Listo | Listo para entregar |
+| Entregado | Completado |
+| Cancelado | Cancelado (se restaura stock) |
 
 ### 7.3 Detalles del Pedido
 
@@ -246,6 +268,7 @@ Haz clic en un pedido para ver:
 - Método de pago
 - Total
 - Estado actual
+- Código QR de verificación
 
 ### 7.4 Descargar Factura
 
@@ -277,7 +300,7 @@ Gestiona tus direcciones de entrega:
 
 Para cambiar tu contraseña:
 1. Contacta al administrador
-2. O usa la función de recuperación (futuro)
+2. O usa la función de recuperación
 
 ---
 
@@ -318,30 +341,46 @@ Desde **"Pedidos"** en el admin:
 - Ver todos los pedidos
 - Filtrar por estado
 - Actualizar estado
-- Ver detalles
+- Ver detalles completos
+- Acciones rápidas:
+  - Marcar como preparando
+  - Marcar como listo
+  - Marcar como entregado
+  - Cancelar pedido
 
 ### 9.5 Gestión de Usuarios
 
 Desde **"Usuarios"** en el admin:
 - Ver lista de usuarios
-- Cambiar rol (cliente/admin)
-- Eliminar usuarios
+- **Filtrar por rol**: Cliente, Admin, Empleado, Repartidor
+- **Cambiar rol**: Asignar diferentes roles
+- **Eliminar usuarios**
 
-### 9.6 Gestión de Contenido
+### 9.6 Roles de Usuario
+
+| Rol | Descripción |
+|-----|-------------|
+| **user** | Cliente regular |
+| **admin** | Administrador del sistema |
+| **employee** | Empleado de tienda (usa TPV) |
+| **delivery** | Repartidor (usa TPV) |
+
+### 9.7 Gestión de Contenido
 
 Desde **"Contenido"** en el admin:
 - **Testimonios**: Agregar, editar, eliminar testimonios
 - **Combos**: Gestionar combos promocionales
 - **Textos**: Modificar contenido del sitio
 
-### 9.7 Documentos Legales
+### 9.8 Documentos Legales
 
 Desde **"Legal"** en el admin:
 - Editar Términos y Condiciones
 - Editar Política de Privacidad
 - Editar Política de Devoluciones
+- Activar/desactivar documentos
 
-### 9.8 Configuración de Pagos
+### 9.9 Configuración de Pagos
 
 Desde **"Configuración"** en el admin:
 - Configurar credenciales de EnZona
@@ -350,17 +389,104 @@ Desde **"Configuración"** en el admin:
 
 ---
 
-## 10. Información Legal
+## 10. App TPV para Empleados
 
-### 10.1 Términos y Condiciones
+La app TPV (Terminal Punto de Venta) es una aplicación móvil para que empleados y repartidores gestionen pedidos.
+
+### 10.1 Descargar e Instalar
+
+1. Descarga el archivo APK del servidor
+2. Instala en dispositivo Android (permitir fuentes desconocidas)
+3. O busca en Google Play (si está publicado)
+
+### 10.2 Iniciar Sesión
+
+1. Abre la app TPV
+2. Ingresa tus credenciales de empleado o repartidor
+3. Serás dirigido a la pantalla principal
+
+### 10.3 Pantalla Principal
+
+**Para Empleados:**
+- Ver pedidos pendientes
+- Ver pedidos en preparación
+- Marcar pedidos como "Listo"
+- Escanear QR para verificar pedidos
+
+**Para Repartidores:**
+- Ver pedidos listos para entrega
+- Marcar pedidos como "Entregado"
+- Escanear QR para confirmar entrega
+
+### 10.4 Gestión de Pedidos
+
+1. **Ver Lista**: Ve todos los pedidos según tu rol
+2. **Filtrar**: Por estado (pendientes, preparing, ready, delivered)
+3. **Detalles**: Toca un pedido para ver información completa
+4. **Actualizar Estado**: Usa los botones de acción rápida
+
+### 10.5 Escanear QR
+
+1. Toca el botón de escáner
+2. Apunta la cámara al código QR de la factura
+3. El pedido se carga automáticamente
+4. Confirma la entrega si eres repartidor
+
+---
+
+## 11. Verificación de Pedidos con QR
+
+### 11.1 Qué es el QR
+
+Cada factura PDF incluye un código QR único que:
+- Identifica el pedido
+- Permite verificar autenticidad
+- Facilita el registro de entrega
+
+### 11.2 Para el Cliente
+
+1. En "Mis Pedidos", descarga tu factura
+2. Muestra el código QR al empleado/repartidor
+3. El código QR está en la factura PDF
+
+### 11.3 Para el Empleado/Repartidor
+
+**Con App TPV:**
+1. Abre la app
+2. Toca "Escanear QR"
+3. Apunta al código QR del cliente
+4. Verifica los detalles del pedido
+5. Confirma la acción
+
+**Verificación Manual:**
+1. Recibe el código QR del cliente
+2. Verifica que el pedido existe en el sistema
+3. Confirma la identidad del cliente
+
+### 11.4 Estados y Entregas
+
+| Estado | ¿Se puede entregar? | Acción |
+|--------|---------------------|--------|
+| Pendiente | No | Esperar confirmación |
+| Confirmado | No | Esperar preparación |
+| Preparando | No | En cocina |
+| Listo | Sí | Entregar al cliente |
+| Entregado | No | Ya entregado |
+| Cancelado | No | No entregar |
+
+---
+
+## 12. Información Legal
+
+### 12.1 Términos y Condiciones
 
 Consulta nuestros términos en: `/terminos`
 
-### 10.2 Política de Privacidad
+### 12.2 Política de Privacidad
 
 Consulta nuestra política en: `/privacidad`
 
-### 10.3 Política de Devoluciones
+### 12.3 Política de Devoluciones
 
 Consulta nuestra política en: `/devoluciones`
 
@@ -368,7 +494,7 @@ Todos estos documentos son editables por el administrador desde el panel.
 
 ---
 
-## 11. Preguntas Frecuentes
+## 13. Preguntas Frecuentes
 
 ### ¿Cómo puedo recuperar mi contraseña?
 
@@ -405,6 +531,16 @@ Sí, selecciona "Recoger en tienda" durante el checkout para evitar el costo de 
 
 En "Mis Pedidos", haz clic en "Descargar Factura" para obtener el PDF.
 
+### ¿Cómo uso la app TPV?
+
+1. Descarga e instala la APK
+2. Inicia sesión con tus credenciales
+3. Gestiona pedidos desde tu dispositivo móvil
+
+### ¿Qué hago si el repartidor no llega?
+
+Contacta al administrador para rastrear tu pedido.
+
 ---
 
 ## Centro de Contacto
@@ -417,6 +553,6 @@ En "Mis Pedidos", haz clic en "Descargar Factura" para obtener el PDF.
 
 ---
 
-**Versión del Documento**: 1.0
+**Versión del Documento**: 2.0
 **Fecha de Actualización**: Marzo 2026
 **Proyecto**: Doña Yoli Ecommerce

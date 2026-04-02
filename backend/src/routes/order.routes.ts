@@ -1,34 +1,40 @@
 import { Router } from 'express';
 import {
-  getCart,
   addToCart,
-  updateCartItem,
-  removeFromCart,
-  clearCart,
+  cancelOrder,
   checkout,
-  getOrders,
-  getOrderById,
-  getAllOrders,
-  updateOrderStatus,
+  clearCart,
   downloadInvoice,
-  verifyOrderByQR,
-  cancelOrder
+  getAllOrders,
+  getCart,
+  getOrderById,
+  getOrders,
+  removeFromCart,
+  updateCartItem,
+  updateOrderStatus,
+  verifyOrderByQR
 } from '../controllers/order.controller.js';
-import { authenticate, authorizeAdmin, authorizeStaff } from '../middleware/auth.js';
+import { authenticate, authorizeStaff } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/cart', authenticate, getCart);
-router.post('/cart', authenticate, addToCart);
-router.put('/cart/:productId', authenticate, updateCartItem);
-router.delete('/cart', authenticate, clearCart);
-router.delete('/cart/:productId', authenticate, removeFromCart);
+router.route('/cart')
+  .get(authenticate, getCart)
+  .post(authenticate, addToCart)
+  .delete(authenticate, clearCart);
+
+router.route('/cart/:productId')
+  .put(authenticate, updateCartItem)
+  .delete(authenticate, removeFromCart);
 
 router.post('/checkout', authenticate, checkout);
 
 router.get('/orders', authenticate, getOrders);
-router.get('/orders/:id', authenticate, getOrderById);
-router.delete('/orders/:id', authenticate, cancelOrder);
+
+router.route('/orders/:id')
+  .get(authenticate, getOrderById)
+  .delete(authenticate, cancelOrder);
+
 router.get('/orders/:id/invoice', authenticate, downloadInvoice);
 
 router.post('/verify-qr', verifyOrderByQR);

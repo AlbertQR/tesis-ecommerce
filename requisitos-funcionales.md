@@ -11,10 +11,10 @@
 - El usuario debe poder iniciar sesión con email y contraseña
 - Generación de token JWT al iniciar sesión exitosamente
 - Persistencia del token JWT en localStorage del navegador
-- **IMPORTANTE**: Solo se almacena el token JWT, los datos del usuario se extraen del payload del JWT
+- Solo se almacena el token JWT, los datos del usuario se extraen del payload del JWT
 - Validación de expiración del token automáticamente
 
-### 1.3 Recuperación de Contraseña (IMPLEMENTADO)
+### 1.3 Recuperación de Contraseña
 - Solicitud de recuperación de contraseña mediante email
 - Token de recuperación válido por 1 hora
 - Formulario para nueva contraseña
@@ -27,7 +27,7 @@
 - Actualización de información del perfil
 - Visualización del historial de pedidos
 
-### 1.5 Favoritos/Wishlist (IMPLEMENTADO)
+### 1.5 Favoritos/Wishlist
 - Agregar productos a favoritos desde cualquier página
 - Ver lista de favoritos en `/favoritos`
 - Eliminar productos de favoritos
