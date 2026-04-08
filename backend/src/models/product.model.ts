@@ -61,6 +61,12 @@ const ProductSchema = new Schema<IProduct>({
   updatedAt: { type: Date, default: Date.now }
 });
 
+// Índices para optimizar queries
+ProductSchema.index({ category: 1 });
+ProductSchema.index({ isFeatured: 1 });
+ProductSchema.index({ isHot: 1 });
+ProductSchema.index({ name: 'text', description: 'text' });
+
 /**
  * Modelo de Mongoose para la colección de productos.
  * 

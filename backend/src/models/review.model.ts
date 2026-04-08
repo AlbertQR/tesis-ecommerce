@@ -21,5 +21,6 @@ const ReviewSchema = new Schema<IReview>({
 });
 
 ReviewSchema.index({ productId: 1, userId: 1 }, { unique: true });
+ReviewSchema.index({ productId: 1, rating: -1 });
 
 export const Review = mongoose.model<IReview>('Review', ReviewSchema);

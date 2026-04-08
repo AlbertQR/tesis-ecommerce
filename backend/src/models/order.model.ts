@@ -144,6 +144,12 @@ const OrderSchema = new Schema<IOrder>({
   refundTransactionUuid: { type: String }
 });
 
+// Índices para optimizar queries
+OrderSchema.index({ userId: 1 });
+OrderSchema.index({ status: 1 });
+OrderSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // Auto-delete expirados
+OrderSchema.index({ orderId: 1 }, { unique: true });
+
 /**
  * Modelo de Mongoose para la colección de pedidos.
  * 

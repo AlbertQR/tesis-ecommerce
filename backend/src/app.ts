@@ -1,5 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import compression from 'compression';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import session from 'express-session';
 import path from 'path';
 import { config } from './config/index.js';
@@ -23,14 +26,64 @@ dotenv.config();
 
 const app = express();
 
+// Security headers con helmet
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameSrc: ["'none'"]
+    }
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  },
+  noSniff: true,
+  xssFilter: true,
+  frameguard: { action: 'deny' }
+}));
+
+// Rate limiting general
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100,
+  message: { error: 'Demasiadas solicitudes, intenta más tarde' }
+});
+
+// Rate limiting para auth (más restrictivo)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  skipSuccessfulRequests: true,
+  message: { error: 'Demasiados intentos, intenta más tarde' }
+});
+
+app.use(generalLimiter);
+
+// CORS con whitelist
+const allowedOrigins = config.cors.origins;
 app.use(cors({
   origin: (origin, callback) => {
-    callback(null, true);
+    // Permite requests sin origin (mobile apps, Postman) o origins en whitelist
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin no permitida por CORS'));
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+app.use(compression({ level: 6, threshold: 1024 }));
 
 app.use(express.json());
 
@@ -46,9 +99,22 @@ app.use(session({
 }));
 
 app.use('/invoices', express.static(path.join(process.cwd(), 'invoices')));
-app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
 
-app.use('/api/auth', authRoutes);
+app.use('/uploads', express.static(
+  path.join(process.cwd(), 'public', 'uploads'),
+  {
+    maxAge: '1y',
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, filePath) => {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+));
+
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);

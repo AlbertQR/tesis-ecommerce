@@ -6,7 +6,8 @@ import {
   ProductModel as ProductModel,
   Testimonial as TestimonialModel
 } from '@core/models';
-import { tap } from 'rxjs';
+import { forkJoin } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { environment } from '@environments/environment';
 
 @Injectable({
@@ -29,20 +30,18 @@ export class DataService {
   }
 
   private loadData(): void {
-    this.http.get<ProductModel[]>(`${this.apiUrl}/products`).pipe(
-      tap(products => this.productsSignal.set(products))
-    ).subscribe();
-
-    this.http.get<CategoryModel[]>(`${this.apiUrl}/categories`).pipe(
-      tap(categories => this.categoriesSignal.set(categories))
-    ).subscribe();
-
-    this.http.get<TestimonialModel[]>(`${this.apiUrl}/testimonials`).pipe(
-      tap(testimonials => this.testimonialsSignal.set(testimonials))
-    ).subscribe();
-
-    this.http.get<ComboModel[]>(`${this.apiUrl}/combos?featured=true`).pipe(
-      tap(combos => this.comboSignal.set(combos[0] || null))
+    forkJoin({
+      products: this.http.get<ProductModel[]>(`${this.apiUrl}/products`),
+      categories: this.http.get<CategoryModel[]>(`${this.apiUrl}/categories`),
+      testimonials: this.http.get<TestimonialModel[]>(`${this.apiUrl}/testimonials`),
+      combos: this.http.get<ComboModel[]>(`${this.apiUrl}/combos?featured=true`)
+    }).pipe(
+      tap(({ products, categories, testimonials, combos }) => {
+        this.productsSignal.set(products);
+        this.categoriesSignal.set(categories);
+        this.testimonialsSignal.set(testimonials);
+        this.comboSignal.set(combos[0] || null);
+      })
     ).subscribe();
   }
 }

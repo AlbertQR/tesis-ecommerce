@@ -1,11 +1,17 @@
+// JWT_SECRET es requerido en producción
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET environment variable is required in production');
+}
+
 export const config = {
   jwt: {
-    secret: process.env.JWT_SECRET || 'dona-yoli-secret-key-2024',
+    secret: jwtSecret || 'dona-yoli-secret-key-2024', // Fallback solo para desarrollo
     expiresIn: '7d' as const
   },
   port: parseInt(process.env.PORT || '3000', 10),
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:4200'
+    origins: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:4200']
   },
   email: {
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',

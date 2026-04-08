@@ -9,7 +9,7 @@
 
       @if (document(); as doc) {
         <div class="bg-white rounded-xl shadow-md p-8">
-          <div class="prose max-w-none" [innerHTML]="doc.content"></div>
+          <div class="prose max-w-none" [innerHTML]="doc.content | safeHtml"></div>
         </div>
       } @else {
         <div class="bg-white rounded-xl shadow-md p-8 text-center">

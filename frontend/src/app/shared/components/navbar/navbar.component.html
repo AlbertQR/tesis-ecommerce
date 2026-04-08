@@ -50,7 +50,7 @@
            routerLink="/productos">
           <i class="fa-solid fa-magnifying-glass text-xl"></i>
         </a>
-        <button
+        <button name="shopping-cart"
           class="text-gray-600 hover:text-brand transition-colors relative"
           routerLink="/carrito">
           <i class="fa-solid fa-cart-shopping text-xl"></i>
@@ -64,7 +64,7 @@
         </button>
 
         @if (isAuthenticated()) {
-          <button
+          <button name="favorites"
             class="text-gray-600 hover:text-brand transition-colors relative"
             routerLink="/favoritos">
             <i class="fa-solid fa-heart text-xl"></i>
