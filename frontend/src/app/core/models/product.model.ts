@@ -3,7 +3,7 @@ export interface ProductModel {
   name: string;
   description: string;
   price: number;
-  category: ProductCategory;
+  category: string;  // Permite categorías dinámicas
   image: string;
   isFeatured: boolean;
   isHot: boolean;
@@ -13,13 +13,15 @@ export interface ProductModel {
   totalReviews?: number;
 }
 
-export type ProductCategory = 'cafeteria' | 'pizzeria' | 'despensa' | 'combo';
+// Tipo para categorías fijas legacy (backwards compatibility)
+export type ProductCategory = 'cafeteria' | 'pizzeria' | 'despensa' | 'combo' | string;
 
 export interface Category {
-  id: ProductCategory;
+  id: string;
   name: string;
   description: string;
   image: string;
+  icon?: string;
 }
 
 export interface Combo {
@@ -36,7 +38,7 @@ export interface Combo {
 
 export interface ProductFilters {
   search: string;
-  category: ProductCategory | 'all';
+  category: string | 'all';  // Permite categorías dinámicas
   priceRange: { min: number; max: number };
   sortBy: 'name' | 'price-asc' | 'price-desc' | 'popular';
   onlyHot: boolean;

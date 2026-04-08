@@ -49,6 +49,162 @@ class _ScannerScreenState extends State<ScannerScreen> {
       }
 
       final apiService = context.read<ApiService>();
+
+      // Primero obtener los datos del pedido para mostrar info
+      final orderData = await apiService.getOrderById(orderId);
+
+      if (mounted) {
+        _showOrderConfirmation(orderId, orderData);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError(e.toString().replaceAll('Exception: ', ''));
+      }
+    }
+  }
+
+  void _showOrderConfirmation(String orderId, Map<String, dynamic> orderData) {
+    final paymentMethod = orderData['paymentMethod'] as String? ?? 'cash';
+    final paymentStatus = orderData['paymentStatus'] as String? ?? 'pending';
+    final total = orderData['total'] as num? ?? 0;
+    final status = orderData['status'] as String? ?? '';
+
+    final isCashPayment = paymentMethod == 'cash';
+    final canConfirmPayment =
+        isCashPayment &&
+        paymentStatus == 'pending' &&
+        ['confirmed', 'preparing', 'ready'].contains(status);
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => AlertDialog(
+            title: Row(
+              children: [
+                const Icon(Icons.qr_code, color: Color(0xFF8B4513)),
+                const SizedBox(width: 8),
+                const Text('Pedido Encontrado'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Orden: ${orderData['orderId'] ?? orderId}'),
+                const SizedBox(height: 4),
+                Text('Estado: ${_getStatusLabel(status)}'),
+                const SizedBox(height: 4),
+                Text('Total: \$${total.toStringAsFixed(0)} COP'),
+                const SizedBox(height: 4),
+                Text(
+                  'Pago: ${paymentMethod == 'cash' ? 'Efectivo' : 'EnZona'}',
+                ),
+                if (isCashPayment) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Estado pago: ${paymentStatus == 'paid' ? 'Confirmado' : 'Pendiente'}',
+                    style: TextStyle(
+                      color:
+                          paymentStatus == 'paid'
+                              ? Colors.green
+                              : Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _resetScanner();
+                },
+                child: const Text('Cancelar'),
+              ),
+              if (canConfirmPayment)
+                FilledButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await _confirmPaymentAndDelivery(orderId);
+                  },
+                  style: FilledButton.styleFrom(backgroundColor: Colors.green),
+                  child: const Text('Confirmar Cobro y Entrega'),
+                )
+              else if (status == 'delivered')
+                FilledButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  style: FilledButton.styleFrom(backgroundColor: Colors.grey),
+                  child: const Text('Ya Entregado'),
+                )
+              else
+                FilledButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    await _confirmDelivery(orderId);
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF8B4513),
+                  ),
+                  child: const Text('Confirmar Entrega'),
+                ),
+            ],
+          ),
+    );
+  }
+
+  String _getStatusLabel(String status) {
+    switch (status) {
+      case 'pending':
+        return 'Pendiente';
+      case 'confirmed':
+        return 'Confirmado';
+      case 'preparing':
+        return 'En preparación';
+      case 'ready':
+        return 'Listo';
+      case 'delivered':
+        return 'Entregado';
+      case 'cancelled':
+        return 'Cancelado';
+      default:
+        return status;
+    }
+  }
+
+  Future<void> _confirmPaymentAndDelivery(String orderId) async {
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      final apiService = context.read<ApiService>();
+      final result = await apiService.verifyQrCode(
+        orderId,
+        confirmPayment: true,
+      );
+
+      if (mounted) {
+        _showSuccess('Pago confirmado y pedido entregado', result);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError(e.toString().replaceAll('Exception: ', ''));
+      }
+    }
+  }
+
+  Future<void> _confirmDelivery(String orderId) async {
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      final apiService = context.read<ApiService>();
       final result = await apiService.verifyQrCode(orderId);
 
       if (mounted) {
@@ -63,10 +219,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
     _resetScanner();
   }
@@ -75,47 +228,48 @@ class _ScannerScreenState extends State<ScannerScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 32),
-            SizedBox(width: 8),
-            Text('Éxito'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(message),
-            const SizedBox(height: 8),
-            if (result['order'] != null)
-              Text(
-                'Estado: ${result['order']['status']}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _resetScanner();
-            },
-            child: const Text('Escanear otro'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF8B4513),
+      builder:
+          (context) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green, size: 32),
+                SizedBox(width: 8),
+                Text('Éxito'),
+              ],
             ),
-            child: const Text('Volver'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(message),
+                const SizedBox(height: 8),
+                if (result['order'] != null)
+                  Text(
+                    'Estado: ${result['order']['status']}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _resetScanner();
+                },
+                child: const Text('Escanear otro'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF8B4513),
+                ),
+                child: const Text('Volver'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -167,9 +321,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
             Container(
               color: Colors.black54,
               child: const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ),
+                child: CircularProgressIndicator(color: Colors.white),
               ),
             ),
           Positioned(
@@ -209,9 +361,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
 class ScannerOverlayPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black54
-      ..style = PaintingStyle.fill;
+    final paint =
+        Paint()
+          ..color = Colors.black54
+          ..style = PaintingStyle.fill;
 
     final scanAreaSize = size.width * 0.7;
     final left = (size.width - scanAreaSize) / 2;
@@ -219,17 +372,21 @@ class ScannerOverlayPainter extends CustomPainter {
 
     final scanRect = Rect.fromLTWH(left, top, scanAreaSize, scanAreaSize);
 
-    final path = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
-      ..addRRect(RRect.fromRectAndRadius(scanRect, const Radius.circular(16)))
-      ..fillType = PathFillType.evenOdd;
+    final path =
+        Path()
+          ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
+          ..addRRect(
+            RRect.fromRectAndRadius(scanRect, const Radius.circular(16)),
+          )
+          ..fillType = PathFillType.evenOdd;
 
     canvas.drawPath(path, paint);
 
-    final borderPaint = Paint()
-      ..color = const Color(0xFF8B4513)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
+    final borderPaint =
+        Paint()
+          ..color = const Color(0xFF8B4513)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3;
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(scanRect, const Radius.circular(16)),

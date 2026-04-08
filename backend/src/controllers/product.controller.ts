@@ -162,7 +162,13 @@ export const getCategories = async (req: AuthRequest, res: Response): Promise<vo
 
 export const createCategory = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id, name, description, image } = req.body as { id: ProductCategory; name: string; description: string; image: string };
+    const { id, name, description, image, icon } = req.body as { 
+      id: ProductCategory; 
+      name: string; 
+      description: string; 
+      image: string;
+      icon?: string;
+    };
     
     const existing = await Category.findOne({ id });
     if (existing) {
@@ -170,7 +176,13 @@ export const createCategory = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    const category = await Category.create({ id, name, description, image });
+    const category = await Category.create({ 
+      id, 
+      name, 
+      description, 
+      image,
+      icon: icon || 'fa-folder'
+    });
     res.status(201).json({ ...category.toObject(), id: category.id });
   } catch (error) {
     console.error('CreateCategory error:', error);
@@ -181,11 +193,16 @@ export const createCategory = async (req: AuthRequest, res: Response): Promise<v
 export const updateCategory = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, description, image } = req.body;
+    const { name, description, image, icon } = req.body;
 
     const category = await Category.findOneAndUpdate(
       { id },
-      { ...(name && { name }), ...(description && { description }), ...(image && { image }) },
+      { 
+        ...(name && { name }), 
+        ...(description && { description }), 
+        ...(image && { image }),
+        ...(icon && { icon })
+      },
       { returnDocument: 'after' }
     );
     

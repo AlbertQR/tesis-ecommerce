@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
-import { Review, User } from '../models/index.js';
+import { Review, User, Order } from '../models/index.js';
 import { AuthRequest } from '../middleware/auth.js';
 
 interface ReviewInput {
@@ -69,6 +69,18 @@ export const addReview = async (req: AuthRequest, res: Response): Promise<void> 
     const user = await User.findById(userId);
     if (!user) {
       res.status(404).json({ error: 'Usuario no encontrado' });
+      return;
+    }
+
+    // Verificar que el usuario haya comprado el producto
+    const hasPurchased = await Order.findOne({
+      userId: new mongoose.Types.ObjectId(userId),
+      'items.productId': productId,
+      status: { $in: ['delivered', 'confirmed', 'preparing', 'ready'] }
+    });
+
+    if (!hasPurchased) {
+      res.status(403).json({ error: 'Solo puedes reseñar productos que hayas comprado' });
       return;
     }
 

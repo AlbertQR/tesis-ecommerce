@@ -64,6 +64,7 @@ export interface IOrder extends Document {
     neighborhood?: string;
     instructions?: string;
   };
+  deliveryPerson?: string;
   invoiceUrl?: string;
   expiresAt: Date;
   createdAt: Date;
@@ -120,6 +121,7 @@ const OrderSchema = new Schema<IOrder>({
     neighborhood: { type: String, required: false },
     instructions: { type: String }
   },
+  deliveryPerson: { type: String },
   invoiceUrl: { type: String },
   expiresAt: { type: Date, required: true },
   createdAt: { type: Date, default: Date.now },

@@ -28,8 +28,12 @@ export interface Order {
   shipping: number;
   total: number;
   deliveryAddress: Address;
+  deliveryPerson?: string;
   invoiceUrl?: string;
   expiresAt?: string;
+  paymentStatus?: 'pending' | 'paid' | 'refunded';
+  paymentMethod?: 'cash' | 'enzona';
+  orderId?: string;
 }
 
 export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';

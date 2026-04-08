@@ -12,6 +12,7 @@ import {
   removeFromCart,
   updateCartItem,
   updateOrderStatus,
+  updateDeliveryPerson,
   verifyOrderByQR
 } from '../controllers/order.controller.js';
 import { authenticate, authorizeStaff } from '../middleware/auth.js';
@@ -41,5 +42,6 @@ router.post('/verify-qr', verifyOrderByQR);
 
 router.get('/admin/orders', authenticate, authorizeStaff, getAllOrders);
 router.put('/admin/orders/:id/status', authenticate, authorizeStaff, updateOrderStatus);
+router.put('/admin/orders/:id/delivery', authenticate, authorizeStaff, updateDeliveryPerson);
 
 export default router;

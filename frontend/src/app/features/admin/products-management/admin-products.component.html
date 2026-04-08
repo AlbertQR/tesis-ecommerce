@@ -15,7 +15,7 @@
     <div class="flex-1 min-w-64">
       <input (ngModelChange)="searchTerm.set($event)" [ngModel]="searchTerm()"
              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2
-        focus:ring-brand focus:border-brand"
+         focus:ring-brand focus:border-brand"
              placeholder="Buscar productos..."
              type="text">
     </div>
@@ -24,10 +24,9 @@
             class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2
       focus:ring-brand focus:border-brand">
       <option value="all">Todas las categorías</option>
-      <option value="cafeteria">Cafetería</option>
-      <option value="pizzeria">Pizzería</option>
-      <option value="despensa">Despensa</option>
-      <option value="combo">Combos</option>
+      @for (cat of categories(); track cat.id) {
+        <option [value]="cat.id">{{ cat.name }}</option>
+      }
     </select>
   </div>
 
@@ -188,10 +187,9 @@
                 [(ngModel)]="formData.category" name="category"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg
                 focus:ring-2 focus:ring-brand focus:border-brand">
-                <option value="cafeteria">Cafetería</option>
-                <option value="pizzeria">Pizzería</option>
-                <option value="despensa">Despensa</option>
-                <option value="combo">Combo</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                }
               </select>
             </div>
             <div>

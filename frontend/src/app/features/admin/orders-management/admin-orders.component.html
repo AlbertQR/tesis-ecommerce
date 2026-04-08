@@ -37,23 +37,38 @@
       <thead class="bg-gray-50">
         <tr>
           <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Pedido</th>
-          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Cliente</th>
           <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Fecha</th>
           <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Total</th>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Pago</th>
           <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Estado</th>
+          <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Repartidor</th>
           <th class="text-left py-3 px-4 text-sm font-medium text-gray-500">Acciones</th>
         </tr>
       </thead>
         <tbody>
           @for (order of filteredOrders(); track order.id) {
             <tr class="border-t hover:bg-gray-50">
-              <td class="py-3 px-4 font-medium">{{ order.id }}</td>
+              <td class="py-3 px-4 font-medium">{{ order.orderId || order.id }}</td>
               <td class="py-3 px-4 text-gray-600">{{ order.date | formatDate }}</td>
               <td class="py-3 px-4 font-bold text-brand">{{ order.total | formatPrice }}</td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-1 rounded text-xs font-medium {{ getPaymentStatusClass(order.paymentStatus) }}">
+                  {{ getPaymentStatusLabel(order.paymentStatus) }}
+                </span>
+              </td>
               <td class="py-3 px-4">
                 <span class="px-2 py-1 rounded text-xs font-medium {{ getStatusClass(order.status) }}">
                   {{ getStatusLabel(order.status) }}
                 </span>
+              </td>
+              <td class="py-3 px-4 text-sm">
+                @if (order.deliveryPerson) {
+                  <span class="text-gray-700">{{ order.deliveryPerson }}</span>
+                } @else {
+                  <button (click)="startAssignDelivery(order.id)" class="text-gray-400 hover:text-brand text-xs">
+                    <i class="fa-solid fa-plus"></i> Asignar
+                  </button>
+                }
               </td>
               <td class="py-3 px-4">
                 <div class="flex gap-2">
@@ -93,7 +108,7 @@
     <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" (click)="closeModal()">
       <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
         <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
-          <h2 class="text-xl font-bold">Pedido {{ selectedOrder()!.id }}</h2>
+          <h2 class="text-xl font-bold">Pedido {{ selectedOrder()!.orderId || selectedOrder()!.id }}</h2>
           <button (click)="closeModal()" class="text-gray-500 hover:text-gray-700">
             <i class="fa-solid fa-xmark text-xl"></i>
           </button>
@@ -111,6 +126,49 @@
               </span>
             </div>
           </div>
+          
+          <!-- Payment Info -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-gray-500">Método de pago</p>
+              <p class="font-medium">{{ getPaymentMethodLabel(selectedOrder()!.paymentMethod) }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Estado de pago</p>
+              <span class="px-2 py-1 rounded text-xs font-medium {{ getPaymentStatusClass(selectedOrder()!.paymentStatus) }}">
+                {{ getPaymentStatusLabel(selectedOrder()!.paymentStatus) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Delivery Person -->
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-sm text-gray-500 mb-2">Repartidor</p>
+            @if (assigningDelivery() === selectedOrder()!.id) {
+              <div class="flex gap-2">
+                <input type="text" [(ngModel)]="deliveryPersonName" 
+                  placeholder="Nombre del repartidor"
+                  class="flex-1 px-3 py-2 border rounded-lg text-sm">
+                <button (click)="saveDeliveryPerson(selectedOrder()!.id)" 
+                  class="bg-brand text-white px-3 py-2 rounded-lg text-sm hover:bg-brand/90">
+                  Guardar
+                </button>
+                <button (click)="assigningDelivery.set(null)" 
+                  class="bg-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm">
+                  Cancelar
+                </button>
+              </div>
+            } @else {
+              <div class="flex items-center justify-between">
+                <span class="font-medium">{{ selectedOrder()!.deliveryPerson || 'No asignado' }}</span>
+                <button (click)="startAssignDelivery(selectedOrder()!.id)" 
+                  class="text-brand hover:underline text-sm">
+                  {{ selectedOrder()!.deliveryPerson ? 'Cambiar' : 'Asignar' }}
+                </button>
+              </div>
+            }
+          </div>
+
           <div>
             <p class="text-sm text-gray-500">Dirección</p>
             <p>{{ selectedOrder()!.deliveryAddress.label }} - {{ selectedOrder()!.deliveryAddress.street }} #{{ selectedOrder()!.deliveryAddress.number }}, {{ selectedOrder()!.deliveryAddress.neighborhood }}, {{ selectedOrder()!.deliveryAddress.city }}</p>

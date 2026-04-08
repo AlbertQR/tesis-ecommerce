@@ -45,16 +45,21 @@
               Categoría
             </label>
             <div class="space-y-2">
-              @for (cat of categories; track cat.id) {
+              @for (cat of categories(); track cat.id) {
                 <button
                   (click)="updateCategory(cat.id)"
                   [class.bg-brand]="filters().category === cat.id"
                   [class.text-white]="filters().category === cat.id"
-                  class="w-full flex items-center gap-3 px-3 py-2 rounded-lg
+                  class="w-full flex items-center justify-between px-3 py-2 rounded-lg
                   hover:bg-gray-100 transition-colors text-left"
                 >
-                  <i [class]="cat.icon"></i>
-                  <span>{{ cat.name }}</span>
+                  <div class="flex items-center gap-3">
+                    <i [class]="cat.icon"></i>
+                    <span>{{ cat.name }}</span>
+                  </div>
+                  <span class="text-xs" [class.text-brand]="filters().category === cat.id">
+                    {{ getCategoryProductCount(cat.id) }}
+                  </span>
                 </button>
               }
             </div>
@@ -145,12 +150,7 @@
           <!-- Quick Stats -->
           <div class="pt-4 border-t">
             <div class="text-xs text-gray-500 space-y-1">
-              <p>
-                Cafetería: {{ getCafeteriaTotalProducts() }} productos</p>
-              <p>
-                Pizzería: {{ getPizzeriaTotalProducts() }} productos</p>
-              <p>
-                Despensa: {{ getDespensaTotalProducts() }} productos</p>
+              <p>{{ dataService.products().length }} productos en total</p>
             </div>
           </div>
         </div>

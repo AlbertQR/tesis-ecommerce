@@ -1,0 +1,175 @@
+<div class="max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Gestión de Categorías</h1>
+      <p class="text-gray-600">Administra las categorías del catálogo de productos</p>
+    </div>
+    <button 
+      (click)="startAdd()"
+      class="bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand/90 flex items-center gap-2">
+      <i class="fa-solid fa-plus"></i>
+      Nueva Categoría
+    </button>
+  </div>
+
+  <!-- Error global -->
+  @if (error()) {
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Form -->
+  @if (showForm()) {
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-lg font-semibold mb-4">
+        {{ isEditing() ? 'Editar Categoría' : 'Nueva Categoría' }}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+          <input 
+            type="text" 
+            [ngModel]="formData().name"
+            (ngModelChange)="formData.update(f => ({ ...f, name: $event }))"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand focus:border-transparent"
+            [class.border-red-500]="nameError()"
+            placeholder="Ej: Cafetería">
+          @if (nameError()) {
+            <p class="text-red-500 text-sm mt-1">{{ nameError() }}</p>
+          }
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Imagen (URL) *</label>
+          <input 
+            type="text" 
+            [ngModel]="formData().image"
+            (ngModelChange)="formData.update(f => ({ ...f, image: $event }))"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand focus:border-transparent"
+            placeholder="https://ejemplo.com/imagen.jpg">
+        </div>
+        
+        <!-- Icon Selector -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Icono</label>
+          <div class="flex gap-2">
+            <div class="flex-1 border border-gray-300 rounded-lg px-3 py-2 bg-gray-50 flex items-center gap-2">
+              <i [class]="'fa-solid ' + formData().icon"></i>
+              <span class="text-sm text-gray-600">{{ getIconPreview(formData().icon) }}</span>
+            </div>
+            <button 
+              type="button"
+              (click)="showIconPicker.set(!showIconPicker())"
+              class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+              <i class="fa-solid fa-icons"></i>
+            </button>
+          </div>
+          
+          <!-- Icon Picker Grid -->
+          @if (showIconPicker()) {
+            <div class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200 max-h-48 overflow-y-auto">
+              <div class="grid grid-cols-5 gap-2">
+                @for (icon of availableIcons; track icon.value) {
+                  <button 
+                    type="button"
+                    (click)="selectIcon(icon.value)"
+                    [title]="icon.label"
+                    class="p-2 rounded-lg hover:bg-brand hover:text-white transition-colors flex flex-col items-center justify-center
+                      {{ formData().icon === icon.value ? 'bg-brand text-white' : 'bg-white' }}">
+                    <i [class]="'fa-solid ' + icon.value + ' text-lg'"></i>
+                    <span class="text-xs mt-1 truncate w-full text-center">{{ getIconPreview(icon.value) }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+        
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+          <textarea 
+            [ngModel]="formData().description"
+            (ngModelChange)="formData.update(f => ({ ...f, description: $event }))"
+            rows="3"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand focus:border-transparent"
+            [class.border-red-500]="descriptionError()"
+            placeholder="Descripción de la categoría..."></textarea>
+          @if (descriptionError()) {
+            <p class="text-red-500 text-sm mt-1">{{ descriptionError() }}</p>
+          }
+        </div>
+      </div>
+      <div class="flex gap-2 mt-4">
+        <button 
+          (click)="save()"
+          [disabled]="isLoading()"
+          class="bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand/90 disabled:opacity-50">
+          {{ isLoading() ? 'Guardando...' : (isEditing() ? 'Actualizar' : 'Crear') }}
+        </button>
+        <button 
+          (click)="cancelForm()"
+          class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading() && categories().length === 0) {
+    <div class="text-center py-8">
+      <i class="fa-solid fa-spinner fa-spin text-3xl text-brand"></i>
+      <p class="mt-2 text-gray-600">Cargando categorías...</p>
+    </div>
+  }
+
+  <!-- Categories Grid -->
+  @if (!showForm() && categories().length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (category of categories(); track category.id) {
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div class="h-40 bg-gray-200 flex items-center justify-center">
+            @if (category.image) {
+              <img [src]="category.image" [alt]="category.name" class="w-full h-full object-cover">
+            } @else {
+              <i [class]="'fa-solid ' + (category.icon || 'fa-folder') + ' text-4xl text-gray-400'"></i>
+            }
+          </div>
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <i [class]="'fa-solid ' + (category.icon || 'fa-folder') + ' text-brand'"></i>
+              <h3 class="text-lg font-semibold text-gray-800">{{ category.name }}</h3>
+            </div>
+            <p class="text-gray-600 text-sm mt-1 line-clamp-2">{{ category.description }}</p>
+            <div class="flex gap-2 mt-4">
+              <button 
+                (click)="startEdit(category)"
+                class="flex-1 bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 text-sm">
+                <i class="fa-solid fa-edit mr-1"></i> Editar
+              </button>
+              <button 
+                (click)="deleteCategory(category.id)"
+                class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 text-sm">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty -->
+  @if (!showForm() && !isLoading() && categories().length === 0) {
+    <div class="text-center py-12 bg-white rounded-lg shadow">
+      <i class="fa-solid fa-folder-open text-4xl text-gray-400"></i>
+      <p class="mt-2 text-gray-600">No hay categorías disponibles</p>
+      <button 
+        (click)="startAdd()"
+        class="mt-4 bg-brand text-white px-4 py-2 rounded-lg hover:bg-brand/90">
+        Crear primera categoría
+      </button>
+    </div>
+  }
+</div>

@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '@core/services/data.service';
 import { ProductCardComponent } from '@shared/components/product-card/product-card.component';
-import { ProductCategory, ProductFilters } from '@core/models';
+import { ProductFilters } from '@core/models';
 import { FormatPricePipe } from '@shared/pipes';
 
 @Component({
@@ -23,13 +23,26 @@ export class ProductsComponent {
   });
   priceMin = signal(0);
   priceMax = signal(100000);
-  categories = [
-    { id: 'all' as const, name: 'Todos', icon: 'fa-solid fa-border-all' },
-    { id: 'cafeteria' as const, name: 'Cafetería', icon: 'fa-solid fa-mug-hot' },
-    { id: 'pizzeria' as const, name: 'Pizzería', icon: 'fa-solid fa-pizza-slice' },
-    { id: 'despensa' as const, name: 'Despensa', icon: 'fa-solid fa-basket-shopping' },
-    { id: 'combo' as const, name: 'Combos', icon: 'fa-solid fa-box-open' }
-  ];
+  
+  // Generar opciones de categorías desde el DataService
+  categories = computed(() => {
+    const cats = this.dataService.categories();
+    const options: { id: string; name: string; icon: string }[] = [
+      { id: 'all', name: 'Todos', icon: 'fa-solid fa-border-all' }
+    ];
+    
+    // Agregar las categorías del API con su icono
+    cats.forEach(cat => {
+      options.push({
+        id: cat.id,
+        name: cat.name,
+        icon: 'fa-solid ' + (cat.icon || 'fa-folder')
+      });
+    });
+    
+    return options;
+  });
+  
   sortOptions = [
     { value: 'popular', label: 'Más Populares' },
     { value: 'name', label: 'Nombre A-Z' },
@@ -96,7 +109,7 @@ export class ProductsComponent {
     this.filters.update(filter => ({ ...filter, search: value }));
   }
 
-  updateCategory(category: ProductCategory | 'all'): void {
+  updateCategory(category: string | 'all'): void {
     this.filters.update(filter => ({ ...filter, category }));
   }
 
@@ -149,19 +162,12 @@ export class ProductsComponent {
       this.priceMax() < 100000;
   }
 
-  getCafeteriaTotalProducts() {
+  getCategoryProductCount(categoryId: string): number {
+    if (categoryId === 'all') {
+      return this.dataService.products().length;
+    }
     return this.dataService.products()
-      .filter(product => product.category === 'cafeteria').length;
-  }
-
-  getPizzeriaTotalProducts() {
-    return this.dataService.products()
-      .filter(product => product.category === 'pizzeria').length;
-  }
-
-  getDespensaTotalProducts() {
-    return this.dataService.products()
-      .filter(product => product.category === 'despensa').length;
+      .filter(product => product.category === categoryId).length;
   }
 
   validatePrice(value: number | string): number {

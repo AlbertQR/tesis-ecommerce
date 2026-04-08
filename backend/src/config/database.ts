@@ -39,9 +39,9 @@ class Database {
     });
 
     await Category.insertMany([
-      { id: 'cafeteria', name: 'Cafetería', description: 'Cafés, pastelería y desayunos', image: '/imgs/photo-1509042239860-f550ce710b93.jfif' },
-      { id: 'pizzeria', name: 'Pizzería', description: 'Masas artesanales y toppings', image: '/imgs/photo-1513104890138-7c749659a591.jfif' },
-      { id: 'despensa', name: 'Despensa', description: 'Harinas, aceites y empacados', image: '/imgs/photo-1542838132-92c53300491e.jfif' }
+      { id: 'cafeteria', name: 'Cafetería', description: 'Cafés, pastelería y desayunos', image: '/imgs/photo-1509042239860-f550ce710b93.jfif', icon: 'fa-mug-hot' },
+      { id: 'pizzeria', name: 'Pizzería', description: 'Masas artesanales y toppings', image: '/imgs/photo-1513104890138-7c749659a591.jfif', icon: 'fa-pizza-slice' },
+      { id: 'despensa', name: 'Despensa', description: 'Harinas, aceites y empacados', image: '/imgs/photo-1542838132-92c53300491e.jfif', icon: 'fa-basket-shopping' }
     ]);
 
     await Product.insertMany([

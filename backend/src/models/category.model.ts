@@ -11,12 +11,14 @@ import mongoose, { Document, Schema } from 'mongoose';
  * @property {string} name - Nombre visible de la categoría
  * @property {string} description - Descripción de la categoría
  * @property {string} image - URL de imagen representativa
+ * @property {string} icon - Clase de Font Awesome (ej: fa-mug-hot)
  */
 export interface ICategory extends Document {
   id: string;
   name: string;
   description: string;
   image: string;
+  icon: string;
 }
 
 /**
@@ -29,7 +31,8 @@ const CategorySchema = new Schema<ICategory>({
   id: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
-  image: { type: String, required: true }
+  image: { type: String, required: true },
+  icon: { type: String, default: 'fa-folder' }
 });
 
 /**

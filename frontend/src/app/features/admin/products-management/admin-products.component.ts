@@ -1,9 +1,16 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { ProductCategory, ProductModel } from '@core/models';
+import { ProductModel } from '@core/models';
 import { FormatPricePipe } from '@shared/pipes';
 import { environment } from '@environments/environment';
+
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+}
 
 @Component({
   selector: 'app-admin-products',
@@ -12,7 +19,8 @@ import { environment } from '@environments/environment';
 })
 export class AdminProductsComponent implements OnInit {
   products = signal<ProductModel[]>([]);
-  categoryFilter = signal<'all' | ProductCategory | 'combo'>('all');
+  categories = signal<Category[]>([]);
+  categoryFilter = signal<string>('all');
   searchTerm = signal('');
   isEditing = signal(false);
   editingProduct = signal<ProductModel | null>(null);
@@ -23,24 +31,31 @@ export class AdminProductsComponent implements OnInit {
     name: '',
     description: '',
     price: 0,
-    category: 'cafeteria',
+    category: '',
     image: '',
     isFeatured: false,
     isHot: false,
     isCombo: false,
     stock: 0
   };
-  categories = [
-    { id: 'cafeteria', name: 'Cafetería' },
-    { id: 'pizzeria', name: 'Pizzería' },
-    { id: 'despensa', name: 'Despensa' },
-    { id: 'combo', name: 'Combo' }
-  ];
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.http.get<Category[]>(`${this.apiUrl}/categories`).subscribe({
+      next: (data) => {
+        this.categories.set(data);
+        // Si no hay categoría y hay categorías disponibles, usar la primera
+        if (!this.formData.category && data.length > 0) {
+          this.formData.category = data[0].id;
+        }
+      }
+    });
   }
 
   loadProducts(): void {
@@ -68,24 +83,25 @@ export class AdminProductsComponent implements OnInit {
     return result;
   }
 
-  getCategoryLabel(category: string): string {
-    const labels: Record<string, string> = {
-      cafeteria: 'Cafetería',
-      pizzeria: 'Pizzería',
-      despensa: 'Despensa',
-      combo: 'Combo'
-    };
-    return labels[category] || category;
+  getCategoryLabel(categoryId: string): string {
+    const cat = this.categories().find(c => c.id === categoryId);
+    return cat?.name || categoryId;
   }
 
-  getCategoryClass(category: string): string {
-    const classes: Record<string, string> = {
-      cafeteria: 'bg-brown-100 text-brown-800',
-      pizzeria: 'bg-red-100 text-red-800',
-      despensa: 'bg-green-100 text-green-800',
-      combo: 'bg-purple-100 text-purple-800'
-    };
-    return classes[category] || 'bg-gray-100 text-gray-800';
+  getCategoryClass(categoryId: string): string {
+    // Generar color basado en el ID de la categoría
+    const colors = [
+      'bg-amber-100 text-amber-800',
+      'bg-red-100 text-red-800', 
+      'bg-green-100 text-green-800',
+      'bg-purple-100 text-purple-800',
+      'bg-blue-100 text-blue-800',
+      'bg-pink-100 text-pink-800',
+      'bg-indigo-100 text-indigo-800',
+      'bg-teal-100 text-teal-800'
+    ];
+    const index = this.categories().findIndex(c => c.id === categoryId);
+    return colors[index % colors.length] || 'bg-gray-100 text-gray-800';
   }
 
   getStockClass(stock: number): string {
@@ -95,12 +111,13 @@ export class AdminProductsComponent implements OnInit {
   }
 
   startAdd(): void {
+    const cats = this.categories();
     this.formData = {
       id: '',
       name: '',
       description: '',
       price: 0,
-      category: 'cafeteria',
+      category: cats.length > 0 ? cats[0].id : 'cafeteria',
       image: '/imgs/photo-1574071318508-1cdbab80d002.jfif',
       isFeatured: false,
       isHot: false,

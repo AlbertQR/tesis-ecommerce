@@ -323,7 +323,7 @@ export const checkout = async (req: AuthRequest, res: Response): Promise<void> =
       date: new Date(),
       status: 'pending' as OrderStatus,
       paymentMethod,
-      paymentStatus: paymentMethod === 'enzona' ? 'pending' : 'paid',
+      paymentStatus: paymentMethod === 'enzona' ? 'pending' : 'pending', // Efectivo: pending hasta confirmar cobro
       items: cart,
       subtotal,
       shipping,
@@ -636,7 +636,7 @@ export const downloadInvoice = async (req: AuthRequest, res: Response): Promise<
 
 export const verifyOrderByQR = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { orderId } = req.body as { orderId: string };
+    const { orderId, confirmPayment } = req.body as { orderId: string; confirmPayment?: boolean };
     
     if (!orderId) {
       res.status(400).json({ error: 'ID de pedido requerido' });
@@ -647,6 +647,11 @@ export const verifyOrderByQR = async (req: AuthRequest, res: Response): Promise<
     if (!order) {
       res.status(404).json({ error: 'Pedido no encontrado' });
       return;
+    }
+
+    // Si se confirma el pago (para efectivo), cambiar paymentStatus a paid
+    if (confirmPayment && order.paymentMethod === 'cash' && order.paymentStatus === 'pending') {
+      order.paymentStatus = 'paid';
     }
 
     if (!['confirmed', 'preparing', 'ready'].includes(order.status)) {
@@ -662,7 +667,7 @@ export const verifyOrderByQR = async (req: AuthRequest, res: Response): Promise<
     await order.save();
 
     res.json({ 
-      message: 'Pedido marcado como entregado',
+      message: confirmPayment ? 'Pago confirmado y pedido marcado como entregado' : 'Pedido marcado como entregado',
       order: { ...order.toObject(), id: order._id.toString() }
     });
   } catch (error) {
@@ -721,3 +726,26 @@ export async function cleanupExpiredOrders(): Promise<void> {
     console.error('Error al limpiar pedidos expirados:', error);
   }
 }
+
+export const updateDeliveryPerson = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { deliveryPerson } = req.body as { deliveryPerson: string };
+    
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { deliveryPerson, updatedAt: new Date() },
+      { returnDocument: 'after' }
+    );
+    
+    if (!order) {
+      res.status(404).json({ error: 'Pedido no encontrado' });
+      return;
+    }
+    
+    res.json({ ...order.toObject(), id: order._id.toString() });
+  } catch (error) {
+    console.error('UpdateDeliveryPerson error:', error);
+    res.status(500).json({ error: 'Error al asignar repartidor' });
+  }
+};
